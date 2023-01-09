@@ -501,16 +501,16 @@ section {
   color: #fff;
 }
 .bg--red {
-  background-color: #B55400;
+  background-color: #403e49;
 }
 .bg--green {
-  background-color: #393E46;
+  background-color: #1062e6;
 }
 .bg--purple {
-  background-color: #F5EDDC;
+  background-color: #3fd646;
 }
 .bg--blue {
-  background-color: #CFD2CF;
+  background-color: #000000;
 }
 img {
   max-height: 1000px;
