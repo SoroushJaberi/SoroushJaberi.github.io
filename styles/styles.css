@@ -170,23 +170,60 @@ section {
   z-index: -1;
   clip-path: polygon(0 0, 46% 0, 79% 100%, 0% 100%);
 }
-.header-content .left-header .image {
-  border-radius: var(--br-sm-2);
-  height: 90%;
-  width: 68%;
-  margin-left: 4rem;
-  background-color: var(none);
+/* CSS: Style updates for responsiveness and positioning */
+.left-header-image {
+  border-radius: 50%;
+  width: 50%;  /* Set to a percentage of the container for responsiveness */
+  max-width: 280px;  /* Set a max-width to constrain the large size */
+  max-height: 280px;  /* Set a max-height to match the max-width */
+  margin: 1rem auto;  /* Center the image */
+  border: 5px solid transparent;
   transition: all 0.4s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  overflow: hidden;
+  backface-visibility: hidden;
 }
-.header-content .left-header .image img {
-  width: 100%;
-  height: 100%;
+
+.left-header-image img {
+  max-width: 100%;
+  max-height: 100%;  /* Set max-height to maintain aspect ratio */
+  border-radius: 50%;  /* Keep the image round */
   object-fit: cover;
-  transition: all 0.4s ease-in-out;
-  filter: grayscale(100%);
 }
-.header-content .left-header .image img:hover {
-  filter: grayscale(0);
+
+/* Hover Effects */
+.left-header-image:hover {
+  border-color: var(--color-secondary);
+}
+
+.left-header-image:hover img {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  transition: transform 0.4s ease-in-out;
+}
+
+/* Responsive adjustments for smaller screens */
+@media screen and (max-width: 768px) {
+  .left-header-image {
+    max-width: 200px;
+    max-height: 200px;  /* Same value as width for circular shape */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .left-header-image {
+    max-width: 150px;
+    max-height: 150px;  /* Same value as width for circular shape */
+  }
+
+  /* Adjust text container padding/margin if necessary */
+  .right-header {
+    padding: 1rem; /* Adjust paddings/margins based on your layout */
+    text-align: center; /* Center-align text for mobile views */
+  }
 }
 .header-content .right-header {
   display: flex;
@@ -269,10 +306,114 @@ section {
   text-transform: uppercase;
 }
 
+/* Skills & Tools Section */
 .about-stats {
-  padding-bottom: 4rem;
+  margin: 4rem 0; /* Space above and below the section */
+  text-align: center; /* Center text alignment for the title */
 }
 
+/* Title Styling */
+.about-stats .stat-title {
+  font-size: 2rem; /* Define size for clarity */
+  color: var(--color-secondary); /* Secondary color for title */
+  margin-bottom: 3rem; /* Margin below the title */
+  text-transform: uppercase; /* Make the title uppercase for a modern look */
+  letter-spacing: 1px; /* Space out the letters slightly */
+}
+
+/* Skills Panels Grid Layout */
+.about-stats .ml {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid layout for skills */
+  gap: 2rem; /* Spacing between grid items */
+}
+
+/* Individual Skill Panel Styling */
+.about-stats .ml-pnl {
+  background-color: var(--color-primary); /* Use primary color for background */
+  border-left: 4px solid var(--color-secondary); /* Left side border for a modern touch */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: none; /* No box-shadow for a flatter, cleaner look */
+  padding: 2rem; /* Internal padding */
+  transition: background-color 0.3s, transform 0.3s; /* Transition effects for background and position changes */
+  cursor: pointer; /* Cursor change to indicate the item can be interacted with */
+}
+
+/* Content Within the Panels */
+.about-stats .ml-pnl h1, .about-stats .ml-pnl h3 {
+  color: var(--color-white); /* Light text for heading */
+  margin-bottom: 1rem; /* Space below the headings */
+}
+
+.about-stats .ml-pnl p {
+  color: var(--color-grey-1); /* Slightly lighter text for the description */
+}
+
+/* Panel Hover Effect */
+.about-stats .ml-pnl:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Lighten the background slightly on hover */
+  transform: translateY(-5px); /* Lift the panel up */
+}
+
+/* Adjustments for Light Mode */
+.light-mode .about-stats .ml-pnl {
+  background-color: var(--color-gray); /* Light background for panels */
+  border-left-color: var(--color-secondary); /* Ensure the left border is visible in light mode */
+}
+
+.light-mode .about-stats .ml-pnl h1, .light-mode .about-stats .ml-pnl h3,
+.light-mode .about-stats .ml-pnl p {
+  color: var(--color-grey-5); /* Darker text for readability on the light background */
+}
+
+.light-mode .about-stats .ml-pnl:hover {
+  background-color: rgba(0, 0, 0, 0.05); /* Even lighter tint on hover for light mode */
+}
+
+
+
+/* Research Experience Section Styling */
+.research-experience {
+  background-color: var(--color-primary); /* Use primary color for background */
+  padding: 2rem; /* Spacing */
+  margin-top: 4rem; /* Top margin for separation from previous content */
+  border-radius: var(--br-sm-2); /* Border radius for smooth corners */
+}
+
+.research-experience .stat-title {
+  color: var(--color-secondary); /* Secondary color for heading */
+  margin-bottom: 2rem; /* Spacing after title */
+}
+
+.research-experience .research-items {
+  gap: 1.5rem; /* Space between research items */
+  display: flex; /* Utilize flex for layout */
+  flex-direction: column; /* Stack items vertically */
+}
+
+.research-experience .research-item {
+  background-color: var(--color-); /* White background for contrast */
+  padding: 1.5rem; /* Padding inside boxes */
+  border-left: 4px solid var(--color-secondary); /* Left accent border */
+  border-radius: var(--br-sm-2); /* Border radius */
+  box-shadow: var(--box-shadow-1); /* Box shadow for depth */
+  transition-duration: 0.3s; /* Smooth transition for hover effect */
+  cursor: pointer; /* Indicate the item is interactive */
+}
+
+.research-experience .research-item h3 {
+  color: var(--color-secondary); /* Text color for headings */
+  margin-bottom: 1rem; /* Space below heading */
+}
+
+.research-experience .research-item p {
+  color: var(--color-grey-3); /* Grey text for paragraph */
+}
+
+.research-experience .research-item:hover {
+  transform: translateY(-5px); /* Hover effect */
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+}
 
 /**
     masonry layouts
@@ -717,100 +858,43 @@ img {
   padding-bottom: 1rem;
 }
 
+.contact-container {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 4rem 0;
+}
 .contact-content-con {
-  display: flex;
-  padding-top: 3.5rem;
+  display: block;
 }
-.contact-content-con .left-contact {
-  flex: 2;
-}
-.contact-content-con .left-contact h4 {
-  margin-top: 1rem;
-  font-size: 2rem;
-  text-transform: uppercase;
-}
-.contact-content-con .left-contact p {
+.left-contact h4 {
+  font-size: 1.8rem;
   margin: 1rem 0;
-  line-height: 2rem;
+  color: var(--color-secondary);
 }
-.contact-content-con .left-contact .contact-info .contact-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.contact-info {
+  margin: 2rem 0;
 }
-.contact-content-con .left-contact .contact-info .contact-item p {
-  margin: 0.3rem 0 !important;
-  padding: 0 !important;
-}
-.contact-content-con .left-contact .contact-info .contact-item .icon {
-  display: grid;
-  grid-template-columns: 40px 1fr;
-}
-.contact-content-con .left-contact .contact-info .contact-item .icon i {
-  display: flex;
-  align-items: center;
-  font-size: 1.3rem;
-}
-.contact-content-con .left-contact .contact-icon {
-  display: flex;
-  margin-top: 2rem;
-}
-.contact-content-con .left-contact .contact-icon a {
-  display: flex;
-  align-items: center;
-  color: var(--color-white);
-  background-color: var(--color-grey-5);
-  cursor: pointer;
-  justify-content: center;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin: 0 0.4rem;
-  transition: all 0.4s ease-in-out;
-}
-.contact-content-con .left-contact .contact-icon a:hover {
-  background-color: var(--color-secondary);
-}
-.contact-content-con .left-contact .contact-icon a:hover i {
-  color: var(--color-primary);
-}
-.contact-content-con .left-contact .contact-icon a i {
+.contact-item {
+  margin: 0.5rem 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1rem;
+  color: var(--color-grey-1);
+}
+.contact-item i {
+  margin-right: 0.5rem;
   font-size: 1.3rem;
 }
-.contact-content-con .right-contact {
-  flex: 3;
-  margin-left: 3rem;
+.social-icons a {
+  margin: 0 1rem;
+  font-size: 2rem;
+  color: var(--color-grey-1);
 }
-.contact-content-con .right-contact .input-control {
-  margin: 1.5rem 0;
+.social-icons a:hover {
+  color: var(--color-secondary);
 }
-.contact-content-con .right-contact .input-control input, .contact-content-con .right-contact .input-control textarea {
-  border-radius: 30px;
-  font-weight: inherit;
-  font-size: inherit;
-  font-family: inherit;
-  padding: 0.8rem 1.1rem;
-  outline: none;
-  border: none;
-  background-color: var(--color-grey-5);
-  width: 100%;
-  color: var(--color-white);
-  resize: none;
-}
-.contact-content-con .right-contact .i-c-2 {
-  display: flex;
-}
-.contact-content-con .right-contact .i-c-2 :last-child {
-  margin-left: 1.5rem;
-}
-.contact-content-con .right-contact .submit-btn {
-  display: flex;
-  justify-content: flex-start;
-}
-
 /*Independed components*/
 .btn-con {
   display: flex;
