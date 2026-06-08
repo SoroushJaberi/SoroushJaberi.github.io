@@ -5,6 +5,7 @@ import MediaFrame, { type MediaVariant } from './ui/MediaFrame';
 
 type Pillar = {
   id: string;
+  node: string;
   variant: MediaVariant;
   title: string;
   description: string;
@@ -15,24 +16,27 @@ type Pillar = {
 const pillars: Pillar[] = [
   {
     id: 'nlp',
+    node: '01',
     variant: 'nlp',
     title: 'Natural Language Processing',
     description:
-      'Sentiment analysis and language understanding for low-resource settings — including Persian — combining transformer embeddings with lexicon signals for robust, interpretable results.',
+      'Sentiment and language understanding for low-resource settings — including Persian — fusing transformer embeddings with lexicon signals for robust, interpretable results.',
     methods: ['Transformers', 'BERT / ParsBERT', 'Sentiment', 'Embeddings'],
     imageHint: 'Token-embedding / attention map visual',
   },
   {
     id: 'medical',
+    node: '02',
     variant: 'medical',
     title: 'Medical AI',
     description:
-      'Deep learning for biomedical image segmentation — liver and lung tumor delineation from CT — with attention to supervision strategy, class imbalance, and clinical evaluation.',
+      'Deep learning for biomedical image segmentation — liver and lung tumor delineation from CT — attentive to supervision strategy, class imbalance, and clinical evaluation.',
     methods: ['UNet', 'CT Imaging', 'Segmentation', 'PyTorch'],
     imageHint: 'CT scan with segmentation mask overlay',
   },
   {
     id: 'rag',
+    node: '03',
     variant: 'rag',
     title: 'Retrieval-Augmented Generation',
     description:
@@ -42,6 +46,7 @@ const pillars: Pillar[] = [
   },
   {
     id: 'vision',
+    node: '04',
     variant: 'vision',
     title: 'Computer Vision',
     description:
@@ -53,8 +58,16 @@ const pillars: Pillar[] = [
 
 export default function ResearchFocus() {
   return (
-    <section id="research" className="relative px-6 py-24 text-foreground md:px-12 md:py-32">
-      <div className="mx-auto max-w-7xl">
+    <section id="research" className="relative overflow-hidden px-6 py-24 text-foreground md:px-12 md:py-32">
+      {/* faint intelligence-map connectors behind the grid */}
+      <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.5]" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <line x1="50" y1="50" x2="26" y2="30" stroke="rgba(124,199,255,0.10)" strokeWidth="0.12" />
+        <line x1="50" y1="50" x2="74" y2="30" stroke="rgba(124,199,255,0.10)" strokeWidth="0.12" />
+        <line x1="50" y1="50" x2="26" y2="72" stroke="rgba(124,199,255,0.10)" strokeWidth="0.12" />
+        <line x1="50" y1="50" x2="74" y2="72" stroke="rgba(124,199,255,0.10)" strokeWidth="0.12" />
+      </svg>
+
+      <div className="relative mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -64,11 +77,11 @@ export default function ResearchFocus() {
         >
           <p className="eyebrow mb-5"><span className="text-foreground/30">03 ·</span> Research Focus</p>
           <h2 className="display-title text-[clamp(2.9rem,7vw,5.6rem)]">
-            Four directions, one <span className="serif-accent text-primary">throughline.</span>
+            A map of <span className="serif-accent text-primary">intelligence.</span>
           </h2>
           <p className="mt-6 max-w-2xl font-syne text-base leading-[1.8] text-foreground/64 md:text-lg">
-            Different domains, the same discipline: frame the problem precisely, measure honestly, and
-            build systems that earn trust because their behaviour can be understood.
+            Four connected domains, one discipline: frame the problem precisely, measure honestly, and
+            build systems whose behaviour can be understood.
           </p>
         </motion.div>
 
@@ -80,29 +93,26 @@ export default function ResearchFocus() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.6, delay: index * 0.06 }}
-              className="soft-card group flex flex-col overflow-hidden rounded-[1.75rem] p-5 transition-colors hover:border-primary/40 md:p-6"
+              className="glow-card flex flex-col overflow-hidden rounded-[1.75rem] p-5 md:p-6"
             >
-              <MediaFrame
-                variant={pillar.variant}
-                ratio="16 / 9"
-                hint={pillar.imageHint}
-                tag={pillar.id}
-                className="mb-6"
-              />
-              <h3 className="font-syne text-2xl font-semibold tracking-[-0.035em] text-foreground md:text-[1.7rem]">
-                {pillar.title}
-              </h3>
-              <p className="mt-3 font-syne text-sm leading-7 text-foreground/64 md:text-base">
-                {pillar.description}
-              </p>
+              <div className="mb-5 flex items-center justify-between">
+                <span className="inline-flex items-center gap-2.5 font-syne text-[0.66rem] uppercase tracking-[0.22em] text-foreground/45">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/60" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                  </span>
+                  Node {pillar.node}
+                </span>
+                <span className="font-syne text-[0.66rem] uppercase tracking-[0.22em] text-foreground/30">{pillar.id}</span>
+              </div>
+
+              <MediaFrame variant={pillar.variant} ratio="16 / 9" hint={pillar.imageHint} tag={pillar.id} className="mb-6" />
+
+              <h3 className="font-syne text-2xl font-semibold tracking-[-0.035em] text-foreground md:text-[1.7rem]">{pillar.title}</h3>
+              <p className="mt-3 font-syne text-sm leading-7 text-foreground/64 md:text-base">{pillar.description}</p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {pillar.methods.map((method) => (
-                  <span
-                    key={method}
-                    className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 font-syne text-[0.7rem] uppercase tracking-[0.14em] text-foreground/55"
-                  >
-                    {method}
-                  </span>
+                  <span key={method} className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 font-syne text-[0.7rem] uppercase tracking-[0.14em] text-foreground/55">{method}</span>
                 ))}
               </div>
             </motion.article>

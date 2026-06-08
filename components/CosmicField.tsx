@@ -38,22 +38,23 @@ export default function CosmicField() {
 
     const init = () => {
       const area = w * h;
-      const starCount = Math.min(240, Math.round(area / 8600));
+      // intentionally sparse + dim — the field is atmosphere, not decoration
+      const starCount = Math.min(130, Math.round(area / 17000));
       stars = Array.from({ length: starCount }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
         z: Math.random() * 0.8 + 0.2,
-        r: Math.random() * 1.2 + 0.2,
+        r: Math.random() * 1.1 + 0.2,
         tw: Math.random() * Math.PI * 2,
-        sp: Math.random() * 0.02 + 0.004,
+        sp: Math.random() * 0.018 + 0.004,
       }));
-      const nodeCount = Math.min(34, Math.round(area / 46000));
+      const nodeCount = Math.min(16, Math.round(area / 90000));
       nodes = Array.from({ length: nodeCount }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.05,
-        vy: (Math.random() - 0.5) * 0.05,
-        r: Math.random() * 1.4 + 0.6,
+        vx: (Math.random() - 0.5) * 0.04,
+        vy: (Math.random() - 0.5) * 0.04,
+        r: Math.random() * 1.3 + 0.5,
       }));
     };
 
@@ -75,7 +76,7 @@ export default function CosmicField() {
       mouse.y += (mouse.ty - mouse.y) * 0.04;
 
       // molecular links
-      const link = 150;
+      const link = 170;
       for (let i = 0; i < nodes.length; i++) {
         if (!reduce) {
           const n = nodes[i];
@@ -96,7 +97,7 @@ export default function CosmicField() {
             ctx.beginPath();
             ctx.moveTo(a.x + mouse.x * 10, a.y + mouse.y * 10);
             ctx.lineTo(b.x + mouse.x * 10, b.y + mouse.y * 10);
-            ctx.strokeStyle = `rgba(124,199,255,${0.05 * (1 - d / link)})`;
+            ctx.strokeStyle = `rgba(124,199,255,${0.035 * (1 - d / link)})`;
             ctx.lineWidth = 1;
             ctx.stroke();
           }
@@ -105,7 +106,7 @@ export default function CosmicField() {
       for (const n of nodes) {
         ctx.beginPath();
         ctx.arc(n.x + mouse.x * 10, n.y + mouse.y * 10, n.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(150,190,255,0.16)';
+        ctx.fillStyle = 'rgba(150,190,255,0.12)';
         ctx.fill();
       }
 

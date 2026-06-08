@@ -1,21 +1,64 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import DnaHelix from './DnaHelix';
+
+const NeuralField = dynamic(() => import('./three/NeuralField'), { ssr: false });
 
 const focus = ['NLP', 'Medical AI', 'RAG Systems', 'Computer Vision', 'Research-driven AI'];
-
 const ease = [0.16, 1, 0.3, 1] as const;
 
-export default function Hero() {
-  return (
-    <section id="intro" className="relative min-h-screen w-full overflow-hidden">
-      {/* signature helix */}
-      <DnaHelix className="absolute inset-0 z-0 h-full w-full opacity-[0.68] lg:opacity-100" />
+function hasWebGL() {
+  try {
+    const c = document.createElement('canvas');
+    return !!(
+      window.WebGLRenderingContext &&
+      (c.getContext('webgl') || c.getContext('experimental-webgl'))
+    );
+  } catch {
+    return false;
+  }
+}
 
-      {/* readability washes — different per breakpoint so the helix always reads */}
-      <div className="absolute inset-0 z-[1] hidden lg:block bg-[linear-gradient(100deg,rgba(5,7,12,0.92)_0%,rgba(5,7,12,0.6)_40%,rgba(5,7,12,0)_68%)]" />
-      <div className="absolute inset-0 z-[1] lg:hidden bg-[radial-gradient(130%_88%_at_50%_40%,rgba(5,7,12,0.22)_0%,rgba(5,7,12,0.58)_52%,rgba(5,7,12,0.92)_100%)]" />
+export default function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [mode, setMode] = useState<'canvas' | 'webgl'>('canvas');
+  const [reduce, setReduce] = useState(false);
+  const [active, setActive] = useState(true);
+
+  // Upgrade to the WebGL scene after mount when it's supported & wanted.
+  useEffect(() => {
+    const prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setReduce(prefersReduce);
+    if (hasWebGL()) setMode('webgl');
+  }, []);
+
+  // Pause the scene when the hero is scrolled away.
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => setActive(entry.isIntersecting), {
+      threshold: 0.05,
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <section ref={sectionRef} id="intro" className="relative min-h-screen w-full overflow-hidden">
+      {/* signature visual: abstract neural field (WebGL), calm CSS fallback */}
+      <div className="absolute inset-0 z-0">
+        {mode === 'webgl' ? (
+          <NeuralField active={active} reduce={reduce} />
+        ) : (
+          <div className="absolute inset-0 bg-[radial-gradient(40%_50%_at_72%_42%,rgba(124,199,255,0.16),transparent_70%),radial-gradient(30%_40%_at_60%_60%,rgba(167,139,250,0.12),transparent_70%)]" />
+        )}
+      </div>
+
+      {/* readability washes — tuned per breakpoint so the visual always reads */}
+      <div className="absolute inset-0 z-[1] hidden lg:block bg-[linear-gradient(100deg,rgba(5,7,12,0.92)_0%,rgba(5,7,12,0.6)_38%,rgba(5,7,12,0)_66%)]" />
+      <div className="absolute inset-0 z-[1] lg:hidden bg-[radial-gradient(130%_88%_at_50%_40%,rgba(5,7,12,0.18)_0%,rgba(5,7,12,0.55)_52%,rgba(5,7,12,0.92)_100%)]" />
       <div className="absolute inset-x-0 bottom-0 z-[1] h-40 bg-[linear-gradient(to_top,var(--background),transparent)]" />
 
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-7xl flex-col justify-center px-6 pb-28 pt-32 md:px-12 lg:px-16">

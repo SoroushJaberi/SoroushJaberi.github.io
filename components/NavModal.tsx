@@ -17,9 +17,13 @@ export default function NavModal({ isOpen, onClose }: { isOpen: boolean; onClose
   const handleClick = (href: string) => {
     onClose();
     setTimeout(() => {
-      const el = document.querySelector(href);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 180);
+      const lenis = window.__lenis;
+      if (lenis) {
+        lenis.scrollTo(href, { offset: 0 });
+      } else {
+        document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 220);
   };
 
   return (

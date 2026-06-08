@@ -68,7 +68,7 @@ export default function SkillsSection() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45 }}
-          className="soft-card flex min-h-[28rem] flex-col justify-between rounded-[2rem] p-7 md:p-10"
+          className="glow-card flex min-h-[28rem] flex-col justify-between rounded-[2rem] p-7 md:p-10"
         >
           <div>
             <p className="eyebrow mb-5">Selected Stack</p>
