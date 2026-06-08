@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import ContactModal from './ContactModal';
+import SectionLabel from './ui/SectionLabel';
 
 const quickLinks = [
   { label: 'Email', href: 'mailto:jaberi.soroush@gmail.com' },
@@ -47,9 +48,9 @@ export default function ContactSection() {
         transition={{ duration: 0.8 }}
         className="relative z-10 mx-auto max-w-3xl text-center"
       >
-        <p className="eyebrow mb-6"><span className="text-foreground/30">08 ·</span> Contact</p>
+        <SectionLabel index="08" label="Contact" className="mb-6 justify-center" />
         <h2 className="display-title text-glow text-[clamp(2.8rem,8vw,6rem)] leading-[0.98]">
-          Let’s build useful <span className="serif-accent text-primary">AI systems.</span>
+          Let’s build useful <span className="serif-accent gradient-text">AI systems.</span>
         </h2>
         <p className="mx-auto mt-7 max-w-xl font-syne text-base leading-[1.8] text-foreground/64 md:text-lg">
           Open to research collaborations, AI / data science roles, and projects across NLP, medical AI,

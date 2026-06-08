@@ -22,7 +22,10 @@ export default function Intro() {
 
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce || sessionStorage.getItem('introSeen')) return;
+    if (reduce || sessionStorage.getItem('introSeen')) {
+      window.dispatchEvent(new Event('intro:done'));
+      return;
+    }
     setShow(true);
     document.body.style.overflow = 'hidden';
     window.__lenis?.stop?.();
@@ -40,6 +43,7 @@ export default function Intro() {
     window.scrollTo(0, 0);
     window.__lenis?.scrollTo?.(0, { immediate: true });
     window.__lenis?.start?.();
+    window.dispatchEvent(new Event('intro:done'));
   }, []);
 
   return (

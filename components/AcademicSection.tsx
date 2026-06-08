@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import SectionLabel from './ui/SectionLabel';
 
 const academicItems = [
   {
@@ -71,9 +72,9 @@ export default function AcademicSection() {
           transition={{ duration: 0.75 }}
           className="mb-14 max-w-3xl md:mb-18"
         >
-          <p className="eyebrow mb-5"><span className="text-foreground/30">04 ·</span> Academic Foundation</p>
+          <SectionLabel index="04" label="Academic Foundation" className="mb-5" />
           <h2 className="display-title text-[clamp(2.9rem,7vw,5.6rem)]">
-            Education, teaching & <span className="serif-accent text-primary">research.</span>
+            Education, teaching & <span className="serif-accent gradient-text">research.</span>
           </h2>
         </motion.div>
 

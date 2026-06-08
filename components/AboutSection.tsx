@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import MediaFrame from './ui/MediaFrame';
+import SectionLabel from './ui/SectionLabel';
 
 const metrics = [
   ['4.0 / 4.0', 'M.Sc. AI GPA'],
@@ -21,19 +21,30 @@ export default function AboutSection() {
           transition={{ duration: 0.75 }}
           className="lg:sticky lg:top-28 lg:h-fit"
         >
-          <p className="eyebrow mb-5"><span className="text-foreground/30">02 ·</span> About</p>
+          <SectionLabel index="02" label="About" className="mb-5" />
           <h2 className="display-title text-[clamp(2.9rem,7vw,5.8rem)]">
-            Research-first, <span className="serif-accent text-primary">build-minded.</span>
+            Research-first, <span className="serif-accent gradient-text">build-minded.</span>
           </h2>
 
-          <MediaFrame
-            variant="portrait"
-            ratio="4 / 5"
-            label="Portrait"
-            hint="Clean, well-lit headshot — replace /public/images/portrait.jpg"
-            tag="4:5"
-            className="mt-8 max-w-xs"
-          />
+          {/* abstract data-layers signature (no image needed) */}
+          <div className="grain relative mt-9 max-w-xs overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.02] p-6">
+            <div className="coord mb-5 flex items-center justify-between text-foreground/40">
+              <span className="text-primary/80">SIGNAL</span>
+              <span>SJ — AI/DS</span>
+            </div>
+            <div className="space-y-2.5">
+              {[88, 64, 76, 42, 70, 54].map((w, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <span className="h-1 w-1 shrink-0 rounded-full bg-primary/60" />
+                  <span className="h-1.5 rounded-full bg-gradient-to-r from-primary/45 to-transparent" style={{ width: `${w}%` }} />
+                </div>
+              ))}
+            </div>
+            <div className="coord mt-6 flex items-center justify-between border-t border-white/10 pt-4 text-foreground/35">
+              <span>NLP · CV · RAG</span>
+              <span className="text-primary/70">● LIVE</span>
+            </div>
+          </div>
         </motion.div>
 
         <div className="space-y-10">

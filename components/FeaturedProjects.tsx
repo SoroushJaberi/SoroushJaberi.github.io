@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import MediaFrame, { type MediaVariant } from './ui/MediaFrame';
+import SectionLabel from './ui/SectionLabel';
+import SplitText from './ui/SplitText';
 
 type ProjectLink = { label: string; href: string };
 type Project = {
@@ -179,9 +181,10 @@ export default function FeaturedProjects() {
     <section id="projects" className="relative text-foreground">
       <div className="px-6 pb-12 pt-24 md:px-12 md:pt-32">
         <div className="mx-auto max-w-7xl">
-          <p className="eyebrow mb-5"><span className="text-foreground/30">06 ·</span> Featured Projects</p>
+          <SectionLabel index="06" label="Featured Projects" className="mb-5" />
           <h2 className="display-title text-[clamp(2.8rem,7vw,5.4rem)]">
-            Selected work, as <span className="serif-accent text-primary">case studies.</span>
+            <SplitText text="Selected work, as" />{' '}
+            <span className="serif-accent gradient-text">case studies.</span>
           </h2>
           <p className="mt-6 max-w-2xl font-syne text-base leading-[1.8] text-foreground/64 md:text-lg">
             Each project framed by the problem it solves, the approach behind it, and what came of it.

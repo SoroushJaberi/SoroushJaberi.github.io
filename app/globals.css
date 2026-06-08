@@ -1,29 +1,7 @@
-/* ── Local font files already included in /public/fonts ───────────────────── */
-@font-face {
-  font-family: 'Bebas Neue';
-  src: url('/fonts/BebasNeue-Regular.ttf') format('truetype');
-  font-weight: 400 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'ClashGrotesk';
-  src: url('/fonts/ClashGrotesk-Variable.woff2') format('woff2'),
-    url('/fonts/ClashGrotesk-Variable.ttf') format('truetype');
-  font-weight: 200 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Boska';
-  src: url('/fonts/Boska-Variable.woff2') format('woff2'),
-    url('/fonts/Boska-Variable.ttf') format('truetype');
-  font-weight: 300 900;
-  font-style: normal;
-  font-display: swap;
-}
+/* Fonts are loaded + self-hosted via next/font (see app/layout.tsx):
+   --font-display  Space Grotesk   (titles + body)
+   --font-mono     JetBrains Mono  (scientific labels, coordinates, years)
+   --font-serif    Instrument Serif (elegant accents) */
 
 @import "tailwindcss";
 
@@ -145,8 +123,9 @@
 html {
   /* smoothness handled by Lenis (JS); avoid double-smoothing with CSS */
   background: var(--background);
-  font-family: 'ClashGrotesk', Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  text-rendering: geometricPrecision;
+  font-family: var(--font-display), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
@@ -165,11 +144,15 @@ body {
 }
 
 .font-syne {
-  font-family: 'ClashGrotesk', Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-display), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .font-instrument {
-  font-family: 'Boska', Georgia, serif;
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+.font-mono-label {
+  font-family: var(--font-mono), ui-monospace, 'SF Mono', Menlo, monospace;
 }
 
 ::selection {
@@ -187,26 +170,26 @@ a {
 }
 
 .eyebrow {
-  font-family: 'ClashGrotesk', Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.72rem;
+  font-family: var(--font-mono), ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 0.68rem;
   line-height: 1;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: rgba(124, 199, 255, 0.88);
 }
 
 .display-title {
-  font-family: 'ClashGrotesk', Inter, ui-sans-serif, system-ui, sans-serif;
-  font-weight: 650;
-  letter-spacing: -0.055em;
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.04em;
   line-height: 0.98;
 }
 
 .serif-accent {
-  font-family: 'Boska', Georgia, serif;
+  font-family: var(--font-serif), Georgia, serif;
   font-style: italic;
-  font-weight: 450;
-  letter-spacing: -0.035em;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
 .soft-card {
@@ -264,4 +247,101 @@ a {
   0% { transform: translateY(0); opacity: 0; }
   30% { opacity: 1; }
   100% { transform: translateY(14px); opacity: 0; }
+}
+
+/* ── Text effects (used sparingly, on key words only) ─────────────────────── */
+.gradient-text {
+  background: linear-gradient(100deg, #7cc7ff 0%, #a78bfa 52%, #d6b56d 110%);
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.gradient-text-animated {
+  animation: sheen 9s linear infinite;
+}
+
+/* Animated underline that draws on hover (links, focus labels) */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -0.2em;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.link-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Data-scan: a light sweeps across the text on hover */
+.scan-hover {
+  background-image: linear-gradient(90deg, transparent 0%, rgba(124, 199, 255, 0.55) 50%, transparent 100%);
+  background-size: 220% 100%;
+  background-position: 150% 0;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  transition: background-position 0.7s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s ease;
+}
+.scan-hover:hover {
+  background-position: -40% 0;
+  color: var(--primary);
+}
+
+/* Coordinate-style metadata marker */
+.coord {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* Fine noise texture for premium panels */
+.grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  70%, 100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* ── Timeline (research archive) active state ─────────────────────────────── */
+.tl-year {
+  transition: color 0.45s ease, text-shadow 0.45s ease;
+  color: rgba(244, 247, 251, 0.5);
+}
+.tl-node {
+  transition: box-shadow 0.45s ease, background-color 0.45s ease, transform 0.45s ease;
+}
+.tl-index {
+  transition: color 0.45s ease;
+}
+.tl-active .tl-year {
+  color: var(--primary);
+  text-shadow: 0 0 28px rgba(124, 199, 255, 0.45);
+}
+.tl-active .tl-node {
+  background-color: var(--primary);
+  box-shadow: 0 0 22px rgba(124, 199, 255, 0.9);
+  transform: scale(1.25);
+}
+.tl-active .tl-index {
+  color: rgba(124, 199, 255, 0.85);
 }

@@ -2,6 +2,8 @@
 
 import { motion } from 'framer-motion';
 import MediaFrame, { type MediaVariant } from './ui/MediaFrame';
+import SectionLabel from './ui/SectionLabel';
+import SplitText from './ui/SplitText';
 
 type Pillar = {
   id: string;
@@ -75,9 +77,10 @@ export default function ResearchFocus() {
           transition={{ duration: 0.75 }}
           className="mb-14 max-w-3xl md:mb-18"
         >
-          <p className="eyebrow mb-5"><span className="text-foreground/30">03 ·</span> Research Focus</p>
+          <SectionLabel index="03" label="Research Focus" className="mb-5" />
           <h2 className="display-title text-[clamp(2.9rem,7vw,5.6rem)]">
-            A map of <span className="serif-accent text-primary">intelligence.</span>
+            <SplitText text="A map of" />{' '}
+            <span className="serif-accent gradient-text">intelligence.</span>
           </h2>
           <p className="mt-6 max-w-2xl font-syne text-base leading-[1.8] text-foreground/64 md:text-lg">
             Four connected domains, one discipline: frame the problem precisely, measure honestly, and

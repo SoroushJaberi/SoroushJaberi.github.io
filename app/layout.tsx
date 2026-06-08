@@ -1,5 +1,25 @@
 import type { Metadata } from 'next';
+import { Space_Grotesk, JetBrains_Mono, Instrument_Serif } from 'next/font/google';
 import './globals.css';
+
+// Optimized, self-hosted at build time — no runtime requests, no layout shift.
+const display = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-display',
+  display: 'swap',
+});
+const mono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap',
+});
+const serif = Instrument_Serif({
+  subsets: ['latin'],
+  weight: '400',
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
+  display: 'swap',
+});
 
 const siteUrl = 'https://soroushjaberi.github.io';
 
@@ -48,7 +68,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className={`dark ${display.variable} ${mono.variable} ${serif.variable}`}>
       <body className="antialiased min-h-screen selection:bg-primary selection:text-primary-foreground bg-background text-foreground">
         {children}
       </body>
