@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chromium-cli --help)",
+      "Bash(npx --yes playwright --version)",
+      "Bash(mkdir -p /tmp/pwtest)",
+      "Read(//tmp/**)",
+      "Bash(npm init *)",
+      "Bash(npm install *)",
+      "Bash(npx playwright *)",
+      "Bash(cp /tmp/shot.mjs /tmp/pwtest/shot.mjs)",
+      "Bash(node shot.mjs)",
+      "Bash(ls -la \"/c/c/c/tmp/shots/\" 2>/dev/null | head -5; ls -la \"/c/c/tmp/shots/\" 2>/dev/null | head -20)",
+      "Read(//c/c/c/tmp/shots//**)",
+      "Read(//c/c/c/c/tmp/shots/**)"
+    ]
+  }
+}

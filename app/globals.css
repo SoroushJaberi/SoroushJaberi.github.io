@@ -1,0 +1,267 @@
+/* ── Local font files already included in /public/fonts ───────────────────── */
+@font-face {
+  font-family: 'Bebas Neue';
+  src: url('/fonts/BebasNeue-Regular.ttf') format('truetype');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'ClashGrotesk';
+  src: url('/fonts/ClashGrotesk-Variable.woff2') format('woff2'),
+    url('/fonts/ClashGrotesk-Variable.ttf') format('truetype');
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Boska';
+  src: url('/fonts/Boska-Variable.woff2') format('woff2'),
+    url('/fonts/Boska-Variable.ttf') format('truetype');
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@import "tailwindcss";
+
+:root {
+  --background: #f7f5ef;
+  --foreground: #101318;
+  --card: #ffffff;
+  --card-foreground: #101318;
+  --popover: #ffffff;
+  --popover-foreground: #101318;
+  --primary: #4f8cff;
+  --primary-foreground: #071018;
+  --secondary: #e9eef7;
+  --secondary-foreground: #101318;
+  --muted: #ece8df;
+  --muted-foreground: #667085;
+  --accent: #d9f3ff;
+  --accent-foreground: #101318;
+  --border: rgba(16, 19, 24, 0.13);
+  --input: rgba(16, 19, 24, 0.16);
+  --ring: #4f8cff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --radius: 1rem;
+  --chart-1: #4f8cff;
+  --chart-2: #7dd3fc;
+  --chart-3: #c6a15b;
+  --chart-4: #a3e635;
+  --chart-5: #94a3b8;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #101318;
+  --sidebar-primary: #4f8cff;
+  --sidebar-primary-foreground: #071018;
+  --sidebar-accent: #e9eef7;
+  --sidebar-accent-foreground: #101318;
+  --sidebar-border: rgba(16, 19, 24, 0.13);
+  --sidebar-ring: #4f8cff;
+}
+
+.dark {
+  --background: #05070c;
+  --foreground: #f4f7fb;
+  --card: #0f141d;
+  --card-foreground: #f4f7fb;
+  --popover: #0f141d;
+  --popover-foreground: #f4f7fb;
+  --primary: #7cc7ff;
+  --primary-foreground: #061019;
+  --secondary: #17202b;
+  --secondary-foreground: #f4f7fb;
+  --muted: #111821;
+  --muted-foreground: #9aa6b2;
+  --accent: #1d2b3a;
+  --accent-foreground: #f4f7fb;
+  --border: rgba(244, 247, 251, 0.11);
+  --input: rgba(244, 247, 251, 0.15);
+  --ring: #7cc7ff;
+  --violet: #a78bfa;
+  --gold: #d6b56d;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --chart-1: #7cc7ff;
+  --chart-2: #d6b56d;
+  --chart-3: #88e1d0;
+  --chart-4: #9aa6b2;
+  --chart-5: #5b6b7d;
+  --sidebar: #080b12;
+  --sidebar-foreground: #f4f7fb;
+  --sidebar-primary: #7cc7ff;
+  --sidebar-primary-foreground: #061019;
+  --sidebar-accent: #17202b;
+  --sidebar-accent-foreground: #f4f7fb;
+  --sidebar-border: rgba(244, 247, 251, 0.11);
+  --sidebar-ring: #7cc7ff;
+}
+
+@theme inline {
+  --color-card: var(--card);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+  --color-radius: var(--radius);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-popover: var(--popover);
+  --color-primary: var(--primary);
+  --color-violet: var(--violet);
+  --color-gold: var(--gold);
+  --color-sidebar: var(--sidebar);
+  --color-secondary: var(--secondary);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-destructive: var(--destructive);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-card-foreground: var(--card-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--background);
+  font-family: 'ClashGrotesk', Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  text-rendering: geometricPrecision;
+}
+
+body {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(1100px 640px at 6% -12%, rgba(124, 199, 255, 0.10), transparent 60%),
+    radial-gradient(1000px 720px at 104% 2%, rgba(167, 139, 250, 0.12), transparent 58%),
+    radial-gradient(940px 680px at 50% 118%, rgba(214, 181, 109, 0.06), transparent 60%);
+  background-attachment: fixed;
+  color: var(--foreground);
+  overflow-x: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+.font-syne {
+  font-family: 'ClashGrotesk', Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.font-instrument {
+  font-family: 'Boska', Georgia, serif;
+}
+
+::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+a {
+  text-underline-offset: 0.22em;
+}
+
+.section-shell {
+  width: min(100% - 3rem, 72rem);
+  margin-inline: auto;
+}
+
+.eyebrow {
+  font-family: 'ClashGrotesk', Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.72rem;
+  line-height: 1;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(124, 199, 255, 0.88);
+}
+
+.display-title {
+  font-family: 'ClashGrotesk', Inter, ui-sans-serif, system-ui, sans-serif;
+  font-weight: 650;
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+}
+
+.serif-accent {
+  font-family: 'Boska', Georgia, serif;
+  font-style: italic;
+  font-weight: 450;
+  letter-spacing: -0.035em;
+}
+
+.soft-card {
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--card) 62%, transparent);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.28);
+}
+
+/* ── Cosmic / scientific helpers ──────────────────────────────────────────── */
+.text-glow {
+  text-shadow: 0 0 38px rgba(124, 199, 255, 0.22);
+}
+
+.hairline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(244, 247, 251, 0.18), transparent);
+}
+
+.lab-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 76px 76px;
+}
+
+/* Glass panel that glows on hover — used for cards across the site */
+.glow-card {
+  position: relative;
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--card) 58%, transparent);
+  backdrop-filter: blur(16px);
+  transition: border-color 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
+}
+.glow-card:hover {
+  border-color: color-mix(in oklab, var(--primary) 45%, transparent);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(124, 199, 255, 0.06) inset;
+}
+
+/* Animated gradient sheen used sparingly on key accents */
+@keyframes sheen {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.scroll-cue-dot {
+  animation: scroll-cue 2.2s ease-in-out infinite;
+}
+@keyframes scroll-cue {
+  0% { transform: translateY(0); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translateY(14px); opacity: 0; }
+}
