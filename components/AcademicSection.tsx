@@ -160,15 +160,6 @@ export default function AcademicSection() {
                 </article>
               ))}
             </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 22 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.65 }}
-              className="border-t border-white/12 pt-6"
-            >
-            </motion.div>
           </div>
         </div>
       </div>
