@@ -12,7 +12,8 @@ const signals = ['NLP', 'Medical imaging', 'Grounded QA', 'Vision prototypes'];
 const proof = [
   ['M.Sc. AI', '4.0 / 4.0 GPA'],
   ['Research', 'NLP, CV, RAG'],
-  ['Spectrum', 'Classical ML to LLMs'],
+  // non-breaking space keeps 'Gen AI' from splitting across lines
+  ['Spectrum', 'Classical ML to LLMs and Gen AI'],
 ];
 
 function hasWebGL() {
@@ -79,7 +80,7 @@ export default function Hero() {
             className="mb-8 flex max-w-2xl flex-wrap items-center gap-x-3 gap-y-2 font-mono-label text-[0.68rem] uppercase tracking-[0.2em] text-foreground/56"
           >
             <span className="h-px w-10 bg-primary/70" />
-            AI / Data Science / ML Engineering / Python
+            AI / Data Science / ML Engineering / Generative AI
           </motion.div>
 
           <h1 className="display-title text-glow max-w-[9ch] text-[clamp(3.4rem,9vw,8rem)] leading-[0.88] text-foreground">
