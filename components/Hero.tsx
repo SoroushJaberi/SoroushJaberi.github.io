@@ -12,7 +12,7 @@ const signals = ['NLP', 'Medical imaging', 'Grounded QA', 'Vision prototypes'];
 const proof = [
   ['M.Sc. AI', '4.0 / 4.0 GPA'],
   ['Research', 'NLP, CV, RAG'],
-  ['Practice', 'Python ML systems'],
+  ['Spectrum', 'Classical ML to LLMs'],
 ];
 
 function hasWebGL() {
