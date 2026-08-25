@@ -9,7 +9,7 @@ const education = [
     role: 'M.Sc. Artificial Intelligence',
     org: 'Karaj Islamic Azad University',
     period: '2023 - Present',
-    details: ['Overall GPA: 4.0 / 4.0', 'Thesis defense expected Summer 2026', 'Machine Learning, Deep Learning, Image Processing'],
+    details: ['Overall GPA: 4.0 / 4.0', 'Thesis defense expected Autumn 2026', 'Machine Learning, Deep Learning, Image Processing'],
   },
   {
     role: 'B.Sc. Computer Engineering',
