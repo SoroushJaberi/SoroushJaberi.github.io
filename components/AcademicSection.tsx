@@ -23,12 +23,17 @@ const teaching = [
   {
     role: 'Teaching Assistant - Machine Learning',
     period: '2023 - 2025',
-    text: 'Supported graduate students in machine learning workflows, model evaluation, and implementation-focused practice.',
+    text: 'Supported graduate students in machine learning workflows and model evaluation, and led Q&A sessions bridging theory and implementation.',
   },
   {
-    role: 'Teaching Assistant - Data Mining & Algorithm Design',
-    period: '2022 - 2025',
-    text: 'Guided preprocessing, feature selection, classification, clustering, algorithmic design, and complexity analysis.',
+    role: 'Teaching Assistant - Data Mining',
+    period: '2023 - 2025',
+    text: 'Designed and evaluated assignments on preprocessing, feature selection, classification, clustering, and pattern discovery.',
+  },
+  {
+    role: 'Teaching Assistant - Algorithm Design',
+    period: '2022 - 2023',
+    text: 'Built and assessed problem sets on efficient algorithm design and rigorous complexity analysis.',
   },
 ];
 
@@ -134,7 +139,7 @@ export default function AcademicSection() {
                 <h3 className="font-mono-label text-[0.68rem] uppercase tracking-[0.22em] text-foreground/56">Teaching</h3>
                 <div className="h-px flex-1 bg-white/10" />
               </div>
-              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
                 {teaching.map((item) => (
                   <article key={item.role} className="border-l border-primary/35 pl-5">
                     <p className="font-mono-label text-[0.62rem] uppercase tracking-[0.18em] text-primary/76">{item.period}</p>
