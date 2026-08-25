@@ -460,3 +460,16 @@ button:focus-visible {
   background: rgba(143, 227, 217, 0.4);
   border-radius: 2px;
 }
+
+/* Portrait card role line: keep it on one line on narrow phones */
+@media (max-width: 420px) {
+  .portrait-role {
+    letter-spacing: 0.11em;
+  }
+}
+
+/* Pinned timeline: fade cards at the viewport edges instead of hard-clipping */
+.tl-edge-fade {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 3rem, #000 calc(100% - 3rem), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 3rem, #000 calc(100% - 3rem), transparent 100%);
+}

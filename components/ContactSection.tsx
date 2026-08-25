@@ -75,8 +75,8 @@ export default function ContactSection() {
             src="/images/optimized/academic-library.jpg"
             alt="Soroush Jaberi in a library setting"
             variant="portrait"
-            ratio="1100 / 2189"
-            objectPosition="50% 50%"
+            ratio="4 / 5"
+            objectPosition="50% 25%"
             className="rounded-lg"
           />
           <div className="mt-4 grid grid-cols-1 gap-4 border-y border-white/12 py-5 sm:grid-cols-3">

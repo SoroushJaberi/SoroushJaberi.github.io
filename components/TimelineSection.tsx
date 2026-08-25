@@ -160,7 +160,7 @@ export default function TimelineSection() {
       {milestones.map((item, i) => (
         <article
           key={item.year}
-          className="tl-item group relative w-[76vw] shrink-0 snap-center sm:w-[21rem] lg:w-[23rem]"
+          className="tl-item group relative w-[76vw] shrink-0 snap-start sm:w-[21rem] lg:w-[23rem]"
         >
           <div className="h-[5.25rem] md:h-[6rem]">
             <span className="tl-index coord block text-foreground/52">
@@ -193,7 +193,7 @@ export default function TimelineSection() {
       {pinned ? (
         <div ref={pin} className="relative flex h-[100svh] flex-col justify-center overflow-hidden">
           {header}
-          <div className="mt-12">{rows}</div>
+          <div className="tl-edge-fade mt-12">{rows}</div>
         </div>
       ) : (
         <div className="py-24 md:py-32">
@@ -201,9 +201,10 @@ export default function TimelineSection() {
           <div
             ref={scroller}
             tabIndex={0}
+            data-lenis-prevent
             role="region"
             aria-label="Timeline, 2019 to 2026 — scroll sideways"
-            className="tl-scroller mt-12 snap-x snap-mandatory overflow-x-auto overscroll-x-contain pb-8"
+            className="tl-scroller mt-12 snap-x snap-proximity scroll-pl-6 overflow-x-auto overscroll-x-contain pb-8 md:scroll-pl-12"
           >
             {rows}
           </div>

@@ -28,7 +28,7 @@ export default function PortraitCard() {
         <div className="grid grid-cols-[1fr_auto] items-end gap-4 px-2 pt-4">
           <div>
             <p className="font-syne text-lg font-semibold leading-none tracking-[-0.03em] text-foreground">Soroush Jaberi</p>
-            <p className="coord mt-2 text-foreground/52">AI researcher / data scientist</p>
+            <p className="coord portrait-role mt-2 text-foreground/52">AI researcher / data scientist</p>
           </div>
           <div className="text-right font-mono-label text-[0.65rem] uppercase leading-5 tracking-[0.18em] text-foreground/52">
             Karaj
