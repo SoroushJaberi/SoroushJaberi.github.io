@@ -159,7 +159,7 @@ export default function MediaFrame({
               </p>
             )}
             {hint && (
-              <p className="mt-2 max-w-[24ch] font-syne text-xs leading-5 text-foreground/40">{hint}</p>
+              <p className="mt-2 max-w-[24ch] font-syne text-xs leading-5 text-foreground/52">{hint}</p>
             )}
           </motion.div>
         </>

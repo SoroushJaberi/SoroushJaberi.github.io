@@ -96,7 +96,7 @@ export default function DataVisual({ kind, label, className = '' }: DataVisualPr
         {kind === 'rag' && <RagVisual />}
         {kind === 'vision' && <VisionVisual />}
       </svg>
-      <div className="pointer-events-none absolute inset-x-3 bottom-3 flex items-center justify-between font-mono-label text-[0.58rem] uppercase tracking-[0.2em] text-foreground/36">
+      <div className="pointer-events-none absolute inset-x-3 bottom-3 flex items-center justify-between font-mono-label text-[0.58rem] uppercase tracking-[0.2em] text-foreground/52">
         <span>{label ?? kind}</span>
         <span>{kind.toUpperCase()}</span>
       </div>

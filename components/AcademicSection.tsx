@@ -59,7 +59,7 @@ export default function AcademicSection() {
           className="mb-14 grid grid-cols-1 gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end"
         >
           <div>
-            <SectionLabel index="04" label="Academic" className="mb-5" />
+            <SectionLabel index="03" label="Academic" className="mb-5" />
             <h2 className="display-title max-w-[12ch] text-[clamp(2.8rem,6.5vw,5.4rem)]">
               Education, teaching & <span className="serif-accent gradient-text">research.</span>
             </h2>
@@ -107,7 +107,7 @@ export default function AcademicSection() {
                   <div className="flex items-start justify-between gap-5">
                     <div>
                       <h3 className="font-syne text-xl font-semibold leading-snug tracking-[-0.03em] text-foreground md:text-2xl">{item.role}</h3>
-                      <p className="mt-2 font-mono-label text-[0.62rem] uppercase tracking-[0.18em] text-foreground/40">{item.org}</p>
+                      <p className="mt-2 font-mono-label text-[0.62rem] uppercase tracking-[0.18em] text-foreground/52">{item.org}</p>
                     </div>
                     <span className="font-mono-label text-[0.62rem] uppercase tracking-[0.18em] text-primary/80">{item.period}</span>
                   </div>

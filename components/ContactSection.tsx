@@ -26,7 +26,7 @@ export default function ContactSection() {
           transition={{ duration: 0.8 }}
           className="relative z-10"
         >
-          <SectionLabel index="08" label="Contact" className="mb-6" />
+          <SectionLabel index="07" label="Contact" className="mb-6" />
           <h2 className="display-title text-glow max-w-[11ch] text-[clamp(3rem,8vw,6.4rem)] leading-[0.94]">
             Let&apos;s build useful <span className="serif-accent gradient-text">AI systems.</span>
           </h2>
@@ -75,22 +75,21 @@ export default function ContactSection() {
             src="/images/optimized/academic-library.jpg"
             alt="Soroush Jaberi in a library setting"
             variant="portrait"
-            ratio="1100 / 2440"
-            objectFit="contain"
+            ratio="1100 / 2189"
             objectPosition="50% 50%"
             className="rounded-lg"
           />
           <div className="mt-4 grid grid-cols-1 gap-4 border-y border-white/12 py-5 sm:grid-cols-3">
             {['Research', 'AI roles', 'ML systems'].map((item) => (
-              <span key={item} className="font-mono-label text-[0.62rem] uppercase tracking-[0.2em] text-foreground/44">{item}</span>
+              <span key={item} className="font-mono-label text-[0.62rem] uppercase tracking-[0.2em] text-foreground/52">{item}</span>
             ))}
           </div>
         </motion.div>
       </div>
 
-      <footer className="relative z-10 mx-auto mt-14 flex max-w-7xl flex-col gap-5 border-t border-white/10 pt-6 font-mono-label text-[0.62rem] uppercase tracking-[0.2em] text-foreground/45 md:flex-row md:items-center md:justify-between">
-        <span>(c) {new Date().getFullYear()} Soroush Jaberi</span>
-        <span className="text-foreground/35">AI Researcher / Data Scientist / Machine Learning Engineer</span>
+      <footer className="relative z-10 mx-auto mt-14 flex max-w-7xl flex-col gap-5 border-t border-white/10 pt-6 font-mono-label text-[0.62rem] uppercase tracking-[0.2em] text-foreground/52 md:flex-row md:items-center md:justify-between">
+        <span>© {new Date().getFullYear()} Soroush Jaberi</span>
+        <span className="text-foreground/52">AI Researcher / Data Scientist / Machine Learning Engineer</span>
       </footer>
 
       <ContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

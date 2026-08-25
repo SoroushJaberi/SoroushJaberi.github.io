@@ -5,11 +5,19 @@ import { useEffect } from 'react';
 
 export default function ContactModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : '';
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    window.__lenis?.stop?.();
+    document.body.style.overflow = 'hidden';
     return () => {
+      window.removeEventListener('keydown', onKey);
+      window.__lenis?.start?.();
       document.body.style.overflow = '';
     };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   const links = [
     { label: 'Email', value: 'jaberi.soroush@gmail.com', href: 'mailto:jaberi.soroush@gmail.com' },
@@ -34,6 +42,9 @@ export default function ContactModal({ isOpen, onClose }: { isOpen: boolean; onC
             exit={{ scale: 0.98, y: 10, opacity: 0 }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Contact details"
             className="soft-card relative w-full max-w-lg overflow-hidden rounded-[2rem] p-7 md:p-9"
           >
             <button type="button" onClick={onClose} className="absolute right-5 top-5 border border-white/10 px-3 py-2 font-syne text-xs uppercase tracking-[0.16em] text-foreground/56 transition-colors hover:border-primary hover:text-primary" aria-label="Close modal">
@@ -51,7 +62,7 @@ export default function ContactModal({ isOpen, onClose }: { isOpen: boolean; onC
             <div className="mt-8 space-y-3">
               {links.map((link) => (
                 <a key={link.label} href={link.href} target={link.href.startsWith('http') || link.href.endsWith('.pdf') ? '_blank' : undefined} rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined} className="flex items-center justify-between gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition-colors hover:border-primary/45">
-                  <span className="font-syne text-xs uppercase tracking-[0.18em] text-foreground/42">{link.label}</span>
+                  <span className="font-syne text-xs uppercase tracking-[0.18em] text-foreground/52">{link.label}</span>
                   <span className="font-syne text-sm font-medium text-foreground/82">{link.value}</span>
                 </a>
               ))}

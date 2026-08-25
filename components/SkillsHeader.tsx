@@ -14,7 +14,7 @@ export default function SkillsHeader() {
           transition={{ duration: 0.7 }}
           className="max-w-4xl"
         >
-          <SectionLabel index="05" label="Skills" className="mb-5" />
+          <SectionLabel index="04" label="Skills" className="mb-5" />
           <h2 className="display-title text-[clamp(2.8rem,6.5vw,5.2rem)]">
             The tools behind the <span className="serif-accent gradient-text">work.</span>
           </h2>

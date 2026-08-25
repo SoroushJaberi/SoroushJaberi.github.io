@@ -40,7 +40,7 @@ export default function SkillsSection() {
           >
             <div className="flex items-baseline justify-between gap-4">
               <h3 className="font-syne text-2xl font-semibold tracking-[-0.03em] text-foreground md:text-[1.75rem]">{skill.category}</h3>
-              <span className="font-mono-label text-[0.6rem] uppercase tracking-[0.22em] text-foreground/35">0{index + 1}</span>
+              <span className="font-mono-label text-[0.6rem] uppercase tracking-[0.22em] text-foreground/52">0{index + 1}</span>
             </div>
             <p className="mt-3 font-syne text-sm leading-7 text-foreground/60 md:text-base">{skill.focus}</p>
             <div className="mt-6 flex flex-wrap gap-2">

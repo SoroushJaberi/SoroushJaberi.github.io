@@ -27,7 +27,7 @@ export default function SectionLabel({
         <span className="absolute inline-flex h-full w-full rounded-full bg-primary/60 [animation:pulse-ring_2.6s_ease-out_infinite]" />
         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
       </span>
-      <span className="text-foreground/35">{index}</span>
+      <span className="text-foreground/52">{index}</span>
       <span className="h-px w-7 bg-gradient-to-r from-primary/55 to-transparent" />
       <span className="text-primary/85">{label}</span>
     </motion.div>

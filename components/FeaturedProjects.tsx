@@ -96,7 +96,7 @@ function ProjectCase({ project, index }: { project: Project; index: number }) {
       <div className={`min-w-0 ${visualFirst ? 'lg:order-1' : 'lg:order-2'}`}>
         <div className="mb-5 flex flex-wrap items-center gap-x-4 gap-y-2">
           <span className="font-mono-label text-[0.64rem] uppercase tracking-[0.24em] text-primary">Case {project.number}</span>
-          <span className="font-mono-label text-[0.64rem] uppercase tracking-[0.2em] text-foreground/38">{project.type}</span>
+          <span className="font-mono-label text-[0.64rem] uppercase tracking-[0.2em] text-foreground/52">{project.type}</span>
         </div>
         <h3 className="font-syne text-[clamp(2rem,4vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.045em] text-foreground">
           {project.title}
@@ -115,7 +115,7 @@ function ProjectCase({ project, index }: { project: Project; index: number }) {
           ))}
         </dl>
 
-        <div className="mt-7 flex flex-wrap gap-x-4 gap-y-2 font-mono-label text-[0.62rem] uppercase tracking-[0.16em] text-foreground/46">
+        <div className="mt-7 flex flex-wrap gap-x-4 gap-y-2 font-mono-label text-[0.62rem] uppercase tracking-[0.16em] text-foreground/52">
           {project.stack.map((item) => (
             <span key={item}>{item}</span>
           ))}
@@ -148,7 +148,7 @@ export default function FeaturedProjects() {
       <div className="mx-auto max-w-7xl">
         <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
           <div>
-            <SectionLabel index="06" label="Selected Work" className="mb-5" />
+            <SectionLabel index="05" label="Selected Work" className="mb-5" />
             <h2 className="display-title max-w-[12ch] text-[clamp(2.8rem,6.5vw,5.4rem)]">
               <SplitText text="Selected" /> <span className="serif-accent gradient-text">case studies.</span>
             </h2>

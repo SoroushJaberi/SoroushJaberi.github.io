@@ -30,7 +30,7 @@ Example — add a portrait:
 | `project-02-rag.jpg`        | Projects — case study 02      | Retrieval → grounded answer screenshot | 4:3    | 1200×900   |
 | `project-03-segmentation.jpg`| Projects — case study 03     | CT slice + predicted tumor mask        | 4:3    | 1200×900   |
 | `project-04-vision.jpg`     | Projects — case study 04      | Pose keypoints over a webcam frame     | 4:3    | 1200×900   |
-| `og-image.png`              | Social share preview (manual) | 1200×630 branded card                  | 1.91:1 | 1200×630   |
+| `og-image.jpg`              | Social share preview (generated) | 1200×630 branded card                  | 1.91:1 | 1200×630   |
 
 ## Styling notes
 

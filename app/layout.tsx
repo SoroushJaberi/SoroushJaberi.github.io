@@ -59,20 +59,21 @@ export const metadata: Metadata = {
     locale: 'en_US',
     images: [
       {
-        url: '/images/optimized/hero-formal.jpg',
+        // 1.91:1 branded card — a portrait source gets centre-cropped to a
+        // headless band by LinkedIn/Facebook, so the share image is its own asset
+        url: '/og-image.jpg',
         width: 1200,
-        height: 2134,
+        height: 630,
         alt: 'Soroush Jaberi, AI researcher and data scientist',
       },
     ],
   },
   twitter: {
-    // 'summary' (square) suits a portrait better than a cropped wide card
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Soroush Jaberi | AI Researcher & Data Scientist',
     description:
       'Research-driven machine learning systems for NLP, medical imaging, and intelligent document retrieval.',
-    images: ['/images/optimized/hero-formal.jpg'],
+    images: ['/og-image.jpg'],
   },
   icons: {
     icon: '/favicon.png',

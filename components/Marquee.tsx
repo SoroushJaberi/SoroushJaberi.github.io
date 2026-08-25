@@ -30,7 +30,7 @@ export default function Marquee() {
   return (
     <section aria-label="Tools and research themes" className="relative py-14 md:py-20">
       <div className="mx-auto mb-8 max-w-7xl px-6 md:px-12">
-        <div className="coord flex items-center gap-3 text-foreground/45">
+        <div className="coord flex items-center gap-3 text-foreground/52">
           <span className="h-1.5 w-1.5 rounded-full bg-primary" />
           Stack in motion
         </div>

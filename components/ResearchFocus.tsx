@@ -52,7 +52,7 @@ export default function ResearchFocus() {
           className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end"
         >
           <div>
-            <SectionLabel index="03" label="Focus areas" className="mb-5" />
+            <SectionLabel index="02" label="Focus areas" className="mb-5" />
             <h2 className="display-title max-w-[13ch] text-[clamp(2.8rem,6.5vw,5.2rem)]">
               <SplitText text="From research to" /> <span className="serif-accent gradient-text">working systems.</span>
             </h2>

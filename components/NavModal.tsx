@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const navItems = [
@@ -14,6 +15,20 @@ const navItems = [
 ];
 
 export default function NavModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  // Escape closes, and the page behind stays put while the menu is open.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    window.__lenis?.stop?.();
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.__lenis?.start?.();
+    };
+  }, [isOpen, onClose]);
+
   const handleClick = (href: string) => {
     onClose();
     setTimeout(() => {
@@ -40,6 +55,9 @@ export default function NavModal({ isOpen, onClose }: { isOpen: boolean; onClose
         >
           <div className="flex min-h-full items-center justify-center px-6 py-12">
             <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Site menu"
               className="w-full max-w-sm"
               initial={{ opacity: 0, y: 14, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -48,7 +66,7 @@ export default function NavModal({ isOpen, onClose }: { isOpen: boolean; onClose
               onClick={(e) => e.stopPropagation()}
             >
               <div className="mb-5 flex items-center justify-between px-1">
-                <span className="font-mono-label text-[0.58rem] uppercase tracking-[0.28em] text-foreground/45">Menu</span>
+                <span className="font-mono-label text-[0.58rem] uppercase tracking-[0.28em] text-foreground/52">Menu</span>
                 <button
                   type="button"
                   onClick={onClose}
@@ -72,14 +90,14 @@ export default function NavModal({ isOpen, onClose }: { isOpen: boolean; onClose
                     <span className="font-syne text-xl font-medium tracking-[-0.02em] text-foreground/85 transition-colors group-hover:text-primary">
                       {item.text}
                     </span>
-                    <span className="font-mono-label text-[0.58rem] tracking-[0.18em] text-foreground/30 transition-colors group-hover:text-primary/60">
+                    <span className="font-mono-label text-[0.58rem] tracking-[0.18em] text-foreground/52 transition-colors group-hover:text-primary/60">
                       0{index + 1}
                     </span>
                   </motion.button>
                 ))}
               </nav>
 
-              <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 font-mono-label text-[0.58rem] uppercase tracking-[0.2em] text-foreground/45">
+              <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 font-mono-label text-[0.58rem] uppercase tracking-[0.2em] text-foreground/52">
                 <a className="transition-colors hover:text-primary" href="https://github.com/SoroushJaberi" target="_blank" rel="noopener noreferrer">GitHub</a>
                 <a className="transition-colors hover:text-primary" href="https://www.linkedin.com/in/soroush-jaberi/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
                 <a className="transition-colors hover:text-primary" href="mailto:jaberi.soroush@gmail.com">Email</a>

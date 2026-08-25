@@ -26,7 +26,7 @@ export default function AboutSection() {
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.75 }}
         >
-          <SectionLabel index="02" label="About" className="mb-5" />
+          <SectionLabel index="01" label="About" className="mb-5" />
           <h2 className="display-title max-w-[10ch] text-[clamp(3rem,7vw,6rem)]">
             Research-first, <span className="serif-accent gradient-text">build-minded.</span>
           </h2>
@@ -44,7 +44,7 @@ export default function AboutSection() {
             {metrics.map(([value, label]) => (
               <div key={label} className="border-white/12 py-5 md:border-r md:px-5 md:first:pl-0 md:last:border-r-0">
                 <div className="font-syne text-2xl font-semibold tracking-[-0.04em] text-primary md:text-3xl">{value}</div>
-                <div className="mt-2 font-mono-label text-[0.62rem] uppercase tracking-[0.18em] text-foreground/38">{label}</div>
+                <div className="mt-2 font-mono-label text-[0.62rem] uppercase tracking-[0.18em] text-foreground/52">{label}</div>
               </div>
             ))}
           </div>
@@ -84,7 +84,7 @@ export default function AboutSection() {
               className="rounded-lg"
             />
             <div className="glow-card p-5">
-              <p className="font-mono-label text-[0.62rem] uppercase tracking-[0.2em] text-foreground/40">Principles</p>
+              <p className="font-mono-label text-[0.62rem] uppercase tracking-[0.2em] text-foreground/52">Principles</p>
               <ul className="mt-4 space-y-3">
                 {principles.map((principle) => (
                   <li key={principle} className="grid grid-cols-[0.7rem_1fr] gap-3 font-syne text-sm leading-6 text-foreground/66">

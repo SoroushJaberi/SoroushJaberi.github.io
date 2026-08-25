@@ -59,7 +59,7 @@ export default function Hero() {
 
   return (
     <section ref={sectionRef} id="intro" className="relative min-h-screen w-full overflow-hidden">
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0" aria-hidden="true">
         {mode === 'webgl' ? (
           <NeuralField active={active} reduce={reduce} />
         ) : (
@@ -83,7 +83,7 @@ export default function Hero() {
           </motion.div>
 
           <h1 className="display-title text-glow max-w-[9ch] text-[clamp(3.4rem,9vw,8rem)] leading-[0.88] text-foreground">
-            <SplitText text="Soroush" trigger={started} interactive className="block" />
+            <SplitText text="Soroush" trigger={started} interactive className="block" />{' '}
             <SplitText text="Jaberi" trigger={started} delay={0.16} interactive className="serif-accent block text-primary" />
           </h1>
 
@@ -105,7 +105,7 @@ export default function Hero() {
           >
             {proof.map(([label, value]) => (
               <div key={label} className="border-white/12 py-4 sm:border-r sm:px-5 sm:first:pl-0 sm:last:border-r-0">
-                <p className="font-mono-label text-[0.62rem] uppercase tracking-[0.22em] text-foreground/36">{label}</p>
+                <p className="font-mono-label text-[0.62rem] uppercase tracking-[0.22em] text-foreground/52">{label}</p>
                 <p className="mt-2 font-syne text-sm font-semibold tracking-[-0.02em] text-foreground/82 md:text-base">{value}</p>
               </div>
             ))}
@@ -134,7 +134,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="absolute inset-x-0 bottom-6 z-10 flex flex-col gap-4 px-6 font-mono-label text-[0.65rem] uppercase tracking-[0.2em] text-foreground/42 md:flex-row md:items-center md:justify-between md:px-12 lg:px-16">
+      <div className="absolute inset-x-0 bottom-6 z-10 flex flex-col gap-4 px-6 font-mono-label text-[0.65rem] uppercase tracking-[0.2em] text-foreground/52 md:flex-row md:items-center md:justify-between md:px-12 lg:px-16">
         <div className="flex flex-wrap gap-x-5 gap-y-2">
           {signals.map((signal) => (
             <span key={signal}>{signal}</span>
