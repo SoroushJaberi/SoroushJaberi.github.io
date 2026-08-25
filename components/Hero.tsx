@@ -12,7 +12,7 @@ const signals = ['NLP', 'Medical imaging', 'Grounded QA', 'Vision prototypes'];
 const proof = [
   ['M.Sc. AI', '4.0 / 4.0 GPA'],
   ['Research', 'NLP, CV, RAG'],
-  ['Practice', 'Python ML systems'],
+  ['Spectrum', 'Classical ML to LLMs'],
 ];
 
 function hasWebGL() {
@@ -79,7 +79,7 @@ export default function Hero() {
             className="mb-8 flex max-w-2xl flex-wrap items-center gap-x-3 gap-y-2 font-mono-label text-[0.68rem] uppercase tracking-[0.2em] text-foreground/56"
           >
             <span className="h-px w-10 bg-primary/70" />
-            AI / Data Science / ML Engineering / Python
+            AI / Machine Learning / Deep Learning / LLMs
           </motion.div>
 
           <h1 className="display-title text-glow max-w-[9ch] text-[clamp(3.4rem,9vw,8rem)] leading-[0.88] text-foreground">
@@ -93,8 +93,9 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.48 }}
             className="mt-7 max-w-2xl font-syne text-lg leading-[1.75] text-foreground/74 md:text-xl"
           >
-            I&apos;m an AI researcher and data scientist building machine learning systems for language,
-            medical imaging, and document retrieval.
+            I&apos;m an AI researcher and data scientist working across the full range of modern AI —
+            classical machine learning, deep learning and large language models — applied to language,
+            medical imaging and document retrieval.
           </motion.p>
 
           <motion.div
