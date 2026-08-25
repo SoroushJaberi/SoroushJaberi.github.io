@@ -43,8 +43,10 @@ export default function TimelineSection() {
   const rail = useRef<HTMLSpanElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
 
-  // Desktop scroll-jacks the page into a horizontal run; touch and
-  // reduced-motion get the same left→right order as a plain swipe track.
+  // One continuous gesture: scrolling down pins the section, carries the years
+  // left→right, then releases and the page keeps going. Every screen size gets
+  // this — no separate sideways scroll. Falls back to a swipe track only where
+  // pinning can't work: reduced motion, or a viewport too short to hold a card.
   const [pinned, setPinned] = useState(false);
 
   // Shared readout: fills the 2019→2026 rail and lights the nearest milestone.
@@ -57,16 +59,17 @@ export default function TimelineSection() {
   }, []);
 
   useEffect(() => {
-    const wide = window.matchMedia('(min-width: 1024px)');
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const decide = () => setPinned(wide.matches && !reduce.matches);
+    // A pinned frame is exactly one viewport tall, so the header + a card have
+    // to fit inside it. Below that, pinning would clip the copy.
+    const decide = () => setPinned(!reduce.matches && window.innerHeight >= 560);
 
     decide();
-    wide.addEventListener('change', decide);
     reduce.addEventListener('change', decide);
+    window.addEventListener('resize', decide);
     return () => {
-      wide.removeEventListener('change', decide);
       reduce.removeEventListener('change', decide);
+      window.removeEventListener('resize', decide);
     };
   }, []);
 
@@ -147,7 +150,14 @@ export default function TimelineSection() {
       </div>
 
       <p className="mt-4 font-mono-label text-[0.62rem] uppercase tracking-[0.2em] text-foreground/52">
-        {pinned ? 'Keep scrolling — the years move left to right' : 'Swipe through the years'}
+        {pinned ? (
+          <>
+            <span className="sm:hidden">Keep scrolling →</span>
+            <span className="hidden sm:inline">Keep scrolling — the years move left to right</span>
+          </>
+        ) : (
+          'Swipe through the years'
+        )}
       </p>
     </div>
   );
