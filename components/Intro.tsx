@@ -118,7 +118,7 @@ AI Researcher · Data Scientist
 
           <motion.button
             type="button"
-            className="absolute bottom-7 right-7 z-10 font-syne text-[0.64rem] uppercase tracking-[0.24em] text-foreground/52 transition-colors hover:text-primary"
+            className="absolute bottom-7 right-7 z-10 -m-2 p-2 font-syne text-[0.64rem] uppercase tracking-[0.24em] text-foreground/52 transition-colors hover:text-primary"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.4 }}

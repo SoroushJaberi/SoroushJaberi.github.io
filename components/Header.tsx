@@ -22,7 +22,7 @@ export default function Header() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.35 }}
-          className="border-b border-white/20 pb-1 font-syne text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-foreground/86 backdrop-blur-xl transition-colors hover:border-primary hover:text-primary md:text-xs"
+          className="border-b border-white/20 pb-1 pt-1.5 font-syne text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-foreground/86 backdrop-blur-xl transition-colors hover:border-primary hover:text-primary md:text-xs"
         >
           Soroush Jaberi
         </motion.a>
