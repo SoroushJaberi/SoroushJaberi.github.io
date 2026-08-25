@@ -141,9 +141,9 @@ export default function Hero() {
           ))}
         </div>
         <div className="flex flex-wrap gap-x-5 gap-y-2">
-          <a className="link-underline transition-colors hover:text-primary" href="https://github.com/SoroushJaberi" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <a className="link-underline transition-colors hover:text-primary" href="https://www.linkedin.com/in/soroush-jaberi/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <a className="link-underline transition-colors hover:text-primary" href="mailto:jaberi.soroush@gmail.com">Email</a>
+          <a className="inline-flex min-h-11 items-center link-underline transition-colors hover:text-primary" href="https://github.com/SoroushJaberi" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a className="inline-flex min-h-11 items-center link-underline transition-colors hover:text-primary" href="https://www.linkedin.com/in/soroush-jaberi/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a className="inline-flex min-h-11 items-center link-underline transition-colors hover:text-primary" href="mailto:jaberi.soroush@gmail.com">Email</a>
         </div>
       </div>
     </section>

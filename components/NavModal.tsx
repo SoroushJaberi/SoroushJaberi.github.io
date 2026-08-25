@@ -98,9 +98,9 @@ export default function NavModal({ isOpen, onClose }: { isOpen: boolean; onClose
               </nav>
 
               <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 font-mono-label text-[0.58rem] uppercase tracking-[0.2em] text-foreground/52">
-                <a className="transition-colors hover:text-primary" href="https://github.com/SoroushJaberi" target="_blank" rel="noopener noreferrer">GitHub</a>
-                <a className="transition-colors hover:text-primary" href="https://www.linkedin.com/in/soroush-jaberi/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                <a className="transition-colors hover:text-primary" href="mailto:jaberi.soroush@gmail.com">Email</a>
+                <a className="inline-flex min-h-11 items-center transition-colors hover:text-primary" href="https://github.com/SoroushJaberi" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a className="inline-flex min-h-11 items-center transition-colors hover:text-primary" href="https://www.linkedin.com/in/soroush-jaberi/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                <a className="inline-flex min-h-11 items-center transition-colors hover:text-primary" href="mailto:jaberi.soroush@gmail.com">Email</a>
               </div>
             </motion.div>
           </div>

@@ -55,7 +55,7 @@ export default function ContactSection() {
                 href={link.href}
                 target={link.href.startsWith('http') || link.href.endsWith('.pdf') ? '_blank' : undefined}
                 rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                className="font-mono-label text-[0.64rem] uppercase tracking-[0.2em] text-foreground/52 transition-colors hover:text-primary"
+                className="inline-flex min-h-11 items-center font-mono-label text-[0.64rem] uppercase tracking-[0.2em] text-foreground/52 transition-colors hover:text-primary"
               >
                 {link.label}
               </a>
