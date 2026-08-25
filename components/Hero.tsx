@@ -70,7 +70,7 @@ export default function Hero() {
       <div className="absolute inset-0 z-[1] bg-[linear-gradient(90deg,rgba(6,7,5,0.96)_0%,rgba(6,7,5,0.82)_46%,rgba(6,7,5,0.38)_78%,rgba(6,7,5,0.12)_100%)]" />
       <div className="absolute inset-x-0 bottom-0 z-[1] h-40 bg-[linear-gradient(to_top,var(--background),transparent)]" />
 
-      <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-7xl grid-cols-1 items-center gap-12 px-6 pb-28 pt-32 md:px-12 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-16">
+      <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-7xl grid-cols-1 items-center gap-12 px-6 pb-8 pt-32 md:pb-28 md:px-12 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-16">
         <div className="order-2 lg:order-1">
           <motion.div
             initial={{ opacity: 0, y: 14 }}
@@ -134,7 +134,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="absolute inset-x-0 bottom-6 z-10 flex flex-col gap-4 px-6 font-mono-label text-[0.65rem] uppercase tracking-[0.2em] text-foreground/52 md:flex-row md:items-center md:justify-between md:px-12 lg:px-16">
+      <div className="relative z-10 mt-12 flex flex-col gap-4 px-6 pb-10 font-mono-label text-[0.65rem] uppercase tracking-[0.2em] text-foreground/52 md:absolute md:inset-x-0 md:bottom-6 md:mt-0 md:flex-row md:items-center md:justify-between md:px-12 md:pb-0 lg:px-16">
         <div className="flex flex-wrap gap-x-5 gap-y-2">
           {signals.map((signal) => (
             <span key={signal}>{signal}</span>
