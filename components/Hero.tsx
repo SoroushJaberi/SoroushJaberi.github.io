@@ -8,7 +8,12 @@ import SplitText from './ui/SplitText';
 
 const NeuralField = dynamic(() => import('./three/NeuralField'), { ssr: false });
 
-const focus = ['NLP', 'Medical AI', 'RAG Systems', 'Computer Vision', 'Research-driven AI'];
+const signals = ['NLP', 'Medical imaging', 'Grounded QA', 'Vision prototypes'];
+const proof = [
+  ['M.Sc. AI', '4.0 / 4.0 GPA'],
+  ['Research', 'NLP, CV, RAG'],
+  ['Practice', 'Python ML systems'],
+];
 
 function hasWebGL() {
   try {
@@ -31,13 +36,12 @@ export default function Hero() {
     setReduce(prefersReduce);
     if (hasWebGL()) setMode('webgl');
 
-    // play the title reveal once the intro dissolves (or immediately if skipped)
     if (prefersReduce || sessionStorage.getItem('introSeen')) {
       setStarted(true);
     } else {
       const onDone = () => setStarted(true);
       window.addEventListener('intro:done', onDone);
-      const fallback = window.setTimeout(() => setStarted(true), 4200);
+      const fallback = window.setTimeout(() => setStarted(true), 2200);
       return () => {
         window.removeEventListener('intro:done', onDone);
         clearTimeout(fallback);
@@ -59,94 +63,86 @@ export default function Hero() {
         {mode === 'webgl' ? (
           <NeuralField active={active} reduce={reduce} />
         ) : (
-          <div className="absolute inset-0 bg-[radial-gradient(40%_50%_at_70%_42%,rgba(124,199,255,0.16),transparent_70%),radial-gradient(30%_40%_at_55%_60%,rgba(167,139,250,0.12),transparent_70%)]" />
+          <div className="absolute inset-0 data-mesh opacity-70" />
         )}
       </div>
 
-      {/* readability washes */}
-      <div className="absolute inset-0 z-[1] hidden lg:block bg-[linear-gradient(90deg,rgba(5,7,12,0.9)_0%,rgba(5,7,12,0.7)_42%,rgba(5,7,12,0.2)_72%,rgba(5,7,12,0)_100%)]" />
-      <div className="absolute inset-0 z-[1] lg:hidden bg-[radial-gradient(130%_80%_at_50%_44%,rgba(5,7,12,0.2)_0%,rgba(5,7,12,0.62)_55%,rgba(5,7,12,0.92)_100%)]" />
+      <div className="absolute inset-0 z-[1] bg-[linear-gradient(90deg,rgba(6,7,5,0.96)_0%,rgba(6,7,5,0.82)_46%,rgba(6,7,5,0.38)_78%,rgba(6,7,5,0.12)_100%)]" />
       <div className="absolute inset-x-0 bottom-0 z-[1] h-40 bg-[linear-gradient(to_top,var(--background),transparent)]" />
 
-      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-7xl flex-col justify-center px-6 pb-28 pt-32 md:px-12 lg:px-16">
-        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[19rem_1fr] lg:gap-16">
-          {/* portrait identity card */}
-          <div className="order-1 flex justify-center lg:justify-start">
-            <PortraitCard />
-          </div>
+      <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-7xl grid-cols-1 items-center gap-12 px-6 pb-28 pt-32 md:px-12 lg:grid-cols-[minmax(0,1fr)_24rem] lg:px-16">
+        <div className="order-2 lg:order-1">
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="mb-8 flex max-w-2xl flex-wrap items-center gap-x-3 gap-y-2 font-mono-label text-[0.68rem] uppercase tracking-[0.2em] text-foreground/56"
+          >
+            <span className="h-px w-10 bg-primary/70" />
+            AI / Data Science / ML Engineering / Python
+          </motion.div>
 
-          {/* text content */}
-          <div className="order-2">
-            <motion.p
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="coord mb-7 flex flex-wrap items-center gap-x-3 gap-y-1 text-foreground/70"
-            >
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_12px_rgba(124,199,255,0.9)]" />
-              AI Researcher
-              <span className="text-foreground/25">/</span> Data Scientist
-              <span className="text-foreground/25">/</span> ML Engineer
-            </motion.p>
+          <h1 className="display-title text-glow max-w-[9ch] text-[clamp(3.4rem,9vw,8rem)] leading-[0.88] text-foreground">
+            <SplitText text="Soroush" trigger={started} interactive className="block" />
+            <SplitText text="Jaberi" trigger={started} delay={0.16} interactive className="serif-accent block text-primary" />
+          </h1>
 
-            <h1 className="display-title text-glow text-[clamp(2.9rem,8.5vw,7rem)] leading-[0.92] text-foreground">
-              <SplitText text="Soroush" trigger={started} className="block" />
-              <SplitText text="Jaberi" trigger={started} delay={0.18} className="serif-accent block text-primary" />
-            </h1>
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.48 }}
+            className="mt-7 max-w-2xl font-syne text-lg leading-[1.75] text-foreground/74 md:text-xl"
+          >
+            I&apos;m an AI researcher and data scientist building machine learning systems for language,
+            medical imaging, and document retrieval.
+          </motion.p>
 
-            <motion.p
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="mt-7 max-w-xl font-syne text-base leading-[1.75] text-foreground/72 md:text-lg"
-            >
-              Designing research-driven machine learning systems where language, medicine, and
-              retrieval meet — built to be measured, understood, and trusted.
-            </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.75, delay: 0.62 }}
+            className="mt-9 grid max-w-2xl grid-cols-1 border-y border-white/12 sm:grid-cols-3"
+          >
+            {proof.map(([label, value]) => (
+              <div key={label} className="border-white/12 py-4 sm:border-r sm:px-5 sm:first:pl-0 sm:last:border-r-0">
+                <p className="font-mono-label text-[0.62rem] uppercase tracking-[0.22em] text-foreground/36">{label}</p>
+                <p className="mt-2 font-syne text-sm font-semibold tracking-[-0.02em] text-foreground/82 md:text-base">{value}</p>
+              </div>
+            ))}
+          </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.64 }}
-              className="mt-8 flex flex-wrap items-center gap-x-3.5 gap-y-2.5"
-            >
-              {focus.map((f, i) => (
-                <span key={f} className="inline-flex items-center gap-3.5">
-                  {i > 0 && <span className="h-1 w-1 rounded-full bg-primary/55" />}
-                  <span className="link-underline coord text-foreground/65 transition-colors hover:text-primary">{f}</span>
-                </span>
-              ))}
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.75, delay: 0.76 }}
+            className="mt-10 flex flex-wrap gap-3"
+          >
+            <a href="#projects" className="border border-primary bg-primary px-5 py-3 font-syne text-xs font-bold uppercase tracking-[0.18em] text-primary-foreground shadow-[0_0_22px_rgba(143,227,217,0.1)] transition-transform hover:-translate-y-0.5">
+              View case studies
+            </a>
+            <a href="/Soroush-Jaberi-CV.pdf" target="_blank" className="border border-white/14 bg-white/[0.035] px-5 py-3 font-syne text-xs font-bold uppercase tracking-[0.18em] text-foreground/86 backdrop-blur-sm transition-colors hover:border-primary hover:text-primary">
+              Download CV
+            </a>
+            <a href="mailto:jaberi.soroush@gmail.com" className="border border-white/14 px-5 py-3 font-syne text-xs font-bold uppercase tracking-[0.18em] text-foreground/86 transition-colors hover:border-primary hover:text-primary">
+              Contact
+            </a>
+          </motion.div>
+        </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.75, delay: 0.78 }}
-              className="mt-10 flex flex-wrap gap-3"
-            >
-              <a href="#projects" className="rounded-full bg-primary px-6 py-3 font-syne text-xs font-bold uppercase tracking-[0.18em] text-primary-foreground shadow-[0_0_40px_rgba(124,199,255,0.28)] transition-transform hover:-translate-y-0.5">
-                View Work
-              </a>
-              <a href="/Soroush-Jaberi-CV.pdf" target="_blank" className="rounded-full border border-white/14 bg-white/[0.03] px-6 py-3 font-syne text-xs font-bold uppercase tracking-[0.18em] text-foreground/86 backdrop-blur-sm transition-colors hover:border-primary hover:text-primary">
-                Download CV
-              </a>
-              <a href="mailto:jaberi.soroush@gmail.com" className="rounded-full border border-white/14 px-6 py-3 font-syne text-xs font-bold uppercase tracking-[0.18em] text-foreground/86 transition-colors hover:border-primary hover:text-primary">
-                Contact
-              </a>
-            </motion.div>
-          </div>
+        <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
+          <PortraitCard />
         </div>
       </div>
 
-      <div className="absolute inset-x-0 bottom-6 z-10 flex flex-col gap-4 px-6 coord text-foreground/45 md:flex-row md:items-center md:justify-between md:px-12 lg:px-16">
-        <div className="flex items-center gap-3">
-          <span className="scroll-cue-dot inline-block h-2.5 w-2.5 rounded-full border border-primary/60" />
-          <span>Scroll to explore</span>
+      <div className="absolute inset-x-0 bottom-6 z-10 flex flex-col gap-4 px-6 font-mono-label text-[0.65rem] uppercase tracking-[0.2em] text-foreground/42 md:flex-row md:items-center md:justify-between md:px-12 lg:px-16">
+        <div className="flex flex-wrap gap-x-5 gap-y-2">
+          {signals.map((signal) => (
+            <span key={signal}>{signal}</span>
+          ))}
         </div>
         <div className="flex flex-wrap gap-x-5 gap-y-2">
           <a className="link-underline transition-colors hover:text-primary" href="https://github.com/SoroushJaberi" target="_blank" rel="noopener noreferrer">GitHub</a>
           <a className="link-underline transition-colors hover:text-primary" href="https://www.linkedin.com/in/soroush-jaberi/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <a className="link-underline transition-colors hover:text-primary" href="https://soroushjaberi.github.io/" target="_blank" rel="noopener noreferrer">Website</a>
           <a className="link-underline transition-colors hover:text-primary" href="mailto:jaberi.soroush@gmail.com">Email</a>
         </div>
       </div>

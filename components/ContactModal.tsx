@@ -36,7 +36,7 @@ export default function ContactModal({ isOpen, onClose }: { isOpen: boolean; onC
             onClick={(e) => e.stopPropagation()}
             className="soft-card relative w-full max-w-lg overflow-hidden rounded-[2rem] p-7 md:p-9"
           >
-            <button onClick={onClose} className="absolute right-5 top-5 rounded-full border border-white/10 px-3 py-2 font-syne text-xs uppercase tracking-[0.16em] text-foreground/56 transition-colors hover:border-primary hover:text-primary" aria-label="Close modal">
+            <button type="button" onClick={onClose} className="absolute right-5 top-5 border border-white/10 px-3 py-2 font-syne text-xs uppercase tracking-[0.16em] text-foreground/56 transition-colors hover:border-primary hover:text-primary" aria-label="Close modal">
               Close
             </button>
 

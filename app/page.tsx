@@ -5,6 +5,7 @@ import ResearchFocus from '@/components/ResearchFocus';
 import AcademicSection from '@/components/AcademicSection';
 import SkillsHeader from '@/components/SkillsHeader';
 import SkillsSection from '@/components/SkillsSection';
+import Marquee from '@/components/Marquee';
 import FeaturedProjects from '@/components/FeaturedProjects';
 import TimelineSection from '@/components/TimelineSection';
 import ContactSection from '@/components/ContactSection';
@@ -25,6 +26,7 @@ export default function Home() {
             <AcademicSection />
             <SkillsHeader />
             <SkillsSection />
+            <Marquee />
             <FeaturedProjects />
             <TimelineSection />
             <ContactSection />

@@ -29,22 +29,23 @@ type MediaFrameProps = {
   /** Real image path, e.g. "/images/portrait.jpg". When set, the image shows. */
   src?: string;
   alt?: string;
+  objectPosition?: string;
+  /** How the image fills the frame. Defaults to "cover". Use "contain" to keep the full image visible. */
+  objectFit?: 'cover' | 'contain';
   /** CSS aspect-ratio string, e.g. "4 / 5". */
   ratio?: string;
   /** Short label shown on the placeholder, e.g. "Portrait". */
   label?: string;
   /** One-line guidance shown under the label on the placeholder. */
   hint?: string;
-  /** Small monospaced-style tag in the corner, e.g. "4:5". */
-  tag?: string;
   className?: string;
   priority?: boolean;
 };
 
 function Motif({ variant }: { variant: MediaVariant }) {
-  const stroke = 'rgba(124,199,255,0.55)';
-  const faint = 'rgba(124,199,255,0.18)';
-  const gold = 'rgba(214,181,109,0.5)';
+  const stroke = 'rgba(143,227,217,0.55)';
+  const faint = 'rgba(143,227,217,0.18)';
+  const gold = 'rgba(217,186,112,0.5)';
 
   switch (variant) {
     case 'portrait':
@@ -113,10 +114,11 @@ export default function MediaFrame({
   variant = 'abstract',
   src,
   alt = '',
+  objectPosition = '50% 50%',
+  objectFit = 'cover',
   ratio = '4 / 5',
   label,
   hint,
-  tag,
   className = '',
   priority = false,
 }: MediaFrameProps) {
@@ -131,12 +133,13 @@ export default function MediaFrame({
           src={src}
           alt={alt}
           loading={priority ? 'eager' : 'lazy'}
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+          style={{ objectPosition }}
+          className={`absolute inset-0 h-full w-full ${objectFit === 'contain' ? 'object-contain' : 'object-cover'} transition-transform duration-700 ease-out group-hover:scale-[1.04]`}
         />
       ) : (
         <>
           {/* themed wash */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(124,199,255,0.10),transparent_60%),radial-gradient(circle_at_80%_90%,rgba(214,181,109,0.07),transparent_55%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(143,227,217,0.10),transparent_60%),radial-gradient(circle_at_80%_90%,rgba(217,186,112,0.07),transparent_55%)]" />
           {/* faint grid */}
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:28px_28px]" />
 
@@ -160,18 +163,6 @@ export default function MediaFrame({
             )}
           </motion.div>
         </>
-      )}
-
-      {/* corner crop brackets — scientific lab framing, kept over images too */}
-      <span className="pointer-events-none absolute left-3 top-3 h-4 w-4 border-l border-t border-white/25" />
-      <span className="pointer-events-none absolute right-3 top-3 h-4 w-4 border-r border-t border-white/25" />
-      <span className="pointer-events-none absolute bottom-3 left-3 h-4 w-4 border-b border-l border-white/25" />
-      <span className="pointer-events-none absolute bottom-3 right-3 h-4 w-4 border-b border-r border-white/25" />
-
-      {tag && (
-        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rotate-90 font-syne text-[0.6rem] uppercase tracking-[0.3em] text-foreground/30">
-          {tag}
-        </span>
       )}
     </div>
   );

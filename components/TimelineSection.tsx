@@ -68,19 +68,19 @@ export default function TimelineSection() {
     <section id="experience" className="relative px-6 py-24 text-foreground md:px-12 md:py-32">
       <div className="mx-auto max-w-7xl">
         <div className="mb-16 max-w-4xl">
-          <SectionLabel index="07" label="Trajectory" className="mb-6" />
-          <h2 className="display-title text-[clamp(2.9rem,7vw,5.6rem)]">
-            A journey through <span className="serif-accent text-primary">research.</span>
+          <SectionLabel index="07" label="Timeline" className="mb-6" />
+          <h2 className="display-title text-[clamp(2.8rem,6.5vw,5.2rem)]">
+            The path <span className="serif-accent text-primary">so far.</span>
           </h2>
         </div>
 
         <div ref={root} className="relative pl-12 md:pl-0">
           {/* signal track */}
           <div className="absolute left-[3px] top-0 h-full w-px bg-white/10 md:left-[166px]" />
-          <div ref={line} className="absolute left-[3px] top-0 h-full w-px origin-top scale-y-0 bg-gradient-to-b from-primary via-[#a78bfa] to-[#d6b56d] shadow-[0_0_12px_rgba(124,199,255,0.5)] md:left-[166px]" />
-          <div ref={comet} className="absolute left-[4px] top-0 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-white shadow-[0_0_22px_rgba(124,199,255,0.95)] md:left-[167px]" />
+          <div ref={line} className="absolute left-[3px] top-0 h-full w-px origin-top scale-y-0 bg-gradient-to-b from-primary via-primary/70 to-[#d9ba70] shadow-[0_0_8px_rgba(143,227,217,0.3)] md:left-[166px]" />
+          <div ref={comet} className="absolute left-[4px] top-0 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-white shadow-[0_0_14px_rgba(143,227,217,0.6)] md:left-[167px]" />
 
-          <div className="space-y-14 md:space-y-20">
+          <div className="space-y-16 md:space-y-24">
             {milestones.map((item, i) => (
               <article
                 key={`${item.year}-${item.title}`}
@@ -90,18 +90,18 @@ export default function TimelineSection() {
                 <span className="tl-node absolute left-[-2.55rem] top-7 hidden h-[0.7rem] w-[0.7rem] rounded-full border border-primary/50 bg-background md:left-[160px] md:block" />
 
                 {/* year as research-archive coordinate */}
-                <div className="md:text-right">
+                <div className="md:pr-10 md:text-right">
                   <span className="tl-index coord block text-foreground/35">A.{String(i + 1).padStart(2, '0')} / {String(milestones.length).padStart(2, '0')}</span>
-                  <Magnetic strength={0.4} className="mt-2 inline-block md:mt-3">
-                    <span className="tl-year font-mono-label block text-[2.7rem] font-medium leading-none tracking-[-0.02em] md:text-[3.4rem]">
+                  <Magnetic strength={0.4} className="mt-3 inline-block md:mt-4">
+                    <span className="tl-year font-instrument block text-[3.6rem] leading-[0.85] tracking-[0.01em] md:text-[4.8rem]">
                       {item.year}
                     </span>
                   </Magnetic>
                 </div>
 
-                <div className="tl-content md:pt-1">
-                  <h3 className="font-syne text-xl font-semibold tracking-[-0.03em] text-foreground md:text-2xl">{item.title}</h3>
-                  <p className="mt-3 max-w-2xl font-syne text-sm leading-7 text-foreground/62 md:text-base">{item.text}</p>
+                <div className="tl-content md:pt-3">
+                  <h3 className="font-syne text-xl font-semibold tracking-[-0.03em] text-foreground md:text-[1.6rem]">{item.title}</h3>
+                  <p className="mt-4 max-w-2xl font-syne text-[0.95rem] leading-7 text-foreground/62 md:text-base">{item.text}</p>
                 </div>
               </article>
             ))}

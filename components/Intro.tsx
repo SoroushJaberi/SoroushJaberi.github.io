@@ -30,7 +30,7 @@ export default function Intro() {
     document.body.style.overflow = 'hidden';
     window.__lenis?.stop?.();
     const lock = setTimeout(() => window.__lenis?.stop?.(), 120);
-    const t = setTimeout(() => setShow(false), 2700);
+    const t = setTimeout(() => setShow(false), 1650);
     return () => {
       clearTimeout(t);
       clearTimeout(lock);
@@ -66,7 +66,7 @@ export default function Intro() {
                 y1={NODES[a][1]}
                 x2={NODES[b][0]}
                 y2={NODES[b][1]}
-                stroke="rgba(124,199,255,0.4)"
+                stroke="rgba(143,227,217,0.4)"
                 strokeWidth={0.12}
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{ pathLength: 1, opacity: 1 }}
@@ -79,11 +79,11 @@ export default function Intro() {
                 cx={x}
                 cy={y}
                 r={i === 5 ? 0.9 : 0.6}
-                fill={i === 5 ? '#d6b56d' : i % 3 === 0 ? '#a78bfa' : '#7cc7ff'}
+                fill={i === 5 ? '#d9ba70' : i % 3 === 0 ? '#d9ba70' : '#8fe3d9'}
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.4 + i * 0.06, ease: [0.16, 1, 0.3, 1] }}
-                style={{ transformOrigin: `${x}px ${y}px`, filter: 'drop-shadow(0 0 1px rgba(124,199,255,0.9))' }}
+                style={{ transformOrigin: `${x}px ${y}px`, filter: 'drop-shadow(0 0 1px rgba(143,227,217,0.9))' }}
               />
             ))}
           </svg>
@@ -98,7 +98,7 @@ export default function Intro() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 1.0 }}
             >
-              AI Research Identity
+AI Researcher · Data Scientist
             </motion.p>
             <motion.h1
               className="display-title text-glow text-[clamp(2.6rem,9vw,6rem)] leading-[0.95]"
@@ -117,6 +117,7 @@ export default function Intro() {
           </div>
 
           <motion.button
+            type="button"
             className="absolute bottom-7 right-7 z-10 font-syne text-[0.64rem] uppercase tracking-[0.24em] text-foreground/45 transition-colors hover:text-primary"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -126,7 +127,7 @@ export default function Intro() {
               setShow(false);
             }}
           >
-            Skip intro →
+            Skip intro
           </motion.button>
         </motion.div>
       )}

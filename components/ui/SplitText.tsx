@@ -23,12 +23,14 @@ export default function SplitText({
   stagger = 0.026,
   delay = 0,
   trigger,
+  interactive = false,
 }: {
   text: string;
   className?: string;
   stagger?: number;
   delay?: number;
   trigger?: boolean;
+  interactive?: boolean;
 }) {
   const controlled = trigger !== undefined;
   const words = text.split(' ');
@@ -44,7 +46,7 @@ export default function SplitText({
       {words.map((word, wi) => (
         <span key={wi} aria-hidden className="inline-block whitespace-nowrap">
           {Array.from(word).map((ch, ci) => (
-            <motion.span key={ci} variants={charVariant} className="inline-block">
+            <motion.span key={ci} variants={charVariant} className={interactive ? 'char-glow inline-block' : 'inline-block'}>
               {ch}
             </motion.span>
           ))}

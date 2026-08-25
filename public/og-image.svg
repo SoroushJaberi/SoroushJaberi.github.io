@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Soroush Jaberi portfolio preview</title>
+  <desc id="desc">A dark editorial OpenGraph card for an AI researcher and data scientist portfolio.</desc>
+  <rect width="1200" height="630" fill="#060705"/>
+  <g opacity="0.55">
+    <path d="M-80 160 C160 80 330 230 560 145 S900 105 1280 205" fill="none" stroke="#8fe3d9" stroke-opacity="0.32"/>
+    <path d="M-80 260 C170 170 350 340 590 255 S920 215 1280 315" fill="none" stroke="#d9ba70" stroke-opacity="0.22"/>
+    <path d="M-80 360 C180 260 360 450 620 365 S940 330 1280 425" fill="none" stroke="#8fe3d9" stroke-opacity="0.2"/>
+  </g>
+  <g opacity="0.16">
+    <path d="M0 0 H1200 M0 90 H1200 M0 180 H1200 M0 270 H1200 M0 360 H1200 M0 450 H1200 M0 540 H1200 M0 630 H1200" stroke="#f4efe4"/>
+    <path d="M0 0 V630 M120 0 V630 M240 0 V630 M360 0 V630 M480 0 V630 M600 0 V630 M720 0 V630 M840 0 V630 M960 0 V630 M1080 0 V630 M1200 0 V630" stroke="#f4efe4"/>
+  </g>
+  <rect x="76" y="74" width="1048" height="482" fill="none" stroke="#f4efe4" stroke-opacity="0.14"/>
+  <text x="96" y="128" fill="#8fe3d9" font-family="JetBrains Mono, ui-monospace, monospace" font-size="18" letter-spacing="5">AI / DATA SCIENCE / ML ENGINEERING</text>
+  <text x="92" y="304" fill="#f4efe4" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="88" font-weight="650" letter-spacing="-4">Soroush Jaberi</text>
+  <text x="96" y="372" fill="#aaa496" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="30">Research-driven machine learning systems</text>
+  <text x="96" y="458" fill="#f4efe4" fill-opacity="0.72" font-family="JetBrains Mono, ui-monospace, monospace" font-size="18" letter-spacing="4">NLP / MEDICAL AI / RAG / COMPUTER VISION</text>
+  <circle cx="1040" cy="160" r="4" fill="#8fe3d9"/>
+  <circle cx="1076" cy="196" r="4" fill="#d9ba70"/>
+  <path d="M1040 160 L1076 196 L1010 252 L1094 318" fill="none" stroke="#8fe3d9" stroke-opacity="0.5"/>
+</svg>

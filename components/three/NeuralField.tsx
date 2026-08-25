@@ -16,10 +16,11 @@ import * as THREE from 'three';
  * Pauses when scrolled out of view via the `active` prop (frameloop).
  */
 
-const WHITE = [0.72, 0.85, 1.0];
-const CYAN = [0.486, 0.78, 1.0];
-const VIOLET = [0.655, 0.545, 0.98];
-const GOLD = [0.839, 0.71, 0.427];
+// Palette aligned to the editorial teal/gold system (values are 0–1 RGB).
+const WHITE = [0.86, 0.92, 0.88]; // warm off-white
+const CYAN = [0.561, 0.89, 0.851]; // teal  #8fe3d9 (primary strand)
+const VIOLET = [0.851, 0.729, 0.439]; // gold  #d9ba70 (secondary strand)
+const GOLD = [0.95, 0.8, 0.45]; // bright gold (signal accents)
 
 type Edge = { a: THREE.Vector3; b: THREE.Vector3 };
 

@@ -1,93 +1,60 @@
 'use client';
 
-import * as React from 'react';
 import { motion } from 'framer-motion';
 
 const skills = [
   {
-    category: 'Machine Learning',
-    items: ['Python', 'PyTorch', 'TensorFlow', 'scikit-learn', 'NumPy', 'pandas', 'XGBoost', 'LightGBM'],
-    focus: 'Modeling, training, evaluation, and experiment-driven iteration.',
+    category: 'Modeling',
+    focus: 'Training, evaluating, and iterating on classical and deep learning models.',
+    tools: ['Python', 'PyTorch', 'TensorFlow', 'scikit-learn', 'NumPy', 'pandas', 'XGBoost'],
   },
   {
-    category: 'NLP & Generative AI',
-    items: ['Transformers', 'BERT', 'ParsBERT', 'FastText', 'RAG', 'LangChain', 'ChromaDB', 'LLM QA'],
-    focus: 'Language understanding, retrieval pipelines, and document-grounded assistants.',
+    category: 'Language',
+    focus: 'NLP and document-grounded generation for sentiment, retrieval, and QA.',
+    tools: ['Transformers', 'BERT', 'ParsBERT', 'RAG', 'LangChain', 'ChromaDB'],
   },
   {
-    category: 'Computer Vision',
-    items: ['OpenCV', 'UNet', 'Image Processing', 'Medical Segmentation', 'Pose Estimation', 'MediaPipe'],
-    focus: 'Segmentation, medical imaging, and applied visual intelligence prototypes.',
+    category: 'Vision',
+    focus: 'Medical segmentation and real-time computer-vision prototypes.',
+    tools: ['OpenCV', 'UNet', 'Image Processing', 'Pose Estimation', 'MediaPipe'],
   },
   {
-    category: 'Software & Research',
-    items: ['Git/GitHub', 'Linux', 'Jupyter', 'Anaconda', 'SQL', 'Java', 'JavaScript', 'Minitab'],
-    focus: 'Reproducible workflows, technical documentation, and research-to-code implementation.',
+    category: 'Engineering',
+    focus: 'Turning research into readable, maintainable code.',
+    tools: ['Git/GitHub', 'Linux', 'Jupyter', 'SQL', 'Java', 'JavaScript'],
   },
 ];
 
 export default function SkillsSection() {
-  const [active, setActive] = React.useState(0);
-  const activeSkill = skills[active];
-
-  React.useEffect(() => {
-    const interval = setInterval(() => setActive((prev) => (prev + 1) % skills.length), 4200);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <section className="px-6 pb-24 text-foreground md:px-12 md:pb-32">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 lg:grid-cols-[0.95fr_1fr] lg:items-stretch">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
-          {skills.map((skill, index) => {
-            const isActive = active === index;
-            return (
-              <button
-                key={skill.category}
-                onMouseEnter={() => setActive(index)}
-                onClick={() => setActive(index)}
-                className={`group rounded-[1.5rem] border p-5 text-left transition-all md:p-6 ${
-                  isActive
-                    ? 'border-primary/55 bg-primary/[0.08]'
-                    : 'border-white/10 bg-white/[0.025] hover:border-white/20 hover:bg-white/[0.04]'
-                }`}
-              >
-                <div className="mb-4 flex items-center justify-between gap-4">
-                  <span className="font-syne text-xs uppercase tracking-[0.22em] text-foreground/40">0{index + 1}</span>
-                  <span className={`h-2 w-2 rounded-full transition-colors ${isActive ? 'bg-primary' : 'bg-white/20'}`} />
-                </div>
-                <h3 className="font-syne text-2xl font-semibold tracking-[-0.04em] text-foreground md:text-3xl">{skill.category}</h3>
-                <p className="mt-3 font-syne text-sm leading-6 text-foreground/55">{skill.focus}</p>
-              </button>
-            );
-          })}
-        </div>
-
-        <motion.div
-          key={activeSkill.category}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45 }}
-          className="glow-card flex min-h-[28rem] flex-col justify-between rounded-[2rem] p-7 md:p-10"
-        >
-          <div>
-            <p className="eyebrow mb-5">Selected Stack</p>
-            <h3 className="display-title text-[clamp(2.6rem,6vw,5rem)]">
-              {activeSkill.category.split(' ')[0]} <span className="serif-accent text-primary">tools</span>
-            </h3>
-            <p className="mt-6 max-w-2xl font-syne text-base leading-[1.8] text-foreground/64 md:text-lg">
-              {activeSkill.focus}
-            </p>
-          </div>
-
-          <div className="mt-10 flex flex-wrap gap-2.5">
-            {activeSkill.items.map((item) => (
-              <span key={item} className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2.5 font-syne text-xs font-medium uppercase tracking-[0.13em] text-foreground/70">
-                {item}
-              </span>
-            ))}
-          </div>
-        </motion.div>
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 md:grid-cols-2">
+        {skills.map((skill, index) => (
+          <motion.article
+            key={skill.category}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.55, delay: index * 0.05 }}
+            className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-7 transition-colors duration-300 hover:border-primary/25 md:p-8"
+          >
+            <div className="flex items-baseline justify-between gap-4">
+              <h3 className="font-syne text-2xl font-semibold tracking-[-0.03em] text-foreground md:text-[1.75rem]">{skill.category}</h3>
+              <span className="font-mono-label text-[0.6rem] uppercase tracking-[0.22em] text-foreground/35">0{index + 1}</span>
+            </div>
+            <p className="mt-3 font-syne text-sm leading-7 text-foreground/60 md:text-base">{skill.focus}</p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {skill.tools.map((tool) => (
+                <span
+                  key={tool}
+                  className="rounded-full border border-white/10 px-3 py-1 font-mono-label text-[0.6rem] uppercase tracking-[0.12em] text-foreground/60"
+                >
+                  {tool}
+                </span>
+              ))}
+            </div>
+          </motion.article>
+        ))}
       </div>
     </section>
   );

@@ -31,47 +31,60 @@ export default function NavModal({ isOpen, onClose }: { isOpen: boolean; onClose
       {isOpen && (
         <motion.div
           key="nav-modal"
-          className="fixed inset-0 z-[9998] overflow-hidden bg-background/92 px-6 py-6 text-foreground backdrop-blur-2xl md:px-12 md:py-10"
+          className="fixed inset-0 z-[9998] overflow-y-auto bg-background/70 backdrop-blur-xl"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.28, ease: 'easeInOut' }}
+          transition={{ duration: 0.24, ease: 'easeInOut' }}
+          onClick={onClose}
         >
-          <div className="absolute left-[-12rem] top-[-12rem] h-[26rem] w-[26rem] rounded-full bg-primary/12 blur-[100px]" />
-          <div className="absolute bottom-[-14rem] right-[-10rem] h-[28rem] w-[28rem] rounded-full bg-[#d6b56d]/8 blur-[110px]" />
+          <div className="flex min-h-full items-center justify-center px-6 py-12">
+            <motion.div
+              className="w-full max-w-sm"
+              initial={{ opacity: 0, y: 14, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.99 }}
+              transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="mb-5 flex items-center justify-between px-1">
+                <span className="font-mono-label text-[0.58rem] uppercase tracking-[0.28em] text-foreground/45">Menu</span>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="rounded-full border border-white/12 px-3.5 py-1.5 font-mono-label text-[0.58rem] uppercase tracking-[0.2em] text-foreground/60 transition-colors hover:border-primary/40 hover:text-primary"
+                >
+                  Close
+                </button>
+              </div>
 
-          <div className="relative z-10 flex h-full flex-col">
-            <div className="flex items-center justify-between">
-              <span className="font-syne text-xs font-semibold uppercase tracking-[0.24em] text-foreground/55">Navigation</span>
-              <button onClick={onClose} className="rounded-full border border-white/10 px-4 py-2 font-syne text-xs font-semibold uppercase tracking-[0.2em] text-foreground/70 transition-colors hover:border-primary/45 hover:text-primary">
-                Close
-              </button>
-            </div>
-
-            <div className="flex flex-1 items-center">
-              <nav className="grid w-full grid-cols-1 gap-2 md:grid-cols-2 md:gap-4">
+              <nav className="flex flex-col gap-1.5" aria-label="Primary">
                 {navItems.map((item, index) => (
                   <motion.button
+                    type="button"
                     key={item.href}
                     onClick={() => handleClick(item.href)}
-                    initial={{ opacity: 0, y: 18 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 8 }}
-                    transition={{ duration: 0.34, delay: index * 0.04 }}
-                    className="group flex items-center justify-between rounded-[1.5rem] border border-white/10 bg-white/[0.025] px-5 py-5 text-left transition-colors hover:border-primary/45 hover:bg-primary/[0.06] md:px-7 md:py-6"
+                    transition={{ duration: 0.3, delay: 0.04 + index * 0.03 }}
+                    className="group flex items-center justify-between rounded-2xl border border-white/[0.07] bg-white/[0.02] px-5 py-3.5 text-left transition-colors duration-300 hover:border-primary/30 hover:bg-primary/[0.05]"
                   >
-                    <span className="font-syne text-[clamp(1.8rem,5vw,4rem)] font-semibold leading-none tracking-[-0.05em] text-foreground transition-colors group-hover:text-primary">{item.text}</span>
-                    <span className="font-syne text-xs uppercase tracking-[0.2em] text-foreground/36">0{index + 1}</span>
+                    <span className="font-syne text-xl font-medium tracking-[-0.02em] text-foreground/85 transition-colors group-hover:text-primary">
+                      {item.text}
+                    </span>
+                    <span className="font-mono-label text-[0.58rem] tracking-[0.18em] text-foreground/30 transition-colors group-hover:text-primary/60">
+                      0{index + 1}
+                    </span>
                   </motion.button>
                 ))}
               </nav>
-            </div>
 
-            <div className="flex flex-wrap gap-x-5 gap-y-2 border-t border-white/10 pt-5 font-syne text-xs uppercase tracking-[0.2em] text-foreground/45">
-              <a className="hover:text-primary" href="https://github.com/SoroushJaberi" target="_blank" rel="noopener noreferrer">GitHub</a>
-              <a className="hover:text-primary" href="https://www.linkedin.com/in/soroush-jaberi/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-              <a className="hover:text-primary" href="mailto:jaberi.soroush@gmail.com">Email</a>
-            </div>
+              <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 font-mono-label text-[0.58rem] uppercase tracking-[0.2em] text-foreground/45">
+                <a className="transition-colors hover:text-primary" href="https://github.com/SoroushJaberi" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a className="transition-colors hover:text-primary" href="https://www.linkedin.com/in/soroush-jaberi/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                <a className="transition-colors hover:text-primary" href="mailto:jaberi.soroush@gmail.com">Email</a>
+              </div>
+            </motion.div>
           </div>
         </motion.div>
       )}

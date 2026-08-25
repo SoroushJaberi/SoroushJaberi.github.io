@@ -3,12 +3,26 @@
 export default function SectionBackground() {
   return (
     <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-      {/* faint scientific grid layered over the global cosmic field */}
-      <div className="lab-grid absolute inset-0 opacity-40 [mask-image:radial-gradient(120%_70%_at_50%_30%,#000_55%,transparent)]" />
-      {/* a couple of soft, translucent nebula blooms for local depth */}
-      <div className="absolute left-[-14rem] top-[12%] h-[28rem] w-[28rem] rounded-full bg-primary/[0.05] blur-[120px]" />
-      <div className="absolute right-[-15rem] top-[40%] h-[34rem] w-[34rem] rounded-full bg-[#a78bfa]/[0.05] blur-[130px]" />
-      <div className="absolute bottom-[6%] left-[20%] h-[30rem] w-[30rem] rounded-full bg-[#d6b56d]/[0.04] blur-[130px]" />
+      <div className="lab-grid absolute inset-0 opacity-25 [mask-image:radial-gradient(120%_70%_at_50%_30%,#000_55%,transparent)]" />
+      <svg className="absolute inset-x-0 top-0 h-[52rem] w-full opacity-30" viewBox="0 0 1440 620" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="section-line" x1="0" x2="1">
+            <stop offset="0" stopColor="rgba(143,227,217,0)" />
+            <stop offset="0.48" stopColor="rgba(143,227,217,0.34)" />
+            <stop offset="1" stopColor="rgba(217,186,112,0)" />
+          </linearGradient>
+        </defs>
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <path
+            key={i}
+            d={`M-60 ${110 + i * 58} C190 ${36 + i * 42}, 424 ${210 + i * 18}, 704 ${128 + i * 48} S1134 ${92 + i * 54}, 1500 ${172 + i * 34}`}
+            fill="none"
+            stroke="url(#section-line)"
+            strokeWidth="1"
+          />
+        ))}
+      </svg>
+      <div className="absolute inset-x-0 top-0 h-[52rem] bg-[linear-gradient(180deg,rgba(6,7,5,0),var(--background)_92%)]" />
     </div>
   );
 }

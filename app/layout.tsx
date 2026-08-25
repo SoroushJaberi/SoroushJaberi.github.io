@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Space_Grotesk, JetBrains_Mono, Instrument_Serif } from 'next/font/google';
 import './globals.css';
 
@@ -56,10 +56,32 @@ export const metadata: Metadata = {
     url: siteUrl,
     siteName: 'Soroush Jaberi Portfolio',
     type: 'website',
+    locale: 'en_US',
+    images: [
+      {
+        url: '/images/optimized/hero-formal.jpg',
+        width: 1200,
+        height: 2134,
+        alt: 'Soroush Jaberi, AI researcher and data scientist',
+      },
+    ],
+  },
+  twitter: {
+    // 'summary' (square) suits a portrait better than a cropped wide card
+    card: 'summary',
+    title: 'Soroush Jaberi | AI Researcher & Data Scientist',
+    description:
+      'Research-driven machine learning systems for NLP, medical imaging, and intelligent document retrieval.',
+    images: ['/images/optimized/hero-formal.jpg'],
   },
   icons: {
     icon: '/favicon.png',
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#060705',
+  colorScheme: 'dark',
 };
 
 export default function RootLayout({

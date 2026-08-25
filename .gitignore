@@ -34,3 +34,6 @@ next-env.d.ts
 
 # claude code local machine settings
 .claude/settings.local.json
+
+# raw original photos kept locally as source — only optimized copies are deployed/committed
+/source-photos/

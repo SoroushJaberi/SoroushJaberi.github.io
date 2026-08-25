@@ -14,13 +14,12 @@ export default function SkillsHeader() {
           transition={{ duration: 0.7 }}
           className="max-w-4xl"
         >
-          <SectionLabel index="05" label="Capabilities" className="mb-5" />
-          <h2 className="display-title text-[clamp(2.9rem,7vw,5.6rem)]">
-            A focused AI stack for <span className="serif-accent gradient-text">research &amp; build.</span>
+          <SectionLabel index="05" label="Skills" className="mb-5" />
+          <h2 className="display-title text-[clamp(2.8rem,6.5vw,5.2rem)]">
+            The tools behind the <span className="serif-accent gradient-text">work.</span>
           </h2>
-          <p className="mt-6 max-w-2xl font-syne text-base leading-[1.8] text-foreground/64 md:text-lg">
-            The stack is intentionally curated around the work I want to be known for: machine learning,
-            NLP, medical AI, retrieval systems, and clean research implementation.
+          <p className="mt-6 max-w-xl font-syne text-base leading-[1.8] text-foreground/60 md:text-lg">
+            Grouped by what they&apos;re for — modeling, language, vision, and the engineering that ties them together.
           </p>
         </motion.div>
       </div>

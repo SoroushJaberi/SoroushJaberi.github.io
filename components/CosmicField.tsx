@@ -97,7 +97,7 @@ export default function CosmicField() {
             ctx.beginPath();
             ctx.moveTo(a.x + mouse.x * 10, a.y + mouse.y * 10);
             ctx.lineTo(b.x + mouse.x * 10, b.y + mouse.y * 10);
-            ctx.strokeStyle = `rgba(124,199,255,${0.035 * (1 - d / link)})`;
+            ctx.strokeStyle = `rgba(143,227,217,${0.035 * (1 - d / link)})`;
             ctx.lineWidth = 1;
             ctx.stroke();
           }
@@ -106,7 +106,7 @@ export default function CosmicField() {
       for (const n of nodes) {
         ctx.beginPath();
         ctx.arc(n.x + mouse.x * 10, n.y + mouse.y * 10, n.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(150,190,255,0.12)';
+        ctx.fillStyle = 'rgba(143,227,217,0.12)';
         ctx.fill();
       }
 
@@ -117,7 +117,7 @@ export default function CosmicField() {
         const tw = reduce ? 0.7 : 0.55 + 0.45 * Math.sin(s.tw + t * s.sp);
         ctx.beginPath();
         ctx.arc(px, py, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(205,224,255,${0.22 * tw * s.z + 0.04})`;
+        ctx.fillStyle = `rgba(224,226,210,${0.22 * tw * s.z + 0.04})`;
         ctx.fill();
       }
 
@@ -174,7 +174,7 @@ export default function CosmicField() {
         }}
       />
       {/* edge vignette to focus the eye */}
-      <div className="absolute inset-0 bg-[radial-gradient(78%_64%_at_50%_42%,transparent_58%,rgba(2,3,7,0.55))]" />
+      <div className="absolute inset-0 bg-[radial-gradient(80%_66%_at_50%_42%,transparent_60%,rgba(2,3,7,0.42))]" />
     </div>
   );
 }

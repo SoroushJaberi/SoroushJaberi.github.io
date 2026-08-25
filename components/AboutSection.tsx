@@ -1,92 +1,101 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import MediaFrame from './ui/MediaFrame';
 import SectionLabel from './ui/SectionLabel';
 
 const metrics = [
   ['4.0 / 4.0', 'M.Sc. AI GPA'],
-  ['AI + DS', 'Core direction'],
-  ['NLP / CV / RAG', 'Research focus'],
-  ['2026', 'Expected defense'],
+  ['2026', 'Expected thesis defense'],
+  ['NLP / CV / RAG', 'Research areas'],
+];
+
+const principles = [
+  'Frame the research question before the model choice.',
+  'Prefer measurable experiments over impressive demos.',
+  'Build readable systems that can be trusted, reviewed, and reused.',
 ];
 
 export default function AboutSection() {
   return (
     <section id="about" className="relative px-6 py-24 text-foreground md:px-12 md:py-32">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 lg:grid-cols-[0.75fr_1fr] lg:gap-16">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-14 lg:grid-cols-[0.95fr_1.05fr] lg:gap-20">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.75 }}
-          className="lg:sticky lg:top-28 lg:h-fit"
         >
           <SectionLabel index="02" label="About" className="mb-5" />
-          <h2 className="display-title text-[clamp(2.9rem,7vw,5.8rem)]">
+          <h2 className="display-title max-w-[10ch] text-[clamp(3rem,7vw,6rem)]">
             Research-first, <span className="serif-accent gradient-text">build-minded.</span>
           </h2>
+          <p className="mt-8 max-w-2xl font-syne text-xl leading-[1.65] text-foreground/78 md:text-2xl">
+            I am an M.Sc. Artificial Intelligence candidate and data scientist focused on turning careful
+            research into practical machine learning systems.
+          </p>
+          <p className="mt-5 max-w-2xl font-syne text-base leading-[1.8] text-foreground/58 md:text-lg">
+            My work spans Persian sentiment analysis, medical image segmentation, retrieval-augmented
+            generation, and applied computer vision. I care about experiments that are clean enough to
+            reproduce and products that are understandable enough to trust.
+          </p>
 
-          {/* abstract data-layers signature (no image needed) */}
-          <div className="grain relative mt-9 max-w-xs overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.02] p-6">
-            <div className="coord mb-5 flex items-center justify-between text-foreground/40">
-              <span className="text-primary/80">SIGNAL</span>
-              <span>SJ — AI/DS</span>
-            </div>
-            <div className="space-y-2.5">
-              {[88, 64, 76, 42, 70, 54].map((w, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <span className="h-1 w-1 shrink-0 rounded-full bg-primary/60" />
-                  <span className="h-1.5 rounded-full bg-gradient-to-r from-primary/45 to-transparent" style={{ width: `${w}%` }} />
-                </div>
-              ))}
-            </div>
-            <div className="coord mt-6 flex items-center justify-between border-t border-white/10 pt-4 text-foreground/35">
-              <span>NLP · CV · RAG</span>
-              <span className="text-primary/70">● LIVE</span>
-            </div>
+          <div className="mt-10 grid grid-cols-1 border-y border-white/12 md:grid-cols-3">
+            {metrics.map(([value, label]) => (
+              <div key={label} className="border-white/12 py-5 md:border-r md:px-5 md:first:pl-0 md:last:border-r-0">
+                <div className="font-syne text-2xl font-semibold tracking-[-0.04em] text-primary md:text-3xl">{value}</div>
+                <div className="mt-2 font-mono-label text-[0.62rem] uppercase tracking-[0.18em] text-foreground/38">{label}</div>
+              </div>
+            ))}
           </div>
         </motion.div>
 
-        <div className="space-y-10">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.75, delay: 0.05 }}
-            className="soft-card rounded-[2rem] p-7 md:p-10"
-          >
-            <p className="font-syne text-xl leading-[1.7] text-foreground/82 md:text-2xl">
-              I am an M.Sc. Artificial Intelligence candidate and data scientist focused on turning
-              research ideas into practical machine learning systems.
-            </p>
-            <div className="mt-8 grid grid-cols-1 gap-5 border-t border-white/10 pt-8 md:grid-cols-2">
-              <p className="font-syne text-base leading-[1.8] text-foreground/64">
-                My work spans natural language processing, Persian sentiment analysis, medical image
-                segmentation, retrieval-augmented generation, and applied computer vision.
-              </p>
-              <p className="font-syne text-base leading-[1.8] text-foreground/64">
-                I care about clean experiments, measurable evaluation, readable code, and systems that
-                are understandable enough to be trusted and useful enough to be deployed.
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.75, delay: 0.05 }}
+          className="grid gap-4 sm:grid-cols-[0.82fr_1fr] lg:pt-12"
+        >
+          <div className="space-y-4">
+            <MediaFrame
+              src="/images/optimized/contact-sun.jpg"
+              alt="Soroush Jaberi in a cinematic, side-lit portrait"
+              variant="portrait"
+              ratio="4 / 5"
+              objectPosition="50% 37%"
+              className="rounded-lg"
+            />
+            <div className="border border-white/10 bg-white/[0.025] p-4">
+              <p className="font-mono-label text-[0.62rem] uppercase tracking-[0.2em] text-primary/78">Working pattern</p>
+              <p className="mt-3 font-syne text-sm leading-6 text-foreground/62">
+                Research question, baseline, evaluation, iteration, readable implementation.
               </p>
             </div>
-          </motion.div>
-
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-            {metrics.map(([value, label], index) => (
-              <motion.div
-                key={label}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.55, delay: index * 0.05 }}
-                className="rounded-3xl border border-white/10 bg-white/[0.025] p-5"
-              >
-                <div className="font-syne text-2xl font-semibold tracking-[-0.04em] text-primary md:text-3xl">{value}</div>
-                <div className="mt-2 font-syne text-xs uppercase tracking-[0.16em] text-foreground/45">{label}</div>
-              </motion.div>
-            ))}
           </div>
-        </div>
+
+          <div className="flex flex-col gap-4">
+            <MediaFrame
+              src="/images/optimized/hero-formal.jpg"
+              alt="Soroush Jaberi seated in a formal portrait"
+              variant="portrait"
+              ratio="5 / 6"
+              objectPosition="50% 40%"
+              className="rounded-lg"
+            />
+            <div className="glow-card p-5">
+              <p className="font-mono-label text-[0.62rem] uppercase tracking-[0.2em] text-foreground/40">Principles</p>
+              <ul className="mt-4 space-y-3">
+                {principles.map((principle) => (
+                  <li key={principle} className="grid grid-cols-[0.7rem_1fr] gap-3 font-syne text-sm leading-6 text-foreground/66">
+                    <span className="mt-2 h-1.5 w-1.5 bg-primary" />
+                    <span>{principle}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
