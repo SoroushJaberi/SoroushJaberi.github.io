@@ -31,15 +31,13 @@ export default function AboutSection() {
             Research-first, <span className="serif-accent gradient-text">build-minded.</span>
           </h2>
           <p className="mt-8 max-w-2xl font-syne text-xl leading-[1.65] text-foreground/78 md:text-2xl">
-            I am an M.Sc. Artificial Intelligence candidate and data scientist who works across the whole
-            of modern AI — from statistical modelling and classical machine learning, through deep neural
-            architectures, to generative models and large language models.
+            I am an M.Sc. Artificial Intelligence candidate and data scientist focused on turning careful
+            research into practical machine learning systems.
           </p>
           <p className="mt-5 max-w-2xl font-syne text-base leading-[1.8] text-foreground/58 md:text-lg">
-            That range is not theoretical: it shows up as Persian sentiment analysis, biomedical image
-            segmentation, retrieval-augmented generation and applied computer vision — research and
-            delivery, not one or the other. I care about experiments clean enough to reproduce and
-            systems understandable enough to trust.
+            My work spans Persian sentiment analysis, medical image segmentation, retrieval-augmented
+            generation, and applied computer vision. I care about experiments that are clean enough to
+            reproduce and products that are understandable enough to trust.
           </p>
 
           <div className="mt-10 grid grid-cols-1 border-y border-white/12 md:grid-cols-3">
