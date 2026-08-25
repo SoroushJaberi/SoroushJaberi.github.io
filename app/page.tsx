@@ -17,7 +17,7 @@ export default function Home() {
       <AppWrapper>
         <HeroSection />
 
-        <div className="relative w-full overflow-x-hidden">
+        <div className="relative w-full overflow-x-clip">
           <SectionBackground />
 
           <div className="relative z-10">

@@ -1,26 +1,19 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SectionLabel from './ui/SectionLabel';
 import Magnetic from './ui/Magnetic';
 
-const milestones = [
+type Milestone = { year: string; title: string; text: string };
+
+/* Chronological — the timeline reads left → right, 2019 through 2026. */
+const milestones: Milestone[] = [
   {
-    year: '2026',
-    title: 'M.Sc. thesis defense preparation',
-    text: 'Preparing to defend my thesis on improving sentiment classification in Persian texts using transformer-based and lexicon-based methods.',
-  },
-  {
-    year: '2025',
-    title: 'Graduate teaching and research focus',
-    text: 'Continued teaching assistant work while deepening research across NLP, medical AI, and retrieval-augmented language systems.',
-  },
-  {
-    year: '2023',
-    title: 'Started M.Sc. in Artificial Intelligence',
-    text: 'Began graduate studies with a strong academic focus on machine learning, deep learning, image processing, and applied AI systems.',
+    year: '2019',
+    title: 'Computer engineering foundation',
+    text: 'Started building the technical foundation in algorithms, programming, artificial intelligence, data mining, and software engineering.',
   },
   {
     year: '2022',
@@ -28,86 +21,194 @@ const milestones = [
     text: 'Worked with Tehran Telecommunication Company on network connectivity data, traffic monitoring, and cloud/networking research.',
   },
   {
-    year: '2019',
-    title: 'Computer engineering foundation',
-    text: 'Started building the technical foundation in algorithms, programming, artificial intelligence, data mining, and software engineering.',
+    year: '2023',
+    title: 'Started M.Sc. in Artificial Intelligence',
+    text: 'Began graduate studies with a strong academic focus on machine learning, deep learning, image processing, and applied AI systems.',
+  },
+  {
+    year: '2025',
+    title: 'Graduate teaching and research focus',
+    text: 'Continued teaching assistant work while deepening research across NLP, medical AI, and retrieval-augmented language systems.',
+  },
+  {
+    year: '2026',
+    title: 'M.Sc. thesis defense preparation',
+    text: 'Preparing to defend my thesis on improving sentiment classification in Persian texts using transformer-based and lexicon-based methods.',
   },
 ];
 
 export default function TimelineSection() {
-  const root = useRef<HTMLDivElement>(null);
-  const line = useRef<HTMLDivElement>(null);
-  const comet = useRef<HTMLDivElement>(null);
+  const pin = useRef<HTMLDivElement>(null);
+  const track = useRef<HTMLDivElement>(null);
+  const rail = useRef<HTMLSpanElement>(null);
+  const scroller = useRef<HTMLDivElement>(null);
+
+  // Desktop scroll-jacks the page into a horizontal run; touch and
+  // reduced-motion get the same left→right order as a plain swipe track.
+  const [pinned, setPinned] = useState(false);
+
+  // Shared readout: fills the 2019→2026 rail and lights the nearest milestone.
+  const setProgress = useCallback((p: number) => {
+    if (rail.current) rail.current.style.transform = `scaleX(${p})`;
+    const items = track.current?.querySelectorAll<HTMLElement>('.tl-item');
+    if (!items?.length) return;
+    const active = Math.round(p * (items.length - 1));
+    items.forEach((item, i) => item.classList.toggle('tl-active', i === active));
+  }, []);
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const wide = window.matchMedia('(min-width: 1024px)');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const decide = () => setPinned(wide.matches && !reduce.matches);
+
+    decide();
+    wide.addEventListener('change', decide);
+    reduce.addEventListener('change', decide);
+    return () => {
+      wide.removeEventListener('change', decide);
+      reduce.removeEventListener('change', decide);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!pinned) return;
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      const track = { trigger: root.current, start: 'top 68%', end: 'bottom 80%', scrub: true } as const;
-      gsap.fromTo(line.current, { scaleY: 0 }, { scaleY: 1, ease: 'none', scrollTrigger: track });
-      gsap.fromTo(comet.current, { top: '0%' }, { top: '100%', ease: 'none', scrollTrigger: track });
+      const el = track.current;
+      const frame = pin.current;
+      if (!el || !frame) return;
 
-      gsap.utils.toArray<HTMLElement>('.tl-item').forEach((item) => {
-        // reveal — slide + subtle rotate
-        gsap.timeline({ scrollTrigger: { trigger: item, start: 'top 84%', once: true } })
-          .from(item.querySelector('.tl-index'), { opacity: 0, x: -20, duration: 0.5, ease: 'power3.out' })
-          .from(item.querySelector('.tl-year'), { opacity: 0, x: -28, rotateX: -40, duration: 0.6, ease: 'power3.out' }, '<0.05')
-          .from(item.querySelector('.tl-content'), { opacity: 0, y: 30, duration: 0.6, ease: 'power3.out' }, '<0.05');
-        // active highlight while centred
-        ScrollTrigger.create({ trigger: item, start: 'top 58%', end: 'bottom 42%', toggleClass: { targets: item, className: 'tl-active' } });
+      const distance = () => Math.max(0, el.scrollWidth - frame.clientWidth);
+      if (distance() === 0) return;
+
+      gsap.to(el, {
+        x: () => -distance(),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: frame,
+          start: 'top top',
+          end: () => `+=${distance()}`,
+          pin: true,
+          anticipatePin: 1,
+          scrub: 0.6,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => setProgress(self.progress),
+        },
+      });
+
+      // reveal the copy, never the node — the nodes have to stay on the axis
+      gsap.from('.tl-item .tl-index, .tl-item .tl-year, .tl-item .tl-content', {
+        opacity: 0,
+        y: 24,
+        duration: 0.6,
+        stagger: 0.04,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: frame, start: 'top 65%', once: true },
       });
 
       ScrollTrigger.refresh();
-    }, root);
+    }, pin);
 
     return () => ctx.revert();
-  }, []);
+  }, [pinned, setProgress]);
+
+  useEffect(() => {
+    if (pinned) return;
+    const el = scroller.current;
+    if (!el) return;
+
+    const onScroll = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      setProgress(max > 0 ? el.scrollLeft / max : 0);
+    };
+
+    onScroll();
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, [pinned, setProgress]);
+
+  const header = (
+    <div className="mx-auto w-full max-w-7xl px-6 md:px-12">
+      <SectionLabel index="06" label="Timeline" className="mb-5" />
+      <h2 className="display-title text-[clamp(2.4rem,5.5vw,4.6rem)]">
+        The path <span className="serif-accent text-primary">so far.</span>
+      </h2>
+
+      <div className="mt-7 flex max-w-lg items-center gap-4">
+        <span className="coord shrink-0 text-foreground/52">2019</span>
+        <span className="relative h-px flex-1 bg-white/12">
+          <span
+            ref={rail}
+            className="absolute inset-0 origin-left scale-x-0 bg-gradient-to-r from-primary to-[#d9ba70]"
+          />
+        </span>
+        <span className="coord shrink-0 text-foreground/52">2026</span>
+      </div>
+
+      <p className="mt-4 font-mono-label text-[0.62rem] uppercase tracking-[0.2em] text-foreground/52">
+        {pinned ? 'Keep scrolling — the years move left to right' : 'Swipe through the years'}
+      </p>
+    </div>
+  );
+
+  const rows = (
+    <div ref={track} className="relative flex w-max items-start gap-9 px-6 md:gap-16 md:px-12">
+      {/* the axis every node sits on — offset kept in sync with the head block below */}
+      <span className="pointer-events-none absolute left-6 right-6 top-[5.25rem] h-px bg-gradient-to-r from-white/6 via-white/16 to-white/6 md:left-12 md:right-12 md:top-[6rem]" />
+
+      {milestones.map((item, i) => (
+        <article
+          key={item.year}
+          className="tl-item group relative w-[76vw] shrink-0 snap-center sm:w-[21rem] lg:w-[23rem]"
+        >
+          <div className="h-[5.25rem] md:h-[6rem]">
+            <span className="tl-index coord block text-foreground/52">
+              A.{String(i + 1).padStart(2, '0')} / {String(milestones.length).padStart(2, '0')}
+            </span>
+            <Magnetic strength={0.35} className="mt-3 inline-block">
+              <span className="tl-year font-instrument block text-[3.4rem] leading-[0.85] tracking-[0.01em] md:text-[4.2rem]">
+                {item.year}
+              </span>
+            </Magnetic>
+          </div>
+
+          {/* pulled up by half its height so it centres on the axis — margin, not
+              transform, because .tl-active scales the node */}
+          <span className="tl-node relative z-10 -mt-[0.35rem] block h-[0.7rem] w-[0.7rem] rounded-full border border-primary/50 bg-background" />
+
+          <div className="tl-content pt-7">
+            <h3 className="font-syne text-lg font-semibold tracking-[-0.03em] text-foreground md:text-[1.35rem]">
+              {item.title}
+            </h3>
+            <p className="mt-3.5 font-syne text-[0.92rem] leading-7 text-foreground/62">{item.text}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
 
   return (
-    <section id="experience" className="relative px-6 py-24 text-foreground md:px-12 md:py-32">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-16 max-w-4xl">
-          <SectionLabel index="07" label="Timeline" className="mb-6" />
-          <h2 className="display-title text-[clamp(2.8rem,6.5vw,5.2rem)]">
-            The path <span className="serif-accent text-primary">so far.</span>
-          </h2>
+    <section id="experience" className="relative text-foreground">
+      {pinned ? (
+        <div ref={pin} className="relative flex h-[100svh] flex-col justify-center overflow-hidden">
+          {header}
+          <div className="mt-12">{rows}</div>
         </div>
-
-        <div ref={root} className="relative pl-12 md:pl-0">
-          {/* signal track */}
-          <div className="absolute left-[3px] top-0 h-full w-px bg-white/10 md:left-[166px]" />
-          <div ref={line} className="absolute left-[3px] top-0 h-full w-px origin-top scale-y-0 bg-gradient-to-b from-primary via-primary/70 to-[#d9ba70] shadow-[0_0_8px_rgba(143,227,217,0.3)] md:left-[166px]" />
-          <div ref={comet} className="absolute left-[4px] top-0 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-white shadow-[0_0_14px_rgba(143,227,217,0.6)] md:left-[167px]" />
-
-          <div className="space-y-16 md:space-y-24">
-            {milestones.map((item, i) => (
-              <article
-                key={`${item.year}-${item.title}`}
-                className="tl-item group relative grid grid-cols-1 gap-3 md:grid-cols-[166px_1fr] md:gap-16"
-              >
-                {/* node on the line */}
-                <span className="tl-node absolute left-[-2.55rem] top-7 hidden h-[0.7rem] w-[0.7rem] rounded-full border border-primary/50 bg-background md:left-[160px] md:block" />
-
-                {/* year as research-archive coordinate */}
-                <div className="md:pr-10 md:text-right">
-                  <span className="tl-index coord block text-foreground/35">A.{String(i + 1).padStart(2, '0')} / {String(milestones.length).padStart(2, '0')}</span>
-                  <Magnetic strength={0.4} className="mt-3 inline-block md:mt-4">
-                    <span className="tl-year font-instrument block text-[3.6rem] leading-[0.85] tracking-[0.01em] md:text-[4.8rem]">
-                      {item.year}
-                    </span>
-                  </Magnetic>
-                </div>
-
-                <div className="tl-content md:pt-3">
-                  <h3 className="font-syne text-xl font-semibold tracking-[-0.03em] text-foreground md:text-[1.6rem]">{item.title}</h3>
-                  <p className="mt-4 max-w-2xl font-syne text-[0.95rem] leading-7 text-foreground/62 md:text-base">{item.text}</p>
-                </div>
-              </article>
-            ))}
+      ) : (
+        <div className="py-24 md:py-32">
+          {header}
+          <div
+            ref={scroller}
+            tabIndex={0}
+            role="region"
+            aria-label="Timeline, 2019 to 2026 — scroll sideways"
+            className="tl-scroller mt-12 snap-x snap-mandatory overflow-x-auto overscroll-x-contain pb-8"
+          >
+            {rows}
           </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }

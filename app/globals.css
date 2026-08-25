@@ -134,7 +134,9 @@ body {
     linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 34rem),
     linear-gradient(90deg, rgba(143, 227, 217, 0.055), transparent 34%, rgba(217, 186, 112, 0.045));
   color: var(--foreground);
-  overflow-x: hidden;
+  /* clip, not hidden: `overflow-x: hidden` computes `overflow-y: auto`, which
+     makes body a scroll container and stops ScrollTrigger pinning from working */
+  overflow-x: clip;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -441,4 +443,20 @@ button:focus-visible {
 }
 .tl-active .tl-index {
   color: rgba(143, 227, 217, 0.85);
+}
+
+/* Horizontal timeline track — swipe mode (touch / reduced motion) */
+.tl-scroller {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(143, 227, 217, 0.35) rgba(255, 255, 255, 0.06);
+}
+.tl-scroller::-webkit-scrollbar {
+  height: 3px;
+}
+.tl-scroller::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+}
+.tl-scroller::-webkit-scrollbar-thumb {
+  background: rgba(143, 227, 217, 0.4);
+  border-radius: 2px;
 }
