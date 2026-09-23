@@ -9,7 +9,7 @@ const education = [
     role: 'M.Sc. Artificial Intelligence',
     org: 'Karaj Islamic Azad University',
     period: '2023 - Present',
-    details: ['Overall GPA: 4.0 / 4.0', 'Thesis defense expected Autumn 2026', 'Machine Learning, Deep Learning, Image Processing'],
+    details: ['Overall GPA: 4.0 / 4.0', 'Thesis defense expected January 2027', 'Machine Learning, Deep Learning, Image Processing'],
   },
   {
     role: 'B.Sc. Computer Engineering',
@@ -37,10 +37,20 @@ const teaching = [
   },
 ];
 
-const researchWorks = [
+type ResearchWork = {
+  title: string;
+  venue: string;
+  description: string;
+  doi?: string;
+  href?: string;
+};
+
+const researchWorks: ResearchWork[] = [
   {
     title: 'Enhancing Sentiment Analysis via Ensemble Methods - BERT + VADER',
     venue: 'Under review',
+    doi: '10.2139/ssrn.5371417',
+    href: 'https://doi.org/10.2139/ssrn.5371417',
     description:
       'A hybrid sentiment analysis framework combining transformer-based contextual embeddings with lexicon-based polarity signals.',
   },
@@ -162,6 +172,17 @@ export default function AcademicSection() {
                   <span className="font-mono-label text-[0.62rem] uppercase tracking-[0.2em] text-primary/75">{work.venue}</span>
                   <h4 className="mt-4 font-syne text-xl font-semibold leading-snug tracking-[-0.035em] text-foreground md:text-2xl">{work.title}</h4>
                   <p className="mt-4 font-syne text-sm leading-7 text-foreground/64 md:text-base">{work.description}</p>
+                  {work.href && (
+                    <a
+                      href={work.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 inline-flex min-h-11 items-center gap-2 font-mono-label text-[0.62rem] uppercase tracking-[0.18em] text-primary/80 transition-colors hover:text-primary"
+                    >
+                      DOI {work.doi}
+                      <span aria-hidden="true">&rarr;</span>
+                    </a>
+                  )}
                 </article>
               ))}
             </motion.div>

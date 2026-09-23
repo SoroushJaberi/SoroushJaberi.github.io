@@ -6,7 +6,7 @@ import SectionLabel from './ui/SectionLabel';
 
 const metrics = [
   ['4.0 / 4.0', 'M.Sc. AI GPA'],
-  ['Autumn 2026', 'Expected thesis defense'],
+  ['January 2027', 'Expected thesis defense'],
   ['NLP / CV / RAG', 'Research areas'],
 ];
 
