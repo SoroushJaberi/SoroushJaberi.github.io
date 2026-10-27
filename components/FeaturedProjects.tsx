@@ -28,7 +28,7 @@ const projects: Project[] = [
     kind: 'nlp',
     problem: 'Persian sentiment is difficult because informal text, scarce labels, negation, and sarcasm weaken simple polarity models.',
     approach: 'ParsBERT contextual embeddings fused with lexicon polarity, combined through ensemble methods and evaluation-led iteration.',
-    outcome: 'A more interpretable sentiment classification pipeline and the basis of a paper currently under review.',
+    outcome: 'A more interpretable sentiment classification pipeline and the basis of an SSRN preprint.',
     stack: ['Python', 'ParsBERT', 'VADER', 'Ensemble', 'Evaluation'],
     links: [
       { label: 'GitHub', href: 'https://github.com/SoroushJaberi' },

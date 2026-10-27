@@ -47,8 +47,8 @@ type ResearchWork = {
 
 const researchWorks: ResearchWork[] = [
   {
-    title: 'Enhancing Sentiment Analysis via Ensemble Methods - BERT + VADER',
-    venue: 'Under review',
+    title: 'HVB-Persian: Hybrid VADER-ParsBERT for Persian Sentiment Classification of Product Reviews',
+    venue: 'SSRN preprint',
     doi: '10.2139/ssrn.5371417',
     href: 'https://doi.org/10.2139/ssrn.5371417',
     description:
