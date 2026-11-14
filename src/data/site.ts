@@ -5,8 +5,6 @@
 
 export const site = {
   name: 'Soroush Jaberi',
-  /** The name in Persian script, shown beside the Latin form. */
-  nameFa: 'سروش جابری',
   role: 'AI researcher & data scientist',
   /** One sentence used as the default meta description and share text. */
   description:

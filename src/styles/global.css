@@ -133,7 +133,6 @@
     /* Display serif, italic: the surname and the accent phrase in a headline. */
     --serif-display: var(--font-instrument), var(--font-newsreader), Georgia, 'Times New Roman', serif;
     --mono: var(--font-atkinson-mono), ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
-    --fa: var(--font-vazirmatn), Tahoma, 'Segoe UI', sans-serif;
 
     --step--1: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
     --step-0: clamp(1rem, 0.97rem + 0.18vw, 1.125rem);
@@ -300,11 +299,6 @@
   table {
     border-collapse: collapse;
     width: 100%;
-  }
-
-  [lang='fa'] {
-    font-family: var(--fa);
-    line-height: 1.7;
   }
 
   @media (prefers-reduced-motion: reduce) {

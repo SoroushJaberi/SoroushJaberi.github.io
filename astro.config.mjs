@@ -13,8 +13,6 @@ const LATIN = [
   'U+0000-00FF', 'U+0131', 'U+0152-0153', 'U+02BB-02BC', 'U+02C6', 'U+02DA', 'U+02DC', 'U+0304', 'U+0308',
   'U+0329', 'U+2000-206F', 'U+20AC', 'U+2122', 'U+2191', 'U+2193', 'U+2212', 'U+2215', 'U+FEFF', 'U+FFFD',
 ];
-/** @type {[string, ...string[]]} */
-const ARABIC = ['U+0600-06FF', 'U+0750-077F', 'U+200C-200E', 'U+FB50-FDFF', 'U+FE70-FEFC'];
 const local = fontProviders.local();
 /** @param {string} name @param {string} file */
 const pkg = (name, file) => `./node_modules/@fontsource-variable/${name}/files/${file}`;
@@ -132,24 +130,6 @@ export default defineConfig({
             weight: '200 800',
             style: 'normal',
             unicodeRange: LATIN,
-          },
-        ],
-      },
-    },
-    {
-      // Persian script, for the name. Fetched only where Persian text appears.
-      provider: local,
-      name: 'Vazirmatn',
-      cssVariable: '--font-vazirmatn',
-      fallbacks: ['Tahoma', 'sans-serif'],
-      optimizedFallbacks: false,
-      options: {
-        variants: [
-          {
-            src: [pkg('vazirmatn', 'vazirmatn-arabic-wght-normal.woff2')],
-            weight: '100 900',
-            style: 'normal',
-            unicodeRange: ARABIC,
           },
         ],
       },

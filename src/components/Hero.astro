@@ -111,9 +111,6 @@ const lastLetters = [...rest.join(' ')];
           quality={72}
         />
       </div>
-      <figcaption class="hero__caption">
-        <span lang="fa" dir="rtl">{site.nameFa}</span>
-      </figcaption>
     </figure>
   </div>
 
@@ -424,20 +421,9 @@ const lastLetters = [...rest.join(' ')];
     object-fit: cover;
     object-position: 52% 18%;
   }
-  .hero__caption {
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0 0.5rem;
-    margin-top: calc(var(--off) + 0.3rem);
-    font-size: 0.6875rem;
-    line-height: 1.5;
-    color: var(--ink-3);
-  }
-  .hero__caption [lang='fa'] {
-    line-height: 1.5;
+  /* Room below the photo for the frame that is set off behind it. */
+  .hero__figure {
+    padding-bottom: var(--off);
   }
 
   .hero__cue {
@@ -527,10 +513,6 @@ const lastLetters = [...rest.join(' ')];
       grid-area: auto;
       justify-self: center;
       width: min(100%, 27rem, calc((var(--avail) - 7.5rem) * 0.8));
-    }
-    .hero__caption {
-      gap: 0.25rem 1rem;
-      font-size: var(--step--1);
     }
   }
   /* Wide and roomy: the button says "Download CV" in full. */

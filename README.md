@@ -43,7 +43,7 @@ use. Only after that does the page turn to the work itself:
   figures). The colours were chosen to sit well with the photographs.
 - **Type:** Bricolage Grotesque for headlines, Hanken Grotesk for text and numbers, Instrument Serif
   italic for the surname and for the one accent phrase in each headline (the face the previous site used),
-  Newsreader for long-form reading, Vazirmatn for the Persian name.
+  Newsreader for long-form reading.
 - **The name:** its letters arrive one after another when the page loads, and each lifts and changes
   colour under the mouse.
 - **The network:** layers of nodes in space, with signals travelling forward from layer to layer the way

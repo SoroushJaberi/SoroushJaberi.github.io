@@ -48,7 +48,6 @@ const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'lin
       <div class="base__id">
         <p class="base__name">
           {site.name}
-          <span lang="fa" dir="rtl">{site.nameFa}</span>
         </p>
         <p class="small">
           {site.role}
@@ -195,12 +194,6 @@ const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'lin
     flex-wrap: wrap;
     align-items: baseline;
     gap: 0.3rem 0.9rem;
-  }
-  .base__name [lang='fa'] {
-    font-size: 0.6em;
-    font-weight: 400;
-    letter-spacing: 0;
-    color: var(--ink-3);
   }
   .base__profiles {
     display: flex;
