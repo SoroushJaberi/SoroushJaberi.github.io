@@ -1,0 +1,25 @@
+---
+/** Overwrite rate by model size, thinking off and on, with 95% intervals. */
+import DotPlot, { type DotRow } from '@/components/DotPlot.astro';
+import { sizes, getRun, overwriteRange } from '@/data/knowledge-conflict';
+
+const rows: DotRow[] = sizes.map((size) => {
+  const off = getRun(size, false);
+  const on = getRun(size, true);
+  return { name: size, off: { v: off.overwrite, ci: off.ci }, on: { v: on.overwrite, ci: on.ci } };
+});
+
+const label =
+  'Share of known facts overwritten by the wrong document, by model size. ' +
+  rows.map((r) => `${r.name}: ${r.off.v}% with thinking off, ${r.on.v}% with thinking on`).join('; ') +
+  '.';
+---
+
+<DotPlot
+  rows={rows}
+  label={label}
+  band={[overwriteRange.min, overwriteRange.max]}
+  values
+  draw
+  legend={['thinking off', 'thinking on', 'right: off / on, %']}
+/>

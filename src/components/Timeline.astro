@@ -1,0 +1,133 @@
+---
+/**
+ * The trajectory, 2019 to now. A vertical line fills as the page scrolls
+ * (via --progress, set by scrollfx.ts) and each year lights up as the line
+ * reaches it. Without the script it is a plain, complete list.
+ */
+import { timeline } from '@/data/profile';
+---
+
+<ol class="tl" role="list" data-progress data-timeline>
+  {
+    timeline.map((item, i) => (
+      <li class="tl__item" data-reveal style={`--at: ${(i + 0.5) / timeline.length}`}>
+        <p class="tl__year num">{item.year}</p>
+        <div class="tl__body">
+          {item.events.map((e) => (
+            <div class="tl__event">
+              <h3>{e.href ? <a href={e.href}>{e.title}</a> : e.title}</h3>
+              <p>{e.text}</p>
+            </div>
+          ))}
+        </div>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .tl {
+    --progress: 1;
+    --axis: 0.5rem;
+    position: relative;
+    display: grid;
+    gap: clamp(2rem, 5vw, 3.5rem);
+    padding-left: 2.5rem;
+  }
+  /* The line: a faint track and a lit part that grows with --progress. */
+  .tl::before,
+  .tl::after {
+    content: '';
+    position: absolute;
+    left: var(--axis);
+    top: 0.6rem;
+    bottom: 0.6rem;
+    width: 2px;
+    translate: -1px 0;
+    background: var(--rule);
+  }
+  .tl::after {
+    background: linear-gradient(var(--mark-fill), var(--blue));
+    transform-origin: top;
+    scale: 1 var(--progress);
+  }
+  .tl__item {
+    position: relative;
+    display: grid;
+    gap: 0.4rem;
+  }
+  /* The node on the line. Lit once the line has reached it. */
+  .tl__item::before {
+    --on: clamp(0, (var(--progress) - var(--at)) * 40 + 1, 1);
+    content: '';
+    position: absolute;
+    left: calc(var(--axis) - 2.5rem);
+    top: 0.55rem;
+    z-index: 1;
+    width: 0.85rem;
+    height: 0.85rem;
+    translate: -50% 0;
+    border-radius: 50%;
+    border: 2px solid var(--mark-fill);
+    background: color-mix(in srgb, var(--mark-fill) calc(var(--on) * 100%), var(--paper));
+    box-shadow: 0 0 0 calc(var(--on) * 6px) var(--mark-soft);
+    transition: box-shadow 0.4s;
+  }
+  .tl__year {
+    font-family: var(--display);
+    font-size: var(--step-3);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--ink);
+  }
+  .tl__body {
+    display: grid;
+    gap: 1rem;
+  }
+  .tl__event h3 {
+    font-size: var(--step-1);
+    letter-spacing: -0.02em;
+  }
+  .tl__event h3 a {
+    text-decoration-color: var(--mark-fill);
+  }
+  .tl__event p {
+    margin-top: 0.25rem;
+    max-width: 30rem;
+    color: var(--ink-2);
+  }
+
+  /* Wide screens: the line runs down the middle and the years alternate. */
+  @media (min-width: 56rem) {
+    .tl {
+      --axis: 50%;
+      padding-left: 0;
+      gap: clamp(2.5rem, 5vw, 4rem);
+    }
+    .tl__item {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 5rem;
+      align-items: start;
+    }
+    .tl__item::before {
+      left: 50%;
+      top: 0.8rem;
+    }
+    .tl__year {
+      text-align: right;
+      font-size: var(--step-4);
+    }
+    .tl__item:nth-child(even) .tl__year {
+      order: 2;
+      text-align: left;
+    }
+    .tl__item:nth-child(even) .tl__body {
+      justify-items: end;
+      text-align: right;
+    }
+    .tl__item:nth-child(even) .tl__event p {
+      margin-left: auto;
+    }
+  }
+</style>

@@ -1,0 +1,510 @@
+---
+/**
+ * Header and the full-screen menu.
+ *
+ * The bar stays minimal: the mark and name, the CV, the theme switch and one
+ * "Menu" button. The menu is a native <dialog>, so focus is trapped and Esc
+ * closes it without any extra code. Without JavaScript the links are shown
+ * inline instead.
+ */
+import { nav, site, profiles, mailto, type NavItem } from '@/data/site';
+import { getPosts } from '@/lib/content';
+import Mark from './Mark.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import Icon, { type IconName } from './Icon.astro';
+
+// "Writing" joins the navigation by itself once a post is published.
+const posts = await getPosts();
+const base: NavItem[] =
+  posts.length > 0 ? [...nav.slice(0, 2), { label: 'Writing', href: '/writing/' }, ...nav.slice(2)] : nav;
+
+const notes: Record<string, string> = {
+  '/': 'The short version',
+  '/work/': 'Studies, systems and a course',
+  '/research/': 'Questions, papers, record',
+  '/writing/': 'Notes and articles',
+  '/about/': 'Who is behind this',
+  '/contact/': 'Start a conversation',
+};
+const items = [{ label: 'Home', href: '/' }, ...base];
+
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'linkedin', YouTube: 'youtube' };
+---
+
+<header class="site-header" data-header>
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label={`${site.name} — home`}>
+      <Mark />
+      <span class="brand__name">{site.name}</span>
+    </a>
+
+    <noscript>
+      <nav class="inline-nav" aria-label="Primary">
+        {base.map((item) => <a href={item.href}>{item.label}</a>)}
+      </nav>
+    </noscript>
+
+    <div class="tools">
+      <a class="cv" href={site.cv}>
+        CV<span class="sr-only"> (PDF)</span>
+      </a>
+      <ThemeToggle />
+      <button class="menu-btn" type="button" aria-haspopup="dialog" aria-controls="site-menu" data-menu-open>
+        <span class="menu-btn__label">Menu</span>
+        <span class="menu-btn__icon" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<dialog class="menu" id="site-menu" aria-label="Site menu" data-menu>
+  <div class="menu__inner wrap">
+    <div class="menu__top">
+      <a class="brand" href="/" aria-label={`${site.name} — home`}>
+        <Mark />
+        <span class="brand__name">{site.name}</span>
+      </a>
+      <button class="menu-btn is-open" type="button" data-menu-close>
+        <span class="menu-btn__label">Close</span>
+        <span class="menu-btn__icon" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
+
+    <nav class="menu__nav" aria-label="Primary">
+      <ol role="list">
+        {
+          items.map((item, i) => (
+            <li style={`--i: ${i}`}>
+              <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                <span class="menu__n num" aria-hidden="true">
+                  {String(i).padStart(2, '0')}
+                </span>
+                <span class="menu__label">{item.label}</span>
+                <span class="menu__note">{notes[item.href]}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+
+    <div class="menu__aside" style={`--i: ${items.length}`}>
+      <div>
+        <p class="label">Write</p>
+        <a class="menu__mail" href={mailto()}>{site.email}</a>
+        <p class="small">
+          {site.location} · {site.timezone}
+        </p>
+      </div>
+      <div>
+        <p class="label">Elsewhere</p>
+        <ul class="menu__profiles" role="list">
+          {
+            profiles.map((p) => (
+              <li>
+                <a href={p.href} rel="me noopener" aria-label={p.label} title={p.label}>
+                  <Icon name={profileIcon[p.label] ?? 'spark'} size={22} />
+                </a>
+              </li>
+            ))
+          }
+          <li>
+            <a href={site.cv} aria-label="CV (PDF)" title="CV (PDF)">
+              <Icon name="cv" size={22} />
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-menu]');
+  const header = document.querySelector<HTMLElement>('[data-header]');
+
+  if (dialog && typeof dialog.showModal === 'function') {
+    const close = () => {
+      if (!dialog.open) return;
+      dialog.classList.add('is-closing');
+      window.setTimeout(
+        () => {
+          dialog.classList.remove('is-closing');
+          dialog.close();
+        },
+        matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 260,
+      );
+    };
+
+    for (const button of document.querySelectorAll('[data-menu-open]')) {
+      button.addEventListener('click', () => dialog.showModal());
+    }
+    dialog.querySelector('[data-menu-close]')?.addEventListener('click', close);
+    // Esc: play the closing animation instead of vanishing.
+    dialog.addEventListener('cancel', (event) => {
+      event.preventDefault();
+      close();
+    });
+    // A link to the page you are already on should still close the menu.
+    dialog.addEventListener('click', (event) => {
+      const link = (event.target as HTMLElement).closest('a');
+      if (link && link.pathname === location.pathname) close();
+    });
+  }
+
+  // The bar hides while scrolling down and returns on the way up.
+  if (header) {
+    let last = window.scrollY;
+    let ticking = false;
+    const update = () => {
+      const y = window.scrollY;
+      header.classList.toggle('is-scrolled', y > 8);
+      header.classList.toggle('is-hidden', y > last && y > 240);
+      last = y;
+      ticking = false;
+    };
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true },
+    );
+    update();
+  }
+</script>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 80;
+    transition:
+      translate 0.45s var(--ease-out),
+      background-color 0.3s,
+      border-color 0.3s;
+    border-bottom: 1px solid transparent;
+    view-transition-name: site-header;
+  }
+  .site-header.is-scrolled {
+    background: color-mix(in srgb, var(--paper) 78%, transparent);
+    backdrop-filter: saturate(1.5) blur(14px);
+    -webkit-backdrop-filter: saturate(1.5) blur(14px);
+    border-bottom-color: var(--rule);
+  }
+  .site-header.is-hidden:not(:focus-within) {
+    translate: 0 -105%;
+  }
+  .bar,
+  .menu__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 4.25rem;
+    font-family: var(--sans);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-height: 2.75rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .brand__name {
+    font-family: var(--display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    white-space: nowrap;
+  }
+  .brand:hover {
+    color: var(--ink);
+  }
+  .brand :global(svg) {
+    transition: rotate 0.5s var(--ease-spring);
+  }
+  .brand:hover :global(svg) {
+    rotate: -10deg;
+  }
+
+  .tools {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .cv {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-inline: 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--ink-2);
+    text-decoration: none;
+  }
+  .cv:hover {
+    color: var(--ink);
+  }
+  @media (max-width: 26rem) {
+    .cv {
+      display: none;
+    }
+  }
+
+  .menu-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 2.75rem;
+    margin-left: 0.35rem;
+    padding: 0 0.55rem 0 1.1rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--ink);
+    transition:
+      background-color 0.25s,
+      color 0.25s,
+      border-color 0.25s;
+  }
+  .menu-btn:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+  .menu-btn__icon {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--mark-fill);
+  }
+  .menu-btn__icon i {
+    position: absolute;
+    width: 0.85rem;
+    height: 1.5px;
+    background: var(--on-mark);
+    transition:
+      translate 0.3s var(--ease),
+      rotate 0.3s var(--ease);
+  }
+  .menu-btn__icon i:first-child {
+    translate: 0 -3px;
+  }
+  .menu-btn__icon i:last-child {
+    translate: 0 3px;
+  }
+  .menu-btn:hover .menu-btn__icon i:first-child {
+    translate: 0 -4.5px;
+  }
+  .menu-btn:hover .menu-btn__icon i:last-child {
+    translate: 0 4.5px;
+  }
+  .menu-btn.is-open .menu-btn__icon i:first-child {
+    translate: 0 0;
+    rotate: 45deg;
+  }
+  .menu-btn.is-open .menu-btn__icon i:last-child {
+    translate: 0 0;
+    rotate: -45deg;
+  }
+
+  .inline-nav {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9375rem;
+  }
+
+  /* ---- the menu ---- */
+  .menu {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--paper);
+    color: var(--ink);
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+  .menu::backdrop {
+    background: var(--paper);
+  }
+  /* A slow pair of lights behind the links. */
+  .menu::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(46rem 30rem at 85% 12%, var(--glow-a), transparent 70%),
+      radial-gradient(40rem 28rem at 5% 95%, var(--glow-b), transparent 70%);
+  }
+  .menu__inner {
+    position: relative;
+    min-height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding-bottom: clamp(1.5rem, 4vw, 3rem);
+  }
+  .menu__nav {
+    align-self: center;
+    padding-block: clamp(1.5rem, 5vh, 4rem);
+  }
+  .menu__nav a {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, auto) minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: clamp(0.5rem, 2vw, 1.5rem);
+    padding-block: clamp(0.35rem, 1.2vh, 0.8rem);
+    border-top: 1px solid var(--rule);
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .menu__nav li:last-child a {
+    border-bottom: 1px solid var(--rule);
+  }
+  .menu__n {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--ink-3);
+  }
+  .menu__label {
+    font-family: var(--display);
+    font-size: clamp(2.4rem, 1.2rem + 6.5vh, 5.5rem);
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -0.045em;
+    transition:
+      translate 0.45s var(--ease-out),
+      color 0.3s;
+  }
+  .menu__note {
+    justify-self: end;
+    font-size: 0.9375rem;
+    color: var(--ink-3);
+    opacity: 0;
+    translate: -0.75rem 0;
+    transition:
+      opacity 0.3s,
+      translate 0.45s var(--ease-out);
+  }
+  .menu__nav a:hover .menu__label,
+  .menu__nav a:focus-visible .menu__label {
+    translate: 1rem 0;
+    color: var(--mark);
+  }
+  .menu__nav a:hover .menu__note,
+  .menu__nav a:focus-visible .menu__note {
+    opacity: 1;
+    translate: 0 0;
+  }
+  .menu__nav a[aria-current='page'] .menu__n {
+    color: var(--mark);
+  }
+  .menu__nav a[aria-current='page'] .menu__label::after {
+    content: '';
+    display: inline-block;
+    width: 0.22em;
+    height: 0.22em;
+    margin-left: 0.18em;
+    border-radius: 50%;
+    background: var(--mark-fill);
+  }
+  @media (max-width: 40rem) {
+    .menu__note {
+      display: none;
+    }
+    .menu__nav a {
+      grid-template-columns: 2rem minmax(0, 1fr);
+    }
+  }
+
+  .menu__aside {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1.5rem 3rem;
+  }
+  .menu__mail {
+    display: inline-block;
+    margin-top: 0.4rem;
+    font-family: var(--display);
+    font-size: clamp(1.15rem, 1rem + 1vw, 1.6rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    text-decoration-color: var(--mark-fill);
+    overflow-wrap: anywhere;
+  }
+  .menu__profiles {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+  }
+  .menu__profiles a {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 50%;
+    color: var(--ink);
+    transition:
+      background-color 0.25s,
+      color 0.25s,
+      border-color 0.25s,
+      translate 0.25s var(--ease);
+  }
+  .menu__profiles a:hover {
+    background: var(--mark-fill);
+    border-color: var(--mark-fill);
+    color: var(--on-mark);
+    translate: 0 -3px;
+  }
+
+  /* Opening: the sheet wipes down, then the links rise in turn. */
+  .menu[open] {
+    animation: menu-in 0.55s var(--ease-out) both;
+  }
+  .menu[open] .menu__nav li,
+  .menu[open] .menu__aside {
+    animation: rise 0.7s var(--ease-out) both;
+    animation-delay: calc(var(--i) * 55ms + 180ms);
+  }
+  .menu.is-closing {
+    animation: menu-out 0.26s ease-in both;
+  }
+  @keyframes menu-in {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  @keyframes menu-out {
+    to {
+      opacity: 0;
+      translate: 0 -1.5rem;
+    }
+  }
+  :global(html:has(dialog.menu[open])) {
+    overflow: hidden;
+  }
+</style>

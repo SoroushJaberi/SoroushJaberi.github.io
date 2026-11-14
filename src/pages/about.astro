@@ -1,0 +1,340 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '@/layouts/Base.astro';
+import portrait from '@/assets/portraits/cafe.jpg';
+import { site, links } from '@/data/site';
+import { education, teaching, skills, languages, habits } from '@/data/profile';
+import Frames from '@/components/Frames.astro';
+
+const schema = [
+  {
+    '@type': 'ProfilePage',
+    name: 'About',
+    url: new URL('/about/', Astro.site).href,
+    mainEntity: { '@id': new URL('/#person', Astro.site).href },
+  },
+];
+---
+
+<Base
+  title="About"
+  description="About Soroush Jaberi: AI researcher and engineer in Karaj, Iran. M.Sc. candidate in Artificial Intelligence (GPA 19.58/20), teaching assistant for three courses, and author of the open course The AI Path."
+  image="/og/about.png"
+  type="profile"
+  schema={schema}
+>
+  <header class="wrap intro lit">
+    <div class="intro__text">
+      <p class="label label--tick rise">About</p>
+      <h1 class="rise" style="--i: 1">
+        I like results I can check, and I build things so that <span class="accent">other people can check them too.</span>
+      </h1>
+      <div class="bio stack rise" style="--i: 2">
+        <p>
+          I am an AI researcher and engineer based in {site.location}. I am completing an M.Sc. in Artificial
+          Intelligence at Karaj Islamic Azad University with a GPA of 19.58 / 20 (4.0 / 4.0), where I also took my
+          B.Sc. in Computer Engineering. My thesis is on classifying sentiment in Persian text by combining transformer
+          models with lexicon-based methods. I expect to defend it in January 2027.
+        </p>
+        <p>
+          My recent work is about evidence: what a language model does when a retrieved document disagrees with what
+          it knows, and what it costs to let the model reason about it. Before that I built document question
+          answering with retrieval, sentiment classifiers for reviews, including Persian ones, and U-Net pipelines that segment
+          tumors in CT scans. I am also writing a systematic mapping study of deep learning for biomedical image
+          segmentation.
+        </p>
+        <p>
+          I have been a teaching assistant for three university courses, and I now teach in the open through
+          <a href="/work/the-ai-path/">The AI Path</a>, a free week-by-week course that goes from Python to AI agents.
+        </p>
+      </div>
+      <p class="intro__links rise" style="--i: 3">
+        <a class="btn" href={site.cv}>Download CV</a>
+        <a class="arrow" href="/contact/">Get in touch</a>
+        <a class="arrow" href={links.github}>GitHub</a>
+      </p>
+    </div>
+
+    <figure class="portrait rise" style="--i: 2">
+      <Picture
+        src={portrait}
+        alt="Soroush Jaberi, smiling, seated at a wooden table in a café"
+        formats={['avif', 'webp']}
+        widths={[360, 540, 720, 1080]}
+        sizes="(min-width: 60rem) 22rem, (min-width: 36rem) 20rem, 80vw"
+        loading="eager"
+        fetchpriority="high"
+        quality={70}
+      />
+      <figcaption class="small">
+        <span>{site.name}</span>
+        <span lang="fa" dir="rtl">{site.nameFa}</span>
+      </figcaption>
+    </figure>
+  </header>
+
+  <section class="section frames" aria-labelledby="frames-title">
+    <div class="wrap">
+      <h2 id="frames-title" class="label label--tick" data-reveal>In frame</h2>
+      <Frames />
+    </div>
+  </section>
+
+  <section class="section" id="habits" aria-labelledby="habits-title">
+    <div class="wrap rail">
+      <header class="rail__label">
+        <h2 id="habits-title" class="label label--ink">How I work</h2>
+        <p class="small">The six habits I practice, and teach every week in The AI Path.</p>
+      </header>
+      <ol class="habits" role="list">
+        {
+          habits.map((habit, i) => (
+            <li class:list={[i === 2 && 'is-key']} data-reveal style={`--i: ${i}`}>
+              <span class="num" aria-hidden="true">
+                {i + 1}
+              </span>
+              <span>{habit}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="teaching" aria-labelledby="exp-title">
+    <div class="wrap rail">
+      <header class="rail__label">
+        <h2 id="exp-title" class="label label--ink">Teaching</h2>
+      </header>
+      <ol class="roles" role="list">
+        {
+          teaching.map((role, i) => (
+            <li data-reveal style={`--i: ${Math.min(i, 3)}`}>
+              <p class="roles__when small num">{role.period}</p>
+              <div>
+                <h3>{role.title}</h3>
+                <p class="small">{role.org}</p>
+                <ul>
+                  {role.points.map((p) => (
+                    <li>{p}</li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="education" aria-labelledby="edu-title">
+    <div class="wrap rail">
+      <header class="rail__label">
+        <h2 id="edu-title" class="label label--ink">Education</h2>
+      </header>
+      <div>
+        <ol class="roles" role="list">
+          {
+            education.map((e, i) => (
+              <li data-reveal style={`--i: ${i}`}>
+                <p class="roles__when small num">{e.period}</p>
+                <div>
+                  <h3>{e.degree}</h3>
+                  <p class="small">{e.school}</p>
+                  <ul>
+                    {e.facts.map((f) => (
+                      <li>{f}</li>
+                    ))}
+                    <li>
+                      Coursework: {e.coursework.map((c) => `${c.name} (${c.grade})`).join(', ')}
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+        <p class="more">
+          <a class="arrow" href="/research/">Research and publications</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="tools" aria-labelledby="skills-title">
+    <div class="wrap rail">
+      <header class="rail__label">
+        <h2 id="skills-title" class="label label--ink">Tools</h2>
+        <p class="small">What I reach for. The work pages show them in use.</p>
+      </header>
+      <div data-reveal>
+        <dl class="facts tools">
+          {
+            skills.map((s) => (
+              <>
+                <dt>{s.group}</dt>
+                <dd>{s.items.join(', ')}</dd>
+              </>
+            ))
+          }
+          <dt>Spoken</dt>
+          <dd>{languages.map((l) => `${l.name} — ${l.level.toLowerCase()}`).join('; ')}</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import '@/scripts/scrollfx';
+</script>
+
+<style>
+  .frames {
+    overflow-x: clip;
+  }
+  .frames h2 {
+    margin-bottom: 2.5rem;
+  }
+  .intro {
+    display: grid;
+    gap: 2.5rem clamp(2.5rem, 6vw, 5rem);
+    padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(1rem, 3vw, 2rem);
+  }
+  @media (min-width: 60rem) {
+    .intro {
+      grid-template-columns: minmax(0, 1fr) 22rem;
+      align-items: start;
+    }
+  }
+  h1 {
+    margin-top: 1rem;
+    font-size: var(--step-3);
+    line-height: 1.04;
+    letter-spacing: -0.04em;
+    max-width: 20ch;
+  }
+  .bio {
+    margin-top: 2rem;
+    max-width: var(--measure);
+  }
+  .bio p:first-child {
+    font-size: var(--step-1);
+    line-height: 1.45;
+  }
+  .intro__links {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.75rem;
+  }
+
+  .portrait {
+    max-width: 22rem;
+    justify-self: start;
+  }
+  @media (min-width: 60rem) {
+    .portrait {
+      position: sticky;
+      top: 5.5rem;
+      justify-self: end;
+    }
+  }
+  .portrait :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 28%;
+    border-radius: var(--radius);
+    background: var(--paper-2);
+  }
+  .portrait figcaption {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.6rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--rule-strong);
+  }
+  .portrait [lang='fa'] {
+    line-height: 1.5;
+  }
+
+
+  .habits {
+    display: grid;
+    border-bottom: 1px solid var(--rule);
+  }
+  @media (min-width: 46rem) {
+    .habits {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 3rem;
+    }
+  }
+  .habits li {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    align-items: baseline;
+    padding-block: 1rem;
+    border-top: 1px solid var(--rule);
+    font-size: var(--step-1);
+    line-height: 1.25;
+    letter-spacing: -0.012em;
+  }
+  .habits .num {
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--ink-3);
+  }
+  .habits .is-key span:last-child {
+    background: linear-gradient(var(--mark-soft), var(--mark-soft)) no-repeat 0 88% / 100% 0.42em;
+    justify-self: start;
+  }
+
+  .roles {
+    border-bottom: 1px solid var(--rule);
+  }
+  .roles > li {
+    display: grid;
+    gap: 0.25rem 2rem;
+    padding-block: 1.5rem;
+    border-top: 1px solid var(--rule);
+  }
+  @media (min-width: 46rem) {
+    .roles > li {
+      grid-template-columns: 8.5rem minmax(0, 1fr);
+    }
+  }
+  .roles__when {
+    padding-top: 0.25rem;
+    color: var(--ink-3);
+  }
+  .roles h3 {
+    font-size: var(--step-1);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.012em;
+  }
+  .roles ul {
+    margin-top: 0.7rem;
+    padding-left: 1.1em;
+    max-width: 40rem;
+    font-size: 1.0625rem;
+    color: var(--ink-2);
+  }
+  .roles ul li + li {
+    margin-top: 0.3rem;
+  }
+  .roles ul li::marker {
+    color: var(--ink-3);
+  }
+  .more {
+    margin-top: 1.5rem;
+  }
+  .tools {
+    max-width: 44rem;
+    font-size: 1rem;
+    row-gap: 0.9rem;
+  }
+</style>

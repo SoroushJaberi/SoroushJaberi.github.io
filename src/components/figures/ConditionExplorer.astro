@@ -1,0 +1,438 @@
+---
+/**
+ * Interactive view of the study's per-condition outcomes: pick a model size
+ * and whether it "thinks", and the four bars redraw. Without JavaScript it
+ * shows the default run; the full numbers are always in the table below.
+ */
+import { runs, sizes, conditions, outcomeLabels, getRun, type Outcome } from '@/data/knowledge-conflict';
+
+const initial = getRun('14B', false);
+const keys: (keyof Outcome)[] = ['truth', 'planted', 'idk', 'other'];
+const pct = (n: number) => `${n.toFixed(1)}%`;
+
+const payload = Object.fromEntries(
+  runs.map((r) => [
+    r.id,
+    { o: r.outcomes, known: r.known, overwrite: r.overwrite, ci: r.ci, kept: r.kept, tokens: r.tokens, wh: r.energyWh },
+  ]),
+);
+---
+
+<div class="cx" data-cx>
+  <form class="cx__controls" data-cx-form>
+    <fieldset class="cx__sizes">
+      <legend class="label">Model size</legend>
+      <div class="seg">
+        {
+          sizes.map((size) => (
+            <label>
+              <input type="radio" name="cx-size" value={size} checked={size === initial.size} />
+              <span class="num">{size}</span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+    <label class="cx__think">
+      <input type="checkbox" role="switch" name="cx-think" data-cx-think />
+      <span class="switch" aria-hidden="true"></span>
+      <span class="label label--ink">Thinks before answering</span>
+    </label>
+  </form>
+
+  <div class="cx__chart" aria-live="off">
+    {
+      conditions.map((c, i) => (
+        <div class="cx__row" style={`--i: ${i}`}>
+          <p class="cx__cond">
+            <strong>{c.label}</strong>
+            <span>{c.note}</span>
+          </p>
+          <div
+            class="cx__bar"
+            role="img"
+            data-cx-bar={c.id}
+            aria-label={keys.map((k) => `${outcomeLabels[k]} ${pct(initial.outcomes[c.id][k])}`).join(', ')}
+          >
+            {keys.map((k) => (
+              <span
+                class={`cx__seg cx__seg--${k}`}
+                data-key={k}
+                style={`--w: ${initial.outcomes[c.id][k]}`}
+                data-small={initial.outcomes[c.id][k] < 9 ? '' : undefined}
+              >
+                <b class="num">{Math.round(initial.outcomes[c.id][k])}</b>
+              </span>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+    <div class="cx__axis num" aria-hidden="true">
+      <span>0</span><span>25</span><span>50</span><span>75</span><span>100%</span>
+    </div>
+  </div>
+
+  <ul class="cx__legend" role="list" aria-hidden="true">
+    {
+      keys.map((k) => (
+        <li>
+          <i class={`cx__seg--${k}`} />
+          {outcomeLabels[k]}
+        </li>
+      ))
+    }
+  </ul>
+
+  <p class="cx__readout" aria-live="polite" data-cx-readout>
+    <strong>Qwen3-{initial.size}, answering directly.</strong>
+    It knows {initial.known} of the 1,000 facts without a document. Given the wrong document, {initial.overwrite}% of
+    those switch to the planted answer [{initial.ci[0]}–{initial.ci[1]}] and {initial.kept}% keep the true one. About {
+      initial.tokens
+    } generated tokens per answer; {initial.energyWh.toFixed(1)} Wh per 1,000 answers.
+  </p>
+
+  <details class="cx__table">
+    <summary>All eight runs as a table</summary>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="All eight runs, per condition">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">Model</th>
+            <th scope="col">Thinking</th>
+            <th scope="col">Condition</th>
+            {keys.map((k) => <th scope="col" class="n">{outcomeLabels[k]}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {
+            runs.flatMap((r) =>
+              conditions.map((c) => (
+                <tr>
+                  <td>{r.size}</td>
+                  <td>{r.thinking ? 'on' : 'off'}</td>
+                  <td>{c.label}</td>
+                  {keys.map((k) => <td class="n">{pct(r.outcomes[c.id][k])}</td>)}
+                </tr>
+              )),
+            )
+          }
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <script is:inline type="application/json" data-cx-data set:html={JSON.stringify(payload)} />
+</div>
+
+<script>
+  type Outcome = Record<'truth' | 'planted' | 'idk' | 'other', number>;
+  type RunData = {
+    o: Record<string, Outcome>;
+    known: number;
+    overwrite: number;
+    ci: [number, number];
+    kept: number;
+    tokens: number;
+    wh: number;
+  };
+  const names: Record<keyof Outcome, string> = {
+    truth: 'True answer',
+    planted: 'Planted answer',
+    idk: '“I don’t know”',
+    other: 'Other',
+  };
+
+  for (const root of document.querySelectorAll<HTMLElement>('[data-cx]')) {
+    const data: Record<string, RunData> = JSON.parse(root.querySelector('[data-cx-data]')?.textContent ?? '{}');
+    const form = root.querySelector<HTMLFormElement>('[data-cx-form]');
+    const readout = root.querySelector<HTMLElement>('[data-cx-readout]');
+    if (!form || !readout) continue;
+
+    const update = () => {
+      const size = new FormData(form).get('cx-size') as string;
+      const thinking = form.querySelector<HTMLInputElement>('[data-cx-think]')?.checked ?? false;
+      const run = data[`${size}-${thinking ? 'on' : 'off'}`];
+      if (!run) return;
+
+      for (const bar of root.querySelectorAll<HTMLElement>('[data-cx-bar]')) {
+        const outcome = run.o[bar.dataset.cxBar ?? ''];
+        if (!outcome) continue;
+        const parts: string[] = [];
+        for (const seg of bar.querySelectorAll<HTMLElement>('[data-key]')) {
+          const key = seg.dataset.key as keyof Outcome;
+          const value = outcome[key];
+          seg.style.setProperty('--w', String(value));
+          seg.toggleAttribute('data-small', value < 9);
+          const text = seg.querySelector('b');
+          if (text) text.textContent = String(Math.round(value));
+          parts.push(`${names[key]} ${value.toFixed(1)}%`);
+        }
+        bar.setAttribute('aria-label', parts.join(', '));
+      }
+
+      readout.innerHTML =
+        `<strong>Qwen3-${size}, ${thinking ? 'thinking first' : 'answering directly'}.</strong> ` +
+        `It knows ${run.known} of the 1,000 facts without a document. Given the wrong document, ` +
+        `${run.overwrite}% of those switch to the planted answer [${run.ci[0]}–${run.ci[1]}] and ` +
+        `${run.kept}% keep the true one. About ${run.tokens} generated tokens per answer; ` +
+        `${run.wh.toFixed(1)} Wh per 1,000 answers.`;
+    };
+
+    form.addEventListener('change', update);
+    form.addEventListener('submit', (e) => e.preventDefault());
+  }
+</script>
+
+<style>
+  .cx {
+    font-family: var(--sans);
+  }
+  .cx__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 1rem 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+  fieldset {
+    border: 0;
+    padding: 0;
+    min-width: 0;
+  }
+  legend {
+    padding: 0;
+    margin-bottom: 0.4rem;
+  }
+
+  /* Segmented control built from real radio inputs. */
+  .seg {
+    display: inline-flex;
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .seg label {
+    position: relative;
+    cursor: pointer;
+  }
+  .seg label + label {
+    border-left: 1px solid var(--rule-strong);
+  }
+  .seg input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .seg span {
+    display: grid;
+    place-items: center;
+    min-width: 3.4rem;
+    min-height: 2.75rem;
+    padding-inline: 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ink-2);
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+  }
+  .seg input:checked + span {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .seg input:focus-visible + span {
+    outline: 2px solid var(--blue);
+    outline-offset: -4px;
+  }
+  .seg label:hover input:not(:checked) + span {
+    background: var(--paper-2);
+    color: var(--ink);
+  }
+
+  /* Switch built from a real checkbox. */
+  .cx__think {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-height: 2.75rem;
+    cursor: pointer;
+  }
+  .cx__think input {
+    position: absolute;
+    opacity: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin: 0;
+    cursor: pointer;
+  }
+  .switch {
+    position: relative;
+    flex: none;
+    width: 2.75rem;
+    height: 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid var(--rule-strong);
+    background: var(--paper-2);
+    transition:
+      background-color 0.25s,
+      border-color 0.25s;
+  }
+  .switch::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0.2rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: var(--ink-3);
+    translate: 0 -50%;
+    transition:
+      translate 0.3s var(--ease-spring),
+      background-color 0.25s;
+  }
+  .cx__think input:checked + .switch {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .cx__think input:checked + .switch::after {
+    translate: 1.2rem -50%;
+    background: var(--paper);
+  }
+  .cx__think input:focus-visible + .switch {
+    outline: 2px solid var(--blue);
+    outline-offset: 3px;
+  }
+
+  .cx__row {
+    display: grid;
+    gap: 0.35rem 1.5rem;
+    padding-block: 0.7rem;
+    border-top: 1px solid var(--rule);
+  }
+  @media (min-width: 44rem) {
+    .cx__row {
+      grid-template-columns: 13.5rem minmax(0, 1fr);
+      align-items: center;
+    }
+    .cx__axis {
+      margin-left: 15rem;
+    }
+  }
+  .cx__cond {
+    display: grid;
+    font-size: var(--step--1);
+    line-height: 1.35;
+  }
+  .cx__cond strong {
+    font-size: 0.9375rem;
+    color: var(--ink);
+  }
+  .cx__cond span {
+    color: var(--ink-3);
+  }
+  .cx__bar {
+    display: flex;
+    height: 2.1rem;
+    border-radius: 2px;
+    overflow: hidden;
+    background: var(--paper-2);
+  }
+  .cx__seg {
+    flex: 0 0 calc(var(--w) * 1%);
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    padding-left: 0.45rem;
+    overflow: hidden;
+    transition: flex-basis 0.7s var(--ease);
+    box-shadow: inset -1px 0 0 var(--paper);
+  }
+  .cx__seg b {
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+  .cx__seg[data-small] b {
+    opacity: 0;
+  }
+  .cx__seg--truth {
+    background: var(--blue);
+    color: var(--paper);
+  }
+  .cx__seg--planted {
+    background: var(--mark-fill);
+    color: var(--on-mark);
+  }
+  .cx__seg--idk {
+    background: var(--neutral-fill);
+    color: #0b0b0d;
+  }
+  .cx__seg--other {
+    background: var(--neutral-fill-2);
+    color: var(--ink);
+  }
+  .cx__axis {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 0.3rem;
+    border-top: 1px solid var(--rule-strong);
+    font-size: 0.75rem;
+    color: var(--ink-3);
+  }
+  .cx__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.25rem;
+    margin-top: 0.9rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  .cx__legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+  .cx__legend i {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 2px;
+  }
+  .cx__readout {
+    margin-top: 1.1rem;
+    padding: 0.9rem 1rem;
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .cx__readout :global(strong) {
+    color: var(--ink);
+  }
+  .cx__table {
+    margin-top: 1rem;
+    font-size: var(--step--1);
+  }
+  .cx__table summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .cx__table summary:hover {
+    color: var(--blue);
+  }
+  .cx__table .table-scroll {
+    margin-top: 0.5rem;
+    max-height: 22rem;
+    overflow-y: auto;
+  }
+</style>

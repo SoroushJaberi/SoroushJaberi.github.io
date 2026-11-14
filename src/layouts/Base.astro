@@ -1,0 +1,96 @@
+---
+/**
+ * The one HTML shell every page uses.
+ */
+import { Font } from 'astro:assets';
+import '@/styles/global.css';
+import Seo from '@/components/Seo.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article' | 'profile';
+  schema?: Record<string, unknown>[];
+  noindex?: boolean;
+  published?: Date;
+  compactFooter?: boolean;
+}
+
+const { compactFooter = false, ...seo } = Astro.props;
+
+// Instant navigations in browsers that support speculation rules: pages are
+// prerendered when a link is hovered. Downloads are left alone.
+const speculation = {
+  prerender: [
+    {
+      where: {
+        and: [{ href_matches: '/*' }, { not: { href_matches: '/*.pdf' } }, { not: { href_matches: '/og/*' } }],
+      },
+      eagerness: 'moderate',
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0b0b0d" />
+
+    <!-- Dark is the default. Apply a saved choice before first paint. -->
+    <script is:inline>
+      try {
+        if (localStorage.getItem('theme') === 'light') document.documentElement.dataset.theme = 'light';
+      } catch (e) {}
+      document.documentElement.classList.add('js');
+    </script>
+
+    <Font cssVariable="--font-bricolage" preload />
+    <Font cssVariable="--font-newsreader" />
+    <Font cssVariable="--font-atkinson" preload />
+    <Font cssVariable="--font-atkinson-mono" />
+    <Font cssVariable="--font-vazirmatn" />
+
+    <Seo {...seo} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <slot name="head" />
+
+    <script is:inline type="speculationrules" set:html={JSON.stringify(speculation)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer compact={compactFooter} />
+
+    <script>
+      import '@/scripts/reveal';
+    </script>
+  </body>
+</html>
+
+<style>
+  /* The header is fixed, so pages start below it. The home page's stage
+     runs underneath the header instead. */
+  main {
+    padding-top: 4.25rem;
+  }
+  main:has(> :global(.stage:first-child)) {
+    padding-top: 0;
+  }
+  main:focus {
+    outline: none;
+  }
+</style>

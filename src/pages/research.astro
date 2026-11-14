@@ -1,0 +1,364 @@
+---
+import Base from '@/layouts/Base.astro';
+import PubList from '@/components/PubList.astro';
+import CopyEmail from '@/components/CopyEmail.astro';
+import { site } from '@/data/site';
+import { education, teaching, interests, thesis } from '@/data/profile';
+import { getPublications } from '@/lib/content';
+
+const publications = await getPublications();
+
+const schema = [
+  {
+    '@type': 'ProfilePage',
+    name: 'Research',
+    url: new URL('/research/', Astro.site).href,
+    mainEntity: { '@id': new URL('/#person', Astro.site).href },
+  },
+  ...publications
+    .filter((p) => p.data.status !== 'in-preparation')
+    .map((p) => ({
+      '@type': 'ScholarlyArticle',
+      name: p.data.title,
+      headline: p.data.title,
+      author: p.data.authors.map((name) => ({ '@type': 'Person', name })),
+      datePublished: String(p.data.year),
+      ...(p.data.doi ? { identifier: `https://doi.org/${p.data.doi}`, sameAs: `https://doi.org/${p.data.doi}` } : {}),
+      ...(p.data.code ? { url: p.data.code } : {}),
+    })),
+];
+---
+
+<Base
+  title="Research"
+  description="Research by Soroush Jaberi: how language models handle conflicting evidence, Persian sentiment analysis, and deep learning for biomedical image segmentation. Publications, thesis, interests and academic record."
+  image="/og/research.png"
+  type="profile"
+  schema={schema}
+>
+  <header class="wrap page-head lit">
+    <p class="label label--tick rise">Research</p>
+    <h1 class="rise" style="--i: 1">Evidence, and what models <span class="accent">do with it.</span></h1>
+    <p class="lede rise" style="--i: 2">
+      I study how language models use the documents they are given, how to classify sentiment in Persian, and how deep
+      learning segments medical images. I am applying for PhD positions in AI.
+    </p>
+    <p class="head-links rise" style="--i: 3">
+      <a class="btn" href={site.cv}>Download CV</a>
+      <a class="arrow" href="#publications">Publications</a>
+      <a class="arrow" href="#record">Academic record</a>
+    </p>
+  </header>
+
+  <section class="section" id="questions" aria-labelledby="questions-title">
+    <div class="wrap rail">
+      <header class="rail__label">
+        <h2 id="questions-title" class="label label--ink">Current questions</h2>
+      </header>
+      <ol class="questions" role="list">
+        <li data-reveal>
+          <h3>When should a model doubt its evidence?</h3>
+          <p>
+            In my latest study, open language models repeated a document that contradicted a fact they knew 49–68% of
+            the time. Their reasoning often stated the true fact first. The signal that something was wrong existed
+            and was thrown away before the answer. I want to find out how to read that signal out, cheaply, and act on
+            it only when it changes the outcome.
+          </p>
+          <a class="arrow" href="/work/knowledge-conflict/">When the document is wrong</a>
+        </li>
+        <li data-reveal style="--i: 1">
+          <h3>What does reasoning buy, and what does it cost?</h3>
+          <p>
+            Step-by-step “thinking” cost 10–19× the GPU energy in the same study and improved accuracy without
+            documents, yet made no model more resistant to a wrong one. A follow-up in progress on the 8B and 14B
+            models suggests the amount matters: capping reasoning at 128 tokens reduced switches to the document’s
+            answer by about 9 points, at 24–41% of the energy of unlimited reasoning.
+          </p>
+        </li>
+        <li data-reveal style="--i: 2">
+          <h3>Can learned and rule-based signals be combined for Persian?</h3>
+          <p>
+            Persian has far less labeled data than English, and reviews are written informally. My thesis and the
+            HVB-Persian preprint combine a fine-tuned transformer with lexicon scores. On about 84,000 reviews the
+            hybrid reaches F1 of 0.88, 0.94 and 0.95 on Digikala, Snappfood and the combined dataset.
+          </p>
+          <a class="arrow" href="/work/hvb-persian/">HVB-Persian</a>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="publications" aria-labelledby="pubs-title">
+    <div class="wrap rail">
+      <header class="rail__label">
+        <h2 id="pubs-title" class="label label--ink">Publications</h2>
+        <p class="small">Status is stated for each. A preprint is not peer-reviewed.</p>
+      </header>
+      <PubList items={publications} />
+    </div>
+  </section>
+
+  <section class="section" id="thesis" aria-labelledby="thesis-title">
+    <div class="wrap rail">
+      <header class="rail__label">
+        <h2 id="thesis-title" class="label label--ink">M.Sc. thesis</h2>
+      </header>
+      <div data-reveal>
+        <p class="thesis">{thesis.title}.</p>
+        <p class="small thesis__meta">
+          {education[0]!.school} · Supervisor: {thesis.supervisor} · Co-advisor: {thesis.coAdvisor} · {thesis.status}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="interests" aria-labelledby="interests-title">
+    <div class="wrap rail">
+      <header class="rail__label">
+        <h2 id="interests-title" class="label label--ink">Interests</h2>
+      </header>
+      <dl class="interests">
+        {
+          interests.map((item, i) => (
+            <div data-reveal style={`--i: ${Math.min(i, 4)}`}>
+              <dt>{item.area}</dt>
+              <dd>{item.detail}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section class="section" id="record" aria-labelledby="record-title">
+    <div class="wrap rail">
+      <header class="rail__label">
+        <h2 id="record-title" class="label label--ink">Academic record</h2>
+      </header>
+      <div class="record">
+        {
+          education.map((e) => (
+            <article class="degree" data-reveal>
+              <header>
+                <h3>{e.degree}</h3>
+                <p class="small">
+                  {e.school} · <span class="num">{e.period}</span>
+                </p>
+              </header>
+              <ul class="degree__facts" role="list">
+                {e.facts.map((f) => (
+                  <li>{f}</li>
+                ))}
+              </ul>
+              <table class="data-table grades">
+                <caption class="sr-only">Selected coursework and grades, {e.degree}</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Selected coursework</th>
+                    <th scope="col" class="n">Grade</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {e.coursework.map((c) => (
+                    <tr>
+                      <td>{c.name}</td>
+                      <td class="n">{c.grade}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="teaching" aria-labelledby="teaching-title">
+    <div class="wrap rail">
+      <header class="rail__label">
+        <h2 id="teaching-title" class="label label--ink">Teaching</h2>
+      </header>
+      <div>
+        <ul class="roles" role="list">
+          {
+            teaching.map((role, i) => (
+              <li data-reveal style={`--i: ${i}`}>
+                <h3>{role.title}</h3>
+                <p class="small">
+                  {role.org} · <span class="num">{role.period}</span>
+                </p>
+              </li>
+            ))
+          }
+          <li data-reveal style="--i: 3">
+            <h3>The AI Path, author and instructor</h3>
+            <p class="small">
+              A free, open course from Python to AI agents · <span class="num">2026 – present</span>
+            </p>
+          </li>
+        </ul>
+        <p class="more">
+          <a class="arrow" href="/about/#teaching">Roles in detail</a>
+          <a class="arrow" href="/work/the-ai-path/">The AI Path</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="supervisors" aria-labelledby="sup-title">
+    <div class="wrap rail">
+      <header class="rail__label">
+        <h2 id="sup-title" class="label label--ink">For prospective supervisors</h2>
+      </header>
+      <div class="sup" data-reveal>
+        <p>
+          If my questions sit near your group's, I would be glad to hear from you. The CV has my full record, and
+          academic references are available on request.
+        </p>
+        <CopyEmail subject="PhD position" />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .head-links {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.75rem;
+  }
+
+  .questions {
+    display: grid;
+    border-bottom: 1px solid var(--rule);
+    counter-reset: q;
+  }
+  .questions li {
+    counter-increment: q;
+    position: relative;
+    padding: clamp(1.5rem, 3vw, 2rem) 0 clamp(1.5rem, 3vw, 2rem) 3rem;
+    border-top: 1px solid var(--rule);
+  }
+  .questions li::before {
+    content: 'Q' counter(q);
+    position: absolute;
+    left: 0;
+    top: clamp(1.75rem, 3.2vw, 2.3rem);
+    font-family: var(--sans);
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: var(--mark);
+  }
+  .questions h3 {
+    font-size: var(--step-2);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.018em;
+  }
+  .questions p {
+    margin-top: 0.75rem;
+    max-width: 40rem;
+    color: var(--ink-2);
+  }
+  .questions .arrow {
+    margin-top: 0.9rem;
+  }
+
+  .thesis {
+    max-width: 26ch;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: var(--step-2);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .thesis__meta {
+    margin-top: 0.9rem;
+  }
+
+  .interests {
+    display: grid;
+    border-bottom: 1px solid var(--rule);
+  }
+  .interests > div {
+    display: grid;
+    gap: 0.2rem 2rem;
+    padding-block: 1rem;
+    border-top: 1px solid var(--rule);
+  }
+  @media (min-width: 46rem) {
+    .interests > div {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    }
+  }
+  .interests dt {
+    font-size: var(--step-1);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.012em;
+  }
+  .interests dd {
+    font-size: 1.0625rem;
+    color: var(--ink-2);
+  }
+
+  .record {
+    display: grid;
+    gap: 2.5rem 3.5rem;
+  }
+  @media (min-width: 52rem) {
+    .record {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .degree {
+    padding-top: 1rem;
+    border-top: 2px solid var(--ink);
+  }
+  .degree h3 {
+    font-size: var(--step-1);
+    font-weight: 500;
+  }
+  .degree__facts {
+    margin-top: 0.9rem;
+    font-size: 1.0625rem;
+  }
+  .degree__facts li:first-child {
+    font-weight: 600;
+  }
+  .grades {
+    margin-top: 1.1rem;
+    min-width: 0;
+  }
+
+  .roles {
+    border-bottom: 1px solid var(--rule);
+  }
+  .roles li {
+    padding-block: 1rem;
+    border-top: 1px solid var(--rule);
+  }
+  .roles h3 {
+    font-size: var(--step-1);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.012em;
+  }
+  .more {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.75rem;
+  }
+
+  .sup p {
+    max-width: 36rem;
+    font-size: var(--step-1);
+    line-height: 1.4;
+    margin-bottom: 1.5rem;
+  }
+</style>

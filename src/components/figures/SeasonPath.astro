@@ -1,0 +1,116 @@
+---
+/** The six planned seasons of The AI Path, as a staircase. Plan as of Nov 2026. */
+const seasons = [
+  {
+    theme: 'Foundations',
+    covers: 'Python for AI, real data, SQL, statistics by simulation',
+    project: 'An end-to-end data and SQL investigation',
+  },
+  {
+    theme: 'Machine learning',
+    covers: 'Honest evaluation first, then the classic models',
+    project: 'A machine learning pipeline you can trust, with a model card',
+  },
+  {
+    theme: 'Deep learning',
+    covers: 'Neural networks from scratch, computer vision, a tiny Transformer',
+    project: 'A computer-vision project and a Transformer you wrote yourself',
+  },
+  {
+    theme: 'Large language models',
+    covers: 'Tokens, embeddings, RAG and evaluation',
+    project: 'An AI app you can evaluate, not just demo',
+  },
+  {
+    theme: 'AI engineering',
+    covers: 'Tool-using agents, deployment, monitoring, cost, security',
+    project: 'A deployed AI agent with guardrails',
+  },
+  {
+    theme: 'Career and research',
+    covers: 'Portfolio reviews, interview prep, reading papers',
+    project: 'Your portfolio, reviewed',
+  },
+];
+---
+
+<ol class="path" role="list">
+  {
+    seasons.map((s, i) => (
+      <li class="path__step" style={`--i: ${i}`} data-reveal>
+        <span class="path__n num" aria-hidden="true">
+          {i + 1}
+        </span>
+        <div>
+          <p class="path__theme">
+            <span class="sr-only">Season {i + 1}: </span>
+            {s.theme}
+          </p>
+          <p class="path__covers">{s.covers}</p>
+          <p class="path__project">
+            <span>Project</span> {s.project}
+          </p>
+        </div>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .path {
+    display: grid;
+    font-family: var(--sans);
+  }
+  .path__step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    gap: 0 1rem;
+    padding: 0.9rem 0 0.9rem;
+    border-top: 1px solid var(--rule);
+  }
+  /* Each season steps a little further in: a staircase on wide screens. */
+  @media (min-width: 48rem) {
+    .path__step {
+      margin-left: calc(var(--i) * 4.5%);
+    }
+  }
+  .path__n {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    border: 1px solid var(--rule-strong);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--ink-2);
+  }
+  .path__step:first-child .path__n {
+    background: var(--mark-fill);
+    border-color: var(--mark-fill);
+    color: var(--on-mark);
+  }
+  .path__theme {
+    font-family: var(--serif);
+    font-size: var(--step-1);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.012em;
+  }
+  .path__covers {
+    margin-top: 0.2rem;
+    font-size: 0.9375rem;
+    color: var(--ink-2);
+  }
+  .path__project {
+    margin-top: 0.3rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  .path__project span {
+    font-weight: 600;
+    color: var(--ink-3);
+    margin-right: 0.35em;
+  }
+</style>

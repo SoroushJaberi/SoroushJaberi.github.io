@@ -1,0 +1,256 @@
+---
+/**
+ * A dot-and-interval plot on a 0–100% axis, built from HTML and CSS so text
+ * stays crisp and the layout is fluid. Used by the home-page experiment and
+ * by the knowledge-conflict case study.
+ *
+ * Dots start "parked" at zero and travel to their value when the plot is
+ * revealed: either by scrolling (data-draw + reveal.ts) or by a parent that
+ * sets [data-state="ask"] → "result" (PredictCheck).
+ */
+export interface DotRow {
+  name: string;
+  off: { v: number; ci: [number, number] };
+  on: { v: number; ci: [number, number] };
+}
+
+interface Props {
+  rows: DotRow[];
+  /** Text alternative describing the data. */
+  label: string;
+  /** Shaded range across all rows. */
+  band?: [number, number];
+  /** Print each row's two values at the right edge. */
+  values?: boolean;
+  /** Animate when scrolled into view. */
+  draw?: boolean;
+  legend?: [string, string, string?];
+}
+
+const { rows, label, band, values = false, draw = false, legend } = Astro.props;
+const ticks = [0, 25, 50, 75, 100];
+---
+
+<div class:list={['dp', values && 'dp--values']} role="img" aria-label={label} data-draw={draw ? '' : undefined}>
+  <div class="dp__plot">
+    <div class="dp__grid" aria-hidden="true">
+      {ticks.map((t) => <i style={`--v: ${t}`} />)}
+    </div>
+    {band && <div class="dp__band" style={`--a: ${band[0]}; --b: ${band[1]}`} aria-hidden="true" />}
+    <slot name="overlay" />
+    {
+      rows.map((row, i) => (
+        <div class="dp__row" style={`--i: ${i}`} aria-hidden="true">
+          <span class="dp__name num">{row.name}</span>
+          <div class="dp__track">
+            <i class="dp__ci dp__ci--off" style={`--a: ${row.off.ci[0]}; --b: ${row.off.ci[1]}`} />
+            <i class="dp__dot dp__dot--off" style={`--v: ${row.off.v}`} />
+            <i class="dp__ci dp__ci--on" style={`--a: ${row.on.ci[0]}; --b: ${row.on.ci[1]}`} />
+            <i class="dp__dot dp__dot--on" style={`--v: ${row.on.v}`} />
+          </div>
+          {values && (
+            <span class="dp__vals num">
+              <span>{row.off.v.toFixed(1)}</span>
+              <span>{row.on.v.toFixed(1)}</span>
+            </span>
+          )}
+        </div>
+      ))
+    }
+    <div class="dp__axis num" aria-hidden="true">
+      {ticks.map((t) => <span style={`--v: ${t}`}>{t === 100 ? '100%' : t}</span>)}
+    </div>
+  </div>
+  {
+    legend && (
+      <p class="dp__legend" aria-hidden="true">
+        <span>
+          <i class="dp__key dp__key--off" />
+          {legend[0]}
+        </span>
+        <span>
+          <i class="dp__key dp__key--on" />
+          {legend[1]}
+        </span>
+        {legend[2] && <span>{legend[2]}</span>}
+      </p>
+    )
+  }
+</div>
+
+<style>
+  .dp {
+    --name: 2.6rem;
+    --vals: 0.5rem;
+    --surface: var(--paper);
+    font-family: var(--sans);
+  }
+  .dp--values {
+    --vals: 3.25rem;
+  }
+  .dp__plot {
+    position: relative;
+    padding-top: 1.5rem;
+  }
+  .dp__grid,
+  .dp__band,
+  :global(.dp__overlay) {
+    position: absolute;
+    left: var(--name);
+    right: var(--vals);
+  }
+  .dp__grid,
+  .dp__band {
+    top: 1.5rem;
+    bottom: 1.5rem;
+  }
+  .dp__grid i {
+    position: absolute;
+    left: calc(var(--v) * 1%);
+    top: 0;
+    bottom: 0;
+    border-left: 1px solid var(--rule);
+  }
+  .dp__band::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--a) * 1%);
+    width: calc((var(--b) - var(--a)) * 1%);
+    top: 0;
+    bottom: 0;
+    background: var(--mark-soft);
+    border-inline: 1px dashed var(--mark-fill);
+    transform-origin: left;
+    transition:
+      scale 0.7s var(--ease) 0.15s,
+      opacity 0.4s 0.15s;
+  }
+  .dp__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--name) minmax(0, 1fr) var(--vals);
+    align-items: center;
+    height: 2.1rem;
+  }
+  .dp__name {
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .dp__track {
+    position: relative;
+    height: 100%;
+  }
+  .dp__ci,
+  .dp__dot {
+    position: absolute;
+    display: block;
+  }
+  .dp__ci {
+    left: calc(var(--a) * 1%);
+    width: calc((var(--b) - var(--a)) * 1%);
+    height: 2px;
+    background: var(--ink-3);
+    translate: 0 -50%;
+    transition: scale 0.5s var(--ease) calc(0.55s + var(--i) * 70ms);
+  }
+  .dp__ci--off,
+  .dp__dot--off {
+    top: 32%;
+  }
+  .dp__ci--on,
+  .dp__dot--on {
+    top: 70%;
+  }
+  .dp__dot {
+    left: calc(var(--v) * 1%);
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    translate: -50% -50%;
+    background: var(--mark-fill);
+    border: 2px solid var(--mark-fill);
+    transition:
+      left 0.9s var(--ease-spring) calc(0.2s + var(--i) * 70ms),
+      opacity 0.3s calc(0.2s + var(--i) * 70ms);
+  }
+  .dp__dot--off {
+    background: var(--surface);
+  }
+  .dp__dot--on {
+    transition-delay: calc(0.28s + var(--i) * 70ms);
+  }
+  .dp__vals {
+    display: grid;
+    justify-items: end;
+    font-size: 0.75rem;
+    line-height: 1.25;
+    color: var(--ink-2);
+  }
+  .dp__axis {
+    position: relative;
+    margin-left: var(--name);
+    margin-right: var(--vals);
+    height: 1.5rem;
+    border-top: 1px solid var(--rule-strong);
+    font-size: 0.75rem;
+    color: var(--ink-3);
+  }
+  .dp__axis span {
+    position: absolute;
+    left: calc(var(--v) * 1%);
+    top: 0.3rem;
+    translate: -50% 0;
+  }
+  .dp__axis span:first-child {
+    translate: 0 0;
+  }
+  .dp__axis span:last-child {
+    translate: -100% 0;
+  }
+  .dp__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 1.1rem;
+    margin-top: 0.35rem;
+    padding-left: var(--name);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--ink-3);
+  }
+  .dp__legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .dp__key {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    border: 2px solid var(--mark-fill);
+    background: var(--mark-fill);
+  }
+  .dp__key--off {
+    background: var(--surface);
+  }
+
+  /* Parked: dots at zero, intervals and band collapsed, no transition, so
+     the motion only ever plays in the "reveal" direction. */
+  .dp.armed:not(.is-in) .dp__dot,
+  :global([data-state='ask']) .dp__dot {
+    left: 0;
+    opacity: 0;
+    transition: none;
+  }
+  .dp.armed:not(.is-in) .dp__ci,
+  :global([data-state='ask']) .dp__ci {
+    scale: 0 1;
+    transition: none;
+  }
+  .dp.armed:not(.is-in) .dp__band::before,
+  :global([data-state='ask']) .dp__band::before {
+    scale: 0 1;
+    opacity: 0;
+    transition: none;
+  }
+</style>

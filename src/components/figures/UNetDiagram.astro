@@ -1,0 +1,125 @@
+---
+/**
+ * Schematic of a U-Net: an encoder that shrinks the image while widening the
+ * features, a decoder that restores resolution, and skip connections between
+ * matching levels. Bar height = spatial size, bar width = number of filters.
+ */
+const levels = [
+  { h: 150, w: 8 },
+  { h: 108, w: 13 },
+  { h: 72, w: 19 },
+  { h: 44, w: 26 },
+];
+const gap = 56;
+const baseY = 172;
+const cx = (i: number) => 60 + i * gap;
+const mirror = (i: number) => 60 + (levels.length * 2 - 2 - i) * gap;
+---
+
+<svg
+  class="unet"
+  viewBox="0 0 460 200"
+  role="img"
+  aria-label="U-Net schematic. On the left, an encoder of four stages, each smaller in spatial size and wider in filters. On the right, a mirrored decoder that restores the original size. Dashed skip connections link each encoder stage to the decoder stage of the same size. The output is a per-voxel mask."
+  data-draw
+>
+  <g class="unet__skips" aria-hidden="true">
+    {
+      levels.slice(0, -1).map((l, i) => (
+        <path style={`--i: ${i}`} d={`M${cx(i) + l.w / 2 + 4} ${baseY - l.h + 10}H${mirror(i) - l.w / 2 - 4}`} />
+      ))
+    }
+  </g>
+  <g class="unet__flow" aria-hidden="true">
+    {
+      levels.slice(0, -1).map((l, i) => (
+        <>
+          <path d={`M${cx(i) + l.w / 2 + 3} ${baseY - 8}L${cx(i + 1) - levels[i + 1]!.w / 2 - 3} ${baseY - 8}`} />
+          <path d={`M${mirror(i + 1) + levels[i + 1]!.w / 2 + 3} ${baseY - 8}L${mirror(i) - l.w / 2 - 3} ${baseY - 8}`} />
+        </>
+      ))
+    }
+  </g>
+  <g aria-hidden="true">
+    {
+      levels.map((l, i) => (
+        <rect
+          class:list={['unet__bar', i === levels.length - 1 && 'unet__bar--mid']}
+          style={`--i: ${i}`}
+          x={cx(i) - l.w / 2}
+          y={baseY - l.h}
+          width={l.w}
+          height={l.h}
+          rx="1.5"
+        />
+      ))
+    }
+    {
+      levels.slice(0, -1).map((l, i) => (
+        <rect
+          class:list={['unet__bar', i === 0 && 'unet__bar--out']}
+          style={`--i: ${levels.length * 2 - 2 - i}`}
+          x={mirror(i) - l.w / 2}
+          y={baseY - l.h}
+          width={l.w}
+          height={l.h}
+          rx="1.5"
+        />
+      ))
+    }
+  </g>
+  <g class="unet__text" aria-hidden="true">
+    <text x={cx(0)} y="194" text-anchor="middle">CT in</text>
+    <text x={cx(3)} y="194" text-anchor="middle">bottleneck</text>
+    <text x={mirror(0)} y="194" text-anchor="middle">mask out</text>
+    <text x={(cx(0) + mirror(0)) / 2} y={baseY - 150 + 4} text-anchor="middle">skip connections</text>
+    <text x={cx(1) - 4} y={baseY - 128} text-anchor="middle">encoder ↓</text>
+    <text x={mirror(1) + 4} y={baseY - 128} text-anchor="middle">decoder ↑</text>
+  </g>
+</svg>
+
+<style>
+  .unet {
+    width: 100%;
+    max-width: 38rem;
+    height: auto;
+    overflow: visible;
+  }
+  .unet__bar {
+    fill: var(--ink-2);
+    transform-box: fill-box;
+    transform-origin: bottom;
+    transition: scale 0.6s var(--ease-spring) calc(var(--i) * 70ms);
+  }
+  .unet__bar--mid {
+    fill: var(--mark-fill);
+  }
+  .unet__bar--out {
+    fill: var(--blue);
+  }
+  .unet__skips path {
+    stroke: var(--ink-3);
+    stroke-width: 1.2;
+    stroke-dasharray: 3 4;
+    fill: none;
+    transition: opacity 0.5s calc(0.6s + var(--i) * 90ms);
+  }
+  .unet__flow path {
+    stroke: var(--rule-strong);
+    stroke-width: 1;
+    fill: none;
+  }
+  .unet__text text {
+    font-family: var(--sans);
+    font-size: 10px;
+    fill: var(--ink-3);
+  }
+  .unet.armed:not(.is-in) .unet__bar {
+    scale: 1 0;
+    transition: none;
+  }
+  .unet.armed:not(.is-in) .unet__skips path {
+    opacity: 0;
+    transition: none;
+  }
+</style>

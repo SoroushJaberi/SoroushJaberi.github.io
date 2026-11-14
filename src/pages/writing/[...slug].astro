@@ -1,0 +1,146 @@
+---
+/**
+ * The writing section: /writing/ (the list) and /writing/<post>/.
+ *
+ * Nothing here is generated until src/content/writing/ contains a published
+ * post. With the first post, the list page, the post page, its share image,
+ * the RSS feed and the "Writing" link in the header all appear together.
+ */
+import { render } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Figure from '@/components/Figure.astro';
+import Note from '@/components/Note.astro';
+import { getPosts, formatDate, type Post } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  if (posts.length === 0) return [];
+  return [
+    { params: { slug: undefined }, props: { posts } },
+    ...posts.map((post) => ({ params: { slug: post.id }, props: { posts, post } })),
+  ];
+}
+
+interface Props {
+  posts: Post[];
+  post?: Post;
+}
+
+const { posts, post } = Astro.props;
+const rendered = post ? await render(post) : undefined;
+const Content = rendered?.Content;
+---
+
+{
+  post && Content ? (
+    <Base
+      title={post.data.title}
+      description={post.data.summary}
+      image={`/og/writing/${post.id}.png`}
+      type="article"
+      published={post.data.published}
+      schema={[
+        {
+          '@type': 'BlogPosting',
+          headline: post.data.title,
+          description: post.data.summary,
+          datePublished: post.data.published.toISOString(),
+          ...(post.data.updated ? { dateModified: post.data.updated.toISOString() } : {}),
+          author: { '@id': new URL('/#person', Astro.site).href },
+          url: new URL(`/writing/${post.id}/`, Astro.site).href,
+        },
+      ]}
+    >
+      <link slot="head" rel="alternate" type="application/rss+xml" title="Writing — RSS" href="/rss.xml" />
+      <article>
+        <header class="wrap page-head">
+          <p class="label rise">
+            <a href="/writing/">Writing</a> · <time datetime={post.data.published.toISOString()}>{formatDate(post.data.published)}</time>
+          </p>
+          <h1 class="rise" style="--i: 1">{post.data.title}</h1>
+          <p class="lede rise" style="--i: 2">{post.data.summary}</p>
+        </header>
+        <div class="wrap">
+          <div class="prose">
+            <Content components={{ Figure, Note }} />
+          </div>
+        </div>
+      </article>
+    </Base>
+  ) : (
+    <Base
+      title="Writing"
+      description="Articles and notes by Soroush Jaberi on machine learning, evaluation and teaching."
+      schema={[{ '@type': 'Blog', name: 'Writing', url: new URL('/writing/', Astro.site).href }]}
+    >
+      <link slot="head" rel="alternate" type="application/rss+xml" title="Writing — RSS" href="/rss.xml" />
+      <header class="wrap page-head">
+        <p class="label rise">Writing</p>
+        <h1 class="rise" style="--i: 1">Notes and articles.</h1>
+      </header>
+      <section class="section">
+        <div class="wrap">
+          <ol class="posts" role="list">
+            {posts.map((p) => (
+              <li data-reveal>
+                <time class="small num" datetime={p.data.published.toISOString()}>
+                  {formatDate(p.data.published)}
+                </time>
+                <div>
+                  <h2>
+                    <a href={`/writing/${p.id}/`}>{p.data.title}</a>
+                  </h2>
+                  <p>{p.data.summary}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <p class="feed">
+            <a class="arrow" href="/rss.xml">
+              RSS feed
+            </a>
+          </p>
+        </div>
+      </section>
+    </Base>
+  )
+}
+
+<style>
+  .label a {
+    color: inherit;
+  }
+  .posts {
+    border-bottom: 1px solid var(--rule);
+  }
+  .posts li {
+    display: grid;
+    gap: 0.4rem 2rem;
+    padding-block: 1.5rem;
+    border-top: 1px solid var(--rule);
+  }
+  @media (min-width: 46rem) {
+    .posts li {
+      grid-template-columns: 11rem minmax(0, 1fr);
+    }
+  }
+  .posts time {
+    padding-top: 0.4rem;
+    color: var(--ink-3);
+  }
+  .posts h2 {
+    font-size: var(--step-2);
+    letter-spacing: -0.018em;
+  }
+  .posts h2 a {
+    text-decoration: none;
+  }
+  .posts p {
+    margin-top: 0.5rem;
+    max-width: 40rem;
+    color: var(--ink-2);
+  }
+  .feed {
+    margin-top: 1.5rem;
+  }
+</style>

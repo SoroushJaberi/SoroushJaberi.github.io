@@ -1,0 +1,117 @@
+---
+/**
+ * Five photographs as a deck of prints. On a wide screen they start as a
+ * stack and fan out as the section scrolls into view (--progress from
+ * scrollfx.ts); hovering a print lifts and straightens it. On a narrow
+ * screen they are a row to swipe.
+ */
+import { Picture } from 'astro:assets';
+import cafe from '@/assets/portraits/cafe.jpg';
+import formal from '@/assets/portraits/formal.jpg';
+import library from '@/assets/portraits/library.jpg';
+import outdoor from '@/assets/portraits/outdoor.jpg';
+import sun from '@/assets/portraits/sun.jpg';
+
+// Order is left to right once fanned; the middle print is on top.
+const frames = [
+  { src: outdoor, alt: 'Soroush Jaberi standing outdoors on a sunny street, in a light sweater and tie', pos: '50% 28%', slot: -2 },
+  { src: formal, alt: 'Soroush Jaberi seated at a table by a window, hands folded', pos: '50% 30%', slot: -1 },
+  { src: cafe, alt: 'Soroush Jaberi smiling, seated at a wooden table in a café', pos: '55% 22%', slot: 0 },
+  { src: library, alt: 'Soroush Jaberi in a cap and hoodie in front of bookshelves', pos: '50% 22%', slot: 1 },
+  { src: sun, alt: 'Soroush Jaberi in sunglasses, lit by low sun in a café window', pos: '45% 30%', slot: 2 },
+];
+---
+
+<div class="deck" data-progress tabindex="0" role="group" aria-label="Five photographs of Soroush Jaberi">
+  {
+    frames.map((f) => (
+      <figure class="print" style={`--slot: ${f.slot}; --z: ${3 - Math.abs(f.slot)}`}>
+        <Picture
+          src={f.src}
+          alt={f.alt}
+          formats={['avif', 'webp']}
+          widths={[320, 480, 640]}
+          sizes="(min-width: 60rem) 17rem, 60vw"
+          width={640}
+          height={800}
+          fit="cover"
+          position="top"
+          quality={68}
+          style={`object-position: ${f.pos}`}
+        />
+      </figure>
+    ))
+  }
+</div>
+
+<style>
+  /* Narrow: a row to swipe. */
+  .deck {
+    --progress: 1;
+    display: flex;
+    gap: 0.9rem;
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 0.5rem var(--gutter) 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .deck::-webkit-scrollbar {
+    display: none;
+  }
+  .print {
+    flex: none;
+    width: min(62vw, 17rem);
+    scroll-snap-align: center;
+    padding: 0.45rem 0.45rem 1.6rem;
+    background: #f4f0e6;
+    border-radius: 3px;
+    box-shadow: var(--shadow);
+  }
+  .print :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 1px;
+    background: #d9d4c6;
+  }
+
+  /* Wide: a stack that fans out with the scroll. */
+  @media (min-width: 60rem) {
+    .deck {
+      --open: clamp(0, var(--progress) * 2.4, 1);
+      position: relative;
+      display: block;
+      height: 27rem;
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+      perspective: 90rem;
+    }
+    .print {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 17rem;
+      z-index: var(--z);
+      transform: translateX(-50%) translateX(calc(var(--slot) * var(--open) * min(13.5vw, 11.5rem)))
+        translateY(calc(var(--slot) * var(--slot) * var(--open) * 0.9rem)) rotate(calc(var(--slot) * var(--open) * 5deg))
+        rotateY(calc(var(--slot) * var(--open) * -7deg));
+      transition:
+        transform 0.6s var(--ease-out),
+        box-shadow 0.4s;
+      will-change: transform;
+    }
+    .print:hover {
+      z-index: 10;
+      transform: translateX(-50%) translateX(calc(var(--slot) * var(--open) * min(13.5vw, 11.5rem))) translateY(-1.25rem)
+        rotate(0deg) scale(1.06);
+      box-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.9);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .deck {
+      --progress: 1 !important;
+    }
+  }
+</style>

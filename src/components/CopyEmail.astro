@@ -1,0 +1,85 @@
+---
+/**
+ * The email address as a real mailto link, plus a button that copies it.
+ * Without JavaScript the button is hidden and the link still works.
+ */
+import { site, mailto } from '@/data/site';
+
+interface Props {
+  subject?: string;
+}
+const { subject } = Astro.props;
+---
+
+<span class="copy-email">
+  <a class="copy-email__address" href={mailto(subject)}>{site.email}</a>
+  <button type="button" class="copy-email__btn" data-copy={site.email} hidden>
+    <span data-copy-label>Copy</span>
+  </button>
+  <span class="sr-only" role="status" aria-live="polite" data-copy-status></span>
+</span>
+
+<script>
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-copy]')) {
+    if (!navigator.clipboard) continue;
+    button.hidden = false;
+    const label = button.querySelector<HTMLElement>('[data-copy-label]');
+    const status = button.parentElement?.querySelector<HTMLElement>('[data-copy-status]');
+    let timer: number | undefined;
+
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy ?? '');
+        if (label) label.textContent = 'Copied';
+        if (status) status.textContent = 'Email address copied';
+        button.dataset.done = '';
+      } catch {
+        if (label) label.textContent = 'Press Ctrl+C';
+      }
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        if (label) label.textContent = 'Copy';
+        if (status) status.textContent = '';
+        delete button.dataset.done;
+      }, 2200);
+    });
+  }
+</script>
+
+<style>
+  .copy-email {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    font-family: var(--sans);
+  }
+  .copy-email__address {
+    font-size: clamp(1rem, 0.9rem + 0.6vw, 1.25rem);
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+  .copy-email__btn {
+    min-height: 2.25rem;
+    min-width: 4.25rem;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius);
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--ink-2);
+    transition:
+      border-color 0.2s,
+      color 0.2s,
+      background-color 0.2s;
+  }
+  .copy-email__btn:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+  .copy-email__btn[data-done] {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+  }
+</style>

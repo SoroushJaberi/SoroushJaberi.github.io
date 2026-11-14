@@ -1,0 +1,229 @@
+---
+title: When the document is wrong
+summary: A reproducible study of what open language models do when a retrieved document contradicts a fact they already know, and what step-by-step reasoning costs.
+finding: Open language models repeat a contradicting document 49–68% of the time. Letting them “think” first costs 10–19× the GPU energy and does not make them resist.
+kind: research
+period: '2026'
+year: 2026
+status: Independent study
+role: Sole author
+tags: [Language models, Retrieval-augmented generation, Evaluation, vLLM]
+glyph: conflict
+stats:
+  - value: 49–68%
+    label: of known facts overwritten by a wrong document
+  - value: 10–19×
+    label: GPU energy when the model “thinks” first
+  - value: '32,000'
+    label: answers scored, all public
+featured: true
+order: 1
+links:
+  - label: Code, data and outputs
+    href: https://github.com/SoroushJaberi/rag-knowledge-conflict
+  - label: Full result tables
+    href: https://github.com/SoroushJaberi/rag-knowledge-conflict/blob/main/results/summary.md
+facts:
+  - label: Models
+    value: Qwen3 at 1.7B, 4B, 8B and 14B parameters
+  - label: Data
+    value: 1,000 questions sampled from NQ-Swap
+  - label: Design
+    value: 4 document conditions × thinking on and off = 32,000 scored answers
+  - label: Hardware
+    value: One A100 40 GB on Google Colab, batched with vLLM
+  - label: License
+    value: MIT; every model output is in the repository
+---
+
+import OverwriteBySize from '@/components/figures/OverwriteBySize.astro';
+import ConditionExplorer from '@/components/figures/ConditionExplorer.astro';
+import CostChart from '@/components/figures/CostChart.astro';
+import PairedTable from '@/components/figures/PairedTable.astro';
+import PredictCheck from '@/components/PredictCheck.astro';
+
+<div class="wide">
+  <PredictCheck />
+</div>
+
+## The question
+
+Retrieval-augmented systems and AI agents answer from documents and tool outputs that can be wrong: outdated pages,
+plain errors, deliberate manipulation. A reliable system should notice when a document contradicts what it knows, and
+say so. At the same time, models that reason step by step before answering are becoming the default, and that
+reasoning is paid for in computation.
+
+So I asked three things. When a document contradicts a fact the model knows, does it keep the true answer, repeat the
+document, or say it doesn't know? Does its confidence drop when it follows a wrong document, so that confidence could
+flag bad evidence? And do larger models, or thinking before answering, help — and at what cost?
+
+## How I tested it
+
+<Note label="Why NQ-Swap">
+  It is built with the substitution method of Longpre et al. (2021): real Natural Questions passages in which the
+  answer is replaced by another entity. The document looks right and says something false.
+</Note>
+
+Every question is asked four ways: with **no document**, with the **correct document**, with a **wrong document** in
+which the answer has been swapped for another entity, and with an **unrelated document** taken from a different
+question. Each of the four Qwen3 models runs the whole set twice, with thinking off and on. The weights are identical;
+only the reasoning switch changes.
+
+Answers are scored by normalized string matching against both the true answer and the planted one. The main measure
+is the **overwrite rate**: among the facts a model answers correctly with no document, the share that switch to the
+planted answer once the wrong document is supplied. I also recorded answer confidence from token log-probabilities,
+and generated tokens, GPU seconds and GPU energy for the generation step.
+
+<Figure
+  n={1}
+  caption="One question, four ways. Choose a model and switch thinking on to see how the answers move. Shares are of all 1,000 questions; “Other” includes truncated generations (at most 0.8%)."
+  source="results/summary.md"
+  href="https://github.com/SoroushJaberi/rag-knowledge-conflict/blob/main/results/summary.md"
+>
+  <ConditionExplorer />
+</Figure>
+
+## What I found
+
+### Wrong documents override known facts, at every size
+
+Across all eight runs, <mark>49–68% of known facts are overwritten</mark> by the planted answer, and only 6–16% keep
+the true one. Larger models know more facts, so their sets of known facts differ; on one fixed set of 304 facts, the
+ones the 14B model knows, the overwrite rate is 58–68% for every model, with no trend by size.
+
+<Figure
+  n={2}
+  caption="Share of known facts that switch to the planted answer when the wrong document is given. Bars are 95% bootstrap confidence intervals; the shaded band is the range across all runs."
+  source="README, results table"
+  href="https://github.com/SoroushJaberi/rag-knowledge-conflict#results"
+>
+  <OverwriteBySize />
+</Figure>
+
+### Thinking costs far more and does not help the model resist
+
+<Note label="A caveat on the smallest model">
+  Qwen3-1.7B almost always writes an empty reasoning block when a document is present, so its “thinking on” run is in
+  effect a second non-thinking run.
+</Note>
+
+For the 4B, 8B and 14B models, thinking raises generation from about 6 tokens per answer to 300–400, GPU time by
+8–12× and GPU energy by roughly 10–19×. It does make the models more accurate when there is no document: the 14B
+model's closed-book accuracy rises from 30.5% to 39.3%. It does not make them question a contradicting one.
+
+<Figure
+  n={3}
+  caption="GPU energy for 1,000 answers, measured with the NVML counter during batched generation. Meant for comparison between runs, not as an absolute cost."
+  source="results/summary.md"
+  href="https://github.com/SoroushJaberi/rag-knowledge-conflict/blob/main/results/summary.md"
+>
+  <CostChart />
+</Figure>
+
+Comparing the same facts with thinking off and on, no model resists more with thinking, and the largest one gives in
+*more* often:
+
+<Figure
+  n={4}
+  caption="Thinking on versus off, restricted to facts each model knows in both modes. For the 14B model, 35 facts are overwritten only when it thinks and 11 only when it does not."
+  source="results/extra_analyses.md"
+  href="https://github.com/SoroushJaberi/rag-knowledge-conflict/blob/main/results/extra_analyses.md"
+>
+  <PairedTable />
+</Figure>
+
+### The model notices the contradiction, then follows the document anyway
+
+In the 4B–14B thinking runs, 73–81% of overwritten answers come with reasoning that contains a conflict keyword. That
+keyword check is rough (it also fires on 24–30% of correct-document answers), so I read a random sample of 12 full
+traces from the 8B and 14B models. Nine of the twelve state the true fact and then give the planted answer, and all
+nine give the instruction to use the document as the reason:
+
+> I remember that in reality, Cruz Ramirez in Cars 3 was voiced by Cristela Alonzo, not Lou Rawls. … the user wants
+> the answer based on the document, not real-world knowledge. … So the answer is Lou Rawls.
+>
+> <cite>Qwen3-14B, reasoning trace</cite>
+
+None of the 1,000 final answers under a wrong document contains a hedge such as “however” or “according to the
+document”, and confidence in those answers averages 0.96–0.99. The conflict is visible in the reasoning and lost in
+the output.
+
+### Unrelated documents are handled well
+
+Given a passage about a different question, the models say “I don't know” 98–100% of the time and almost never
+invent an answer. The failure is specific to documents that contradict the model, not to documents in general.
+
+### A cheap check works only where the model has something to compare
+
+“Ask twice” — answer once without the document and flag the document if the two answers differ — costs about six
+extra tokens. On facts the model knows it flags wrong documents well (AUROC 0.72–0.81). Across all 1,000 questions it
+is close to chance (0.52–0.59), and so is answer confidence (0.51–0.60). A model can only catch a contradiction of
+something it knows, so a useful detector has to estimate that first.
+
+## What it means
+
+In this setup the models do not fail to see the contradiction. They resolve it in favor of the document and say so in
+their reasoning, citing the instruction. The signal that something is wrong exists inside the generation and is
+discarded before the final answer; answer confidence does not carry it.
+
+More computation is not a fix. Thinking costs an order of magnitude more energy and improves closed-book accuracy,
+but it does not make a model doubt a contradicting document.
+
+For retrieval-augmented systems, the conflict signal would have to be read out explicitly — from the reasoning, from
+the model's internal states, or by comparing against what the model knows — and acted on, by flagging the answer or
+abstaining. Doing that cheaply, and only when it changes the outcome, is the question I want to study next.
+
+## Follow-up, in progress
+
+<Note label="Status">
+  These follow-up numbers come from work in progress on the 8B and 14B models. They are not yet in the repository's
+  published tables.
+</Note>
+
+Two things have been checked since. First, the results are stable across three runs. Second, the amount of reasoning
+matters: limiting it to 128 tokens reduced switches to the document's answer by about 9 points (p < 0.001), at 24–41%
+of the GPU energy of unlimited reasoning. A little thinking helped where a lot did not. That is a result to check
+again carefully before building on it.
+
+## Limitations
+
+<Note label="No new method">
+  This is a measurement study. Its contribution is the controlled comparison: open weights at four sizes, the same
+  weights with thinking on and off, and measured generation cost.
+</Note>
+
+- **The prompt.** It tells the model to answer *using the document*, and the traces show the models follow that
+  instruction deliberately. Part of what is measured is instruction-following, not only a failure to detect conflict.
+  Runs with a prompt that warns about errors, and with a neutral prompt, are the next step.
+- **One model family, one dataset, one seed.** Qwen3 only, NQ-Swap only, one sampled generation per run.
+- **Implausible substitutions.** NQ-Swap often swaps in answers that make no sense, which should make wrong documents
+  easier to spot. The models follow them anyway.
+- **Scoring.** Normalized string matching counts partly right answers as wrong, and some Natural Questions labels are
+  debatable. This affects all models alike.
+- **“Known facts”** are defined by one sampled closed-book answer, so they include some lucky guesses.
+- **Heuristics.** The conflict-keyword check is rough, and the twelve-trace spot check is small.
+
+## Reproduce it
+
+All model outputs are in the repository, so the analysis re-runs without a GPU:
+
+```bash
+pip install datasets numpy matplotlib
+python prepare_data.py     # downloads NQ-Swap, rebuilds the 1,000-question set
+python analyze.py          # summary tables, figures, error lists
+python extra_analyses.py   # paired comparisons, sign tests, cheap detectors
+```
+
+Re-running the eight model runs takes about 2–4 GPU hours on an A100 through the included Colab notebook. The
+repository also has tests that push a fake model through the whole pipeline, including resuming an interrupted run.
+
+<Note label="How this was made">
+  As stated in the repository, the study design, the code and the write-up were developed with the help of an AI
+  assistant (Claude). I ran all experiments. The spot-check labels were also made with the assistant's help, and the
+  full traces are published so anyone can check them.
+</Note>
+
+The closest related work is Chen et al. (2026), *Does RAG Know When Retrieval Is Wrong?*, and Jeripity Venkata
+(2026), *Do Models Know Why They Changed Their Mind?* This study differs in using open-weight models across four
+sizes, the same weights with thinking on and off, and measured generation cost and energy. The full reference list is
+in the [repository README](https://github.com/SoroushJaberi/rag-knowledge-conflict#related-work).

@@ -1,0 +1,230 @@
+---
+import { site, profiles, nav, mailto } from '@/data/site';
+import CopyEmail from './CopyEmail.astro';
+import Icon, { type IconName } from './Icon.astro';
+
+interface Props {
+  /** Hide the large invitation (the contact page already is one). */
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+const year = new Date().getFullYear();
+const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'linkedin', YouTube: 'youtube' };
+---
+
+<footer class="site-footer" id="contact">
+  {
+    !compact && (
+      <div class="invite lit">
+        <div class="wrap">
+          <p class="label label--tick" data-reveal>
+            Contact
+          </p>
+          <p class="invite__line" data-reveal style="--i: 1">
+            A position, a project, or a result I should check?
+            <a href={mailto()}>
+              <span class="accent">Write to me.</span>
+            </a>
+          </p>
+          <div class="invite__row" data-reveal style="--i: 2">
+            <CopyEmail />
+            <a class="arrow" href="/contact/">
+              Who I would like to hear from
+            </a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  <div class="wrap">
+    <div class="base">
+      <div class="base__id">
+        <p class="base__name">
+          {site.name}
+          <span lang="fa" dir="rtl">{site.nameFa}</span>
+        </p>
+        <p class="small">
+          {site.role} · {site.location}
+        </p>
+        <ul class="base__profiles" role="list">
+          {
+            profiles.map((p) => (
+              <li>
+                <a href={p.href} rel="me noopener" aria-label={p.label} title={p.label}>
+                  <Icon name={profileIcon[p.label] ?? 'spark'} size={20} />
+                </a>
+              </li>
+            ))
+          }
+          <li>
+            <a href={mailto()} aria-label="Email" title="Email">
+              <Icon name="mail" size={20} />
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <nav aria-label="Footer">
+        <ul role="list" class="cols">
+          <li>
+            <p class="label">Site</p>
+            <ul role="list">
+              {
+                nav.map((item) => (
+                  <li>
+                    <a href={item.href}>{item.label}</a>
+                  </li>
+                ))
+              }
+              <li>
+                <a href={site.cv}>CV (PDF)</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <p class="label">Elsewhere</p>
+            <ul role="list">
+              {
+                profiles.map((p) => (
+                  <li>
+                    <a href={p.href} rel="me noopener">
+                      {p.label}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <p class="colophon small">
+      © {year}
+      {site.name}. Set in Bricolage Grotesque, Atkinson Hyperlegible and Newsreader. Static HTML, no trackers, no cookies.
+      <a href={site.repo}>Source on GitHub</a>.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--section);
+    border-top: 1px solid var(--rule);
+    padding-bottom: 2rem;
+    overflow-x: clip;
+  }
+  .invite {
+    padding-block: clamp(4rem, 10vw, 8.5rem);
+    border-bottom: 1px solid var(--rule);
+  }
+  .invite.lit::before {
+    top: 0;
+    height: 100%;
+  }
+  .invite__line {
+    margin-top: 1.25rem;
+    max-width: 17ch;
+    font-family: var(--display);
+    font-size: var(--step-4);
+    font-weight: 600;
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
+  }
+  .invite__line a {
+    text-decoration: none;
+    background: linear-gradient(var(--mark-fill), var(--mark-fill)) no-repeat 0 96% / 0% 2px;
+    transition: background-size 0.6s var(--ease-out);
+  }
+  .invite__line a:hover {
+    background-size: 100% 2px;
+  }
+  .invite__row {
+    margin-top: clamp(2rem, 5vw, 3rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2.5rem;
+  }
+
+  .base {
+    display: grid;
+    gap: 2.5rem;
+    padding-top: clamp(2.5rem, 6vw, 4rem);
+  }
+  @media (min-width: 48rem) {
+    .base {
+      grid-template-columns: 1fr auto;
+      align-items: start;
+    }
+  }
+  .base__name {
+    font-family: var(--display);
+    font-size: var(--step-2);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem 0.9rem;
+  }
+  .base__name [lang='fa'] {
+    font-size: 0.6em;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--ink-3);
+  }
+  .base__profiles {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 1.25rem;
+  }
+  .base__profiles a {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 50%;
+    color: var(--ink);
+    transition:
+      background-color 0.25s,
+      color 0.25s,
+      border-color 0.25s,
+      translate 0.25s var(--ease);
+  }
+  .base__profiles a:hover {
+    background: var(--mark-fill);
+    border-color: var(--mark-fill);
+    color: var(--on-mark);
+    translate: 0 -3px;
+  }
+  .cols {
+    display: flex;
+    gap: clamp(2.5rem, 8vw, 5rem);
+    font-family: var(--sans);
+    font-size: 0.9375rem;
+  }
+  .cols ul {
+    margin-top: 0.6rem;
+  }
+  .cols a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    color: var(--ink-2);
+    text-decoration: none;
+  }
+  .cols a:hover {
+    color: var(--mark);
+  }
+  .colophon {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-3);
+  }
+</style>

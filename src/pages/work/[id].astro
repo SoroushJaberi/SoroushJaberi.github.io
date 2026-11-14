@@ -1,0 +1,335 @@
+---
+/**
+ * A case study. One page per entry in src/content/work/ that has `page: true`.
+ * <Figure> and <Note> are available in every .mdx file without importing.
+ */
+import { render } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Figure from '@/components/Figure.astro';
+import Note from '@/components/Note.astro';
+import { site } from '@/data/site';
+import { getCaseStudies, type Work } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const studies = await getCaseStudies();
+  return studies.map((entry, i) => ({
+    params: { id: entry.id },
+    props: { entry, next: studies[(i + 1) % studies.length]!, count: studies.length },
+  }));
+}
+
+interface Props {
+  entry: Work;
+  next: Work;
+  count: number;
+}
+
+const { entry, next, count } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+
+const kindLabel = { research: 'Research', engineering: 'Engineering', teaching: 'Teaching' } as const;
+
+const schema = [
+  {
+    '@type': data.kind === 'research' ? 'ScholarlyArticle' : data.kind === 'teaching' ? 'Course' : 'CreativeWork',
+    name: data.title,
+    headline: data.title,
+    description: data.summary,
+    url: new URL(`/work/${entry.id}/`, Astro.site).href,
+    author: { '@id': new URL('/#person', Astro.site).href },
+    ...(data.kind === 'teaching' ? { provider: { '@id': new URL('/#person', Astro.site).href } } : {}),
+    keywords: data.tags.join(', '),
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Work', item: new URL('/work/', Astro.site).href },
+      { '@type': 'ListItem', position: 2, name: data.title },
+    ],
+  },
+];
+---
+
+<Base title={data.title} description={data.summary} image={`/og/work/${entry.id}.png`} type="article" schema={schema}>
+  <div class="progress" aria-hidden="true"></div>
+
+  <article>
+    <header class="wrap head lit">
+      <div class="head__main">
+        <p class="crumbs small rise">
+          <a href="/work/">Work</a>
+          <span aria-hidden="true">/</span>
+          <span>{kindLabel[data.kind]}</span>
+          <span aria-hidden="true">·</span>
+          <span class="num">{data.period}</span>
+          {
+            data.status && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>{data.status}</span>
+              </>
+            )
+          }
+        </p>
+        <h1 class="rise" style={`--i: 1; view-transition-name: work-${entry.id}`}>{data.title}</h1>
+        <p class="lede rise" style="--i: 2">{data.finding ?? data.summary}</p>
+        {
+          data.links.length > 0 && (
+            <p class="head__links rise" style="--i: 3">
+              {data.links.map((l) => (
+                <a class="arrow" href={l.href}>
+                  {l.label}
+                </a>
+              ))}
+            </p>
+          )
+        }
+      </div>
+
+      {
+        data.facts.length > 0 && (
+          <aside class="glance rise" style="--i: 3" aria-label="At a glance">
+            <p class="label">At a glance</p>
+            <dl>
+              {data.role && (
+                <div>
+                  <dt>Role</dt>
+                  <dd>{data.role}</dd>
+                </div>
+              )}
+              {data.facts.map((f) => (
+                <div>
+                  <dt>{f.label}</dt>
+                  <dd>{f.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </aside>
+        )
+      }
+    </header>
+
+    <div class="wrap body">
+      <div class="prose">
+        <Content components={{ Figure, Note }} />
+      </div>
+    </div>
+  </article>
+
+  {
+    count > 1 && (
+      <nav class="wrap next" aria-label="More work">
+        <a href={`/work/${next.id}/`} class="next__link">
+          <span class="label">Next case study</span>
+          <span class="next__title">
+            {next.data.title}
+            <span class="icon-arrow" aria-hidden="true" />
+          </span>
+          <span class="small">{next.data.summary}</span>
+        </a>
+        <p class="next__all">
+          <a class="arrow" href="/work/">All work</a>
+          <a class="arrow" href={`mailto:${site.email}?subject=${encodeURIComponent(`About “${data.title}”`)}`}>
+            Ask me about this
+          </a>
+        </p>
+      </nav>
+    )
+  }
+</Base>
+
+<style>
+  /* Reading progress: a scroll-driven animation, so no script. */
+  .progress {
+    display: none;
+  }
+  @supports (animation-timeline: scroll()) {
+    .progress {
+      display: block;
+      position: fixed;
+      inset: 0 0 auto 0;
+      height: 3px;
+      z-index: 60;
+      background: var(--mark-fill);
+      transform-origin: 0 50%;
+      animation: progress linear both;
+      animation-timeline: scroll(root block);
+    }
+    @keyframes progress {
+      from {
+        scale: 0 1;
+      }
+      to {
+        scale: 1 1;
+      }
+    }
+  }
+
+  .head {
+    display: grid;
+    gap: 2.5rem clamp(2rem, 5vw, 4rem);
+    padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(2.5rem, 6vw, 4rem);
+    border-bottom: 1px solid var(--rule);
+  }
+  @media (min-width: 60rem) {
+    .head {
+      grid-template-columns: minmax(0, 1fr) 19rem;
+      align-items: end;
+    }
+  }
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.1rem 0.5rem;
+    color: var(--ink-3);
+  }
+  .crumbs a {
+    color: var(--ink-2);
+    font-weight: 600;
+  }
+  h1 {
+    margin-top: 1rem;
+    font-size: var(--step-4);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+    max-width: 16ch;
+    width: fit-content;
+  }
+  .lede {
+    margin-top: 1.5rem;
+    max-width: 38rem;
+  }
+  .head__links {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.75rem;
+  }
+
+  .glance {
+    font-family: var(--sans);
+    padding-top: 1rem;
+    border-top: 2px solid var(--ink);
+  }
+  .glance dl {
+    margin-top: 0.5rem;
+  }
+  .glance dl > div {
+    padding-block: 0.55rem;
+    border-top: 1px solid var(--rule);
+  }
+  .glance dt {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ink-3);
+  }
+  .glance dd {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+
+  .body {
+    padding-block: clamp(2.5rem, 6vw, 4.5rem) 0;
+  }
+  /* Three large scores side by side. */
+  .prose :global(.scores) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    font-family: var(--sans);
+  }
+  .prose :global(.scores > div) {
+    padding: 1.5rem;
+    background: var(--paper-2);
+  }
+  .prose :global(.scores .num) {
+    font-family: var(--display);
+    font-size: var(--step-4);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+  .prose :global(.scores > div:last-child .num) {
+    color: var(--mark);
+  }
+  .prose :global(.scores p) {
+    margin-top: 0.4rem;
+    font-size: var(--step--1);
+    color: var(--ink-3);
+  }
+  .prose :global(.rhythm) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0;
+    font-family: var(--sans);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .prose :global(.rhythm span) {
+    display: inline-flex;
+    align-items: center;
+  }
+  .prose :global(.rhythm span + span::before) {
+    content: '';
+    width: 1.75rem;
+    height: 1px;
+    margin-inline: 0.6rem;
+    background: var(--mark-fill);
+  }
+  .prose :global(.rhythm span:nth-child(2)),
+  .prose :global(.rhythm span:nth-child(4)) {
+    color: var(--mark);
+  }
+
+  .next {
+    margin-top: var(--section);
+    padding-top: 2rem;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    gap: 1.5rem 3rem;
+  }
+  @media (min-width: 52rem) {
+    .next {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+    }
+  }
+  .next__link {
+    display: grid;
+    gap: 0.35rem;
+    text-decoration: none;
+    max-width: 40rem;
+  }
+  .next__title {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: var(--step-3);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    transition: color 0.2s;
+  }
+  .next__title .icon-arrow {
+    width: 0.5em;
+    height: 0.5em;
+    margin-left: 0.25em;
+    color: var(--mark-fill);
+  }
+  .next__link:hover .next__title {
+    color: var(--mark);
+  }
+  .next__all {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.75rem;
+  }
+</style>

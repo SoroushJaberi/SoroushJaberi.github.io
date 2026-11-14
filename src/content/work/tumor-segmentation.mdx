@@ -1,0 +1,75 @@
+---
+title: Tumor segmentation in CT
+summary: Two PyTorch U-Net pipelines that segment liver and lung tumors in CT scans from the Medical Segmentation Decathlon.
+finding: A 3D U-Net for liver and tumor, and a 2D U-Net for lung tumors trained with oversampling against extreme class imbalance, reaching a validation Dice of 0.80 on lung.
+kind: engineering
+period: 2022 – 2023
+year: 2023
+tags: [Medical imaging, Segmentation, U-Net, PyTorch]
+glyph: unet
+stats:
+  - value: '0.80'
+    label: validation Dice, lung tumors
+  - value: 3D + 2D
+    label: U-Nets for liver and lung
+featured: true
+order: 3
+links:
+  - label: Liver model
+    href: https://github.com/SoroushJaberi/Liver-Tumor-Segmentation-Using-PyTorch-DeepLearning
+  - label: Lung model
+    href: https://github.com/SoroushJaberi/Lung-Tumor-Segmentation-Using-PyTorch-DeepLearning
+facts:
+  - label: Data
+    value: Medical Segmentation Decathlon, CT volumes
+  - label: Liver
+    value: 3D U-Net, three output classes; 105 subjects for training, 13 for testing
+  - label: Lung
+    value: 2D U-Net on slices, with weighted oversampling of tumor slices; validation Dice 0.80
+  - label: Stack
+    value: PyTorch, trained on a single GTX 1050 Ti
+---
+
+import UNetDiagram from '@/components/figures/UNetDiagram.astro';
+
+## The problem
+
+Outlining a tumor by hand on every slice of a CT scan is slow, and the thing you are looking for is tiny. In a lung
+scan most voxels are not tumor, so a model can reach a very low loss by predicting “nothing” everywhere. Getting a
+segmentation model to learn the small region that matters is mostly a problem of imbalance.
+
+## Two pipelines
+
+Both models are U-Nets: an encoder that shrinks the image while widening the features, a decoder that restores the
+resolution, and skip connections that carry detail across.
+
+<Figure
+  n={1}
+  caption="A U-Net. Bar height stands for spatial size and bar width for the number of filters. Skip connections pass fine detail from each encoder stage to the decoder stage of the same size."
+>
+  <UNetDiagram />
+</Figure>
+
+**Liver.** The liver model works on whole volumes. It takes the 2D U-Net and makes it three-dimensional: 3D
+convolutions and pooling, trilinear upsampling, and three output channels for background, liver and tumor. The
+original Decathlon set is over 26 GB, so the scans were resampled to 256 × 256 × Z, which brings it to about 2.5 GB.
+105 subjects were used for training and 13 for testing.
+
+<Note label="Why oversample">
+  Typically there is one weight per class. Here that means one weight for slices without a tumor and one for slices
+  with a tumor, assigned to every sample in the dataset.
+</Note>
+
+**Lung.** Lung tumors are often very small, so the lung model is trained slice by slice with oversampling. A
+`WeightedRandomSampler` draws slices that contain a tumor more often, so that the network cannot settle on the
+trivial solution of outputting zero for every voxel. The lung model reaches a Dice score of 0.80 on validation data.
+
+Both were trained on a single consumer GPU, a GTX 1050 Ti. The notebooks are public; the lung repository also
+includes rendered result pages.
+
+## What it led to
+
+These projects are the practical foundation for a manuscript I am writing with Dr. Amineh Amini, *A Systematic
+Mapping Study on Deep Learning-Based Biomedical Image Segmentation Techniques*. It surveys architectures across biomedical imaging modalities and supervised,
+semi-supervised and unsupervised methods, with attention to evaluation metrics and clinical relevance, and sets out
+the open problems in 3D architectures and standardized evaluation protocols. It is in preparation.

@@ -1,0 +1,119 @@
+---
+import Base from '@/layouts/Base.astro';
+import CopyEmail from '@/components/CopyEmail.astro';
+import Paths from '@/components/Paths.astro';
+import { site, profiles } from '@/data/site';
+
+const schema = [
+  {
+    '@type': 'ContactPage',
+    name: 'Contact',
+    url: new URL('/contact/', Astro.site).href,
+    mainEntity: { '@id': new URL('/#person', Astro.site).href },
+  },
+];
+---
+
+<Base
+  title="Contact"
+  description="Contact Soroush Jaberi about PhD positions, AI and ML roles, projects, or research collaboration. Email, GitHub, LinkedIn and YouTube."
+  image="/og/contact.png"
+  schema={schema}
+  compactFooter
+>
+  <header class="wrap page-head lit">
+    <p class="label label--tick rise">Contact</p>
+    <h1 class="rise" style="--i: 1">Write <span class="accent">to me.</span></h1>
+    <p class="lede rise" style="--i: 2">
+      Email is the best way to reach me. Say who you are and what you have in mind. A paragraph is enough.
+    </p>
+    <div class="reach rise" style="--i: 3">
+      <CopyEmail />
+      <p class="small">
+        {site.location} · {site.timezone}
+      </p>
+    </div>
+  </header>
+
+  <section class="section" aria-labelledby="who-title">
+    <div class="wrap rail">
+      <header class="rail__label">
+        <h2 id="who-title" class="label label--ink">Who I would like to hear from</h2>
+        <p class="small">Each link opens an email with the subject filled in, or takes you to what you need first.</p>
+      </header>
+      <Paths level="h3" />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="else-title">
+    <div class="wrap rail">
+      <header class="rail__label">
+        <h2 id="else-title" class="label label--ink">Elsewhere</h2>
+      </header>
+      <ul class="profiles" role="list">
+        {
+          profiles.map((p, i) => (
+            <li data-reveal style={`--i: ${i}`}>
+              <a href={p.href} rel="me noopener">
+                <span class="profiles__name">{p.label}</span>
+                <span class="profiles__handle small">{p.handle}</span>
+                <span class="icon-arrow icon-arrow--out" aria-hidden="true" />
+              </a>
+            </li>
+          ))
+        }
+        <li data-reveal style="--i: 4">
+          <a href={site.cv}>
+            <span class="profiles__name">CV</span>
+            <span class="profiles__handle small">PDF, three pages</span>
+            <span class="icon-arrow icon-arrow--down" aria-hidden="true"></span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .reach {
+    margin-top: 2.25rem;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .reach :global(.copy-email__address) {
+    font-size: var(--step-2);
+    font-family: var(--display);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    text-decoration-color: var(--mark-fill);
+    text-decoration-thickness: 2px;
+  }
+  .profiles {
+    border-bottom: 1px solid var(--rule);
+  }
+  .profiles a {
+    display: grid;
+    grid-template-columns: minmax(6rem, 10rem) minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: 1rem;
+    border-top: 1px solid var(--rule);
+    text-decoration: none;
+  }
+  .profiles__name {
+    font-size: var(--step-1);
+    font-weight: 500;
+    letter-spacing: -0.012em;
+  }
+  .profiles__handle {
+    color: var(--ink-3);
+    overflow-wrap: anywhere;
+  }
+  .profiles .icon-arrow {
+    color: var(--ink-3);
+    align-self: center;
+  }
+  .profiles a:hover .icon-arrow {
+    color: var(--blue);
+  }
+</style>

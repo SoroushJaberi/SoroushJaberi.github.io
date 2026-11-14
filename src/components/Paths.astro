@@ -1,0 +1,147 @@
+---
+/**
+ * Four ways in, one for each kind of visitor. Each names who it is for, says
+ * what is relevant to them, and gives the links they need next.
+ */
+import { site, mailto } from '@/data/site';
+import Icon, { type IconName } from './Icon.astro';
+
+interface Props {
+  /** Heading level of each path's title. */
+  level?: 'h2' | 'h3';
+}
+const { level: Title = 'h3' } = Astro.props;
+
+const paths: { id: string; icon: IconName; who: string; title: string; text: string; links: { label: string; href: string }[] }[] = [
+  {
+    id: 'phd',
+    icon: 'cap',
+    who: 'Prospective PhD supervisors',
+    title: 'Considering me as a PhD student',
+    text: 'I am applying for PhD positions in AI. My research record, interests, thesis and grades are on one page, and the CV has the rest.',
+    links: [
+      { label: 'Research and publications', href: '/research/' },
+      { label: 'CV', href: site.cv },
+    ],
+  },
+  {
+    id: 'hiring',
+    icon: 'briefcase',
+    who: 'Employers',
+    title: 'Hiring for an AI or ML role',
+    text: 'I build and evaluate machine learning systems end to end: data, models, retrieval, and the measurement that says whether they work. Open to AI, ML and data science roles.',
+    links: [
+      { label: 'Selected work', href: '/work/' },
+      { label: 'Skills and teaching', href: '/about/#tools' },
+    ],
+  },
+  {
+    id: 'project',
+    icon: 'cube',
+    who: 'Clients',
+    title: 'Starting a project',
+    text: 'Open to selected projects where a model has to be built, checked or explained: retrieval and LLM applications, NLP (including Persian), computer-vision prototypes, and evaluation.',
+    links: [{ label: 'Describe the project', href: mailto('Project inquiry') }],
+  },
+  {
+    id: 'research',
+    icon: 'flask',
+    who: 'Researchers',
+    title: 'Collaborating on research',
+    text: 'I work on how language models use retrieved evidence, on Persian NLP, and on medical image segmentation. My latest study is public with its code and every model output.',
+    links: [
+      { label: 'Current questions', href: '/research/#questions' },
+      { label: 'Propose something', href: mailto('Research collaboration') },
+    ],
+  },
+];
+---
+
+<ul class="paths" role="list">
+  {
+    paths.map((p, i) => (
+      <li class="path card has-icon" id={`for-${p.id}`} data-reveal data-tilt="4" style={`--i: ${i}`}>
+        <span class="path__icon">
+          <Icon name={p.icon} size={26} />
+        </span>
+        <p class="label">{p.who}</p>
+        <Title class="path__title">{p.title}</Title>
+        <p class="path__text">{p.text}</p>
+        <p class="path__links">
+          {p.links.map((l) => (
+            <a class="arrow" href={l.href}>
+              {l.label}
+            </a>
+          ))}
+        </p>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .paths {
+    display: grid;
+    gap: clamp(0.9rem, 2vw, 1.25rem);
+  }
+  @media (min-width: 46rem) {
+    .paths {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .path {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    overflow: hidden;
+    transform: perspective(60rem) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition:
+      transform 0.5s var(--ease-out),
+      border-color 0.3s;
+  }
+  .path::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(20rem 14rem at var(--gx, 100%) var(--gy, 0%), var(--glow-a), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  .path:hover {
+    border-color: var(--rule-strong);
+  }
+  .path:hover::before {
+    opacity: 1;
+  }
+  .path__icon {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    margin-bottom: 1.5rem;
+    border-radius: 50%;
+    background: var(--mark-fill);
+    color: var(--on-mark);
+  }
+  .path__title {
+    margin-top: 0.6rem;
+    font-size: var(--step-2);
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+  }
+  .path__text {
+    margin-top: 0.8rem;
+    color: var(--ink-2);
+    max-width: 32rem;
+  }
+  .path__links {
+    position: relative;
+    margin-top: auto;
+    padding-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+  }
+</style>

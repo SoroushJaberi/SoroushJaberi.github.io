@@ -1,0 +1,97 @@
+---
+/**
+ * Night / day switch. Night is the default; the visitor's choice is kept in
+ * localStorage and applied before first paint by the script in Base.astro.
+ */
+---
+
+<button class="theme-toggle" type="button" aria-label="Switch between night and day theme" title="Night / day" data-theme-toggle>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+    <circle class="disc" cx="12" cy="12" r="5" fill="currentColor"></circle>
+    <g class="rays" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.55 1.55M17.15 17.15l1.55 1.55M5.3 18.7l1.55-1.55M17.15 6.85l1.55-1.55"></path>
+    </g>
+    <circle class="bite" cx="16.5" cy="8.5" r="5"></circle>
+  </svg>
+</button>
+
+<script>
+  const root = document.documentElement;
+  const isLight = () => root.dataset.theme === 'light';
+
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]')) {
+    button.setAttribute('aria-pressed', String(isLight()));
+    button.addEventListener('click', () => {
+      const next = isLight() ? 'dark' : 'light';
+      if (next === 'light') root.dataset.theme = 'light';
+      else delete root.dataset.theme;
+      for (const b of document.querySelectorAll('[data-theme-toggle]')) b.setAttribute('aria-pressed', String(next === 'light'));
+      window.dispatchEvent(new CustomEvent('themechange', { detail: next }));
+      try {
+        localStorage.setItem('theme', next);
+      } catch {
+        /* private mode: the choice simply lasts for this page */
+      }
+    });
+  }
+</script>
+
+<style>
+  .theme-toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    color: var(--ink-2);
+    transition:
+      color 0.2s,
+      background-color 0.2s;
+  }
+  .theme-toggle:hover {
+    color: var(--ink);
+    background: var(--paper-3);
+  }
+  svg {
+    overflow: visible;
+  }
+  .disc,
+  .rays,
+  .bite {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      scale 0.5s var(--ease-spring),
+      rotate 0.5s var(--ease),
+      opacity 0.3s,
+      translate 0.5s var(--ease);
+  }
+  /* Night (default): a crescent. The "bite" circle carves the disc. */
+  .bite {
+    fill: var(--paper);
+  }
+  .theme-toggle:hover .bite {
+    fill: var(--paper-3);
+  }
+  .rays {
+    scale: 0.4;
+    rotate: 45deg;
+    opacity: 0;
+  }
+  .disc {
+    scale: 1.5;
+  }
+  /* Day: the bite slides away and the rays come out. */
+  :global([data-theme='light']) .bite {
+    opacity: 0;
+    translate: 6px -6px;
+  }
+  :global([data-theme='light']) .rays {
+    scale: 1;
+    rotate: 0deg;
+    opacity: 1;
+  }
+  :global([data-theme='light']) .disc {
+    scale: 1;
+  }
+</style>

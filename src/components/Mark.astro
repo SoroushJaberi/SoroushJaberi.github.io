@@ -1,0 +1,24 @@
+---
+/**
+ * The site's mark: a point estimate with its interval — a dot on an error bar.
+ * It says "measured, with the uncertainty shown".
+ */
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 22, class: className } = Astro.props;
+---
+
+<svg
+  class={className}
+  width={size}
+  height={size}
+  viewBox="0 0 32 32"
+  fill="none"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d="M4 16h24M4 10.5v11M28 10.5v11" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+  <circle cx="18.5" cy="16" r="5" fill="var(--mark-fill)" stroke="var(--paper)" stroke-width="2"></circle>
+</svg>

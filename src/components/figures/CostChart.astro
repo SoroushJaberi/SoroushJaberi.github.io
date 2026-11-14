@@ -1,0 +1,153 @@
+---
+/** GPU energy per 1,000 answers, thinking off vs on, for each model size. */
+import { sizes, getRun } from '@/data/knowledge-conflict';
+
+const rows = sizes.map((size) => {
+  const off = getRun(size, false);
+  const on = getRun(size, true);
+  return { size, off, on, ratio: on.energyWh / off.energyWh };
+});
+const max = 20;
+const label =
+  'GPU energy per 1,000 answers in watt-hours. ' +
+  rows
+    .map((r) => `${r.size}: ${r.off.energyWh} thinking off, ${r.on.energyWh} thinking on, ${r.ratio.toFixed(1)} times more`)
+    .join('; ') +
+  '.';
+---
+
+<div class="cost" role="img" aria-label={label} data-draw>
+  {
+    rows.map((r, i) => (
+      <div class="cost__row" style={`--i: ${i}`} aria-hidden="true">
+        <p class="cost__name">
+          <strong class="num">{r.size}</strong>
+          <span class="num">
+            {r.off.tokens} → {r.on.tokens} tokens
+          </span>
+        </p>
+        <div class="cost__bars">
+          <div class="cost__bar cost__bar--off" style={`--w: ${(r.off.energyWh / max) * 100}`}>
+            <span class="num">{r.off.energyWh.toFixed(1)}</span>
+          </div>
+          <div class="cost__bar cost__bar--on" style={`--w: ${(r.on.energyWh / max) * 100}`}>
+            <span class="num">{r.on.energyWh.toFixed(1)} Wh</span>
+          </div>
+        </div>
+        <p class="cost__ratio num">×{r.ratio.toFixed(r.ratio < 10 ? 1 : 0)}</p>
+      </div>
+    ))
+  }
+  <p class="cost__legend" aria-hidden="true">
+    <span><i class="cost__key cost__key--off"></i>thinking off</span>
+    <span><i class="cost__key cost__key--on"></i>thinking on</span>
+    <span>left: generated tokens per answer</span>
+  </p>
+</div>
+
+<style>
+  .cost {
+    font-family: var(--sans);
+  }
+  .cost__row {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr) 2.75rem;
+    align-items: center;
+    gap: 0 1rem;
+    padding-block: 0.65rem;
+    border-top: 1px solid var(--rule);
+  }
+  .cost__name {
+    display: grid;
+    line-height: 1.3;
+  }
+  .cost__name strong {
+    font-size: 0.9375rem;
+  }
+  .cost__name span {
+    font-size: 0.75rem;
+    color: var(--ink-3);
+  }
+  .cost__bars {
+    display: grid;
+    gap: 3px;
+  }
+  .cost__bar {
+    position: relative;
+    height: 0.95rem;
+    width: calc(var(--w) * 1%);
+    min-width: 2px;
+    border-radius: 0 2px 2px 0;
+    transform-origin: left;
+    transition: scale 0.9s var(--ease) calc(var(--i) * 90ms);
+  }
+  .cost__bar--off {
+    background: var(--neutral-fill);
+  }
+  .cost__bar--on {
+    background: var(--mark-fill);
+    transition-delay: calc(var(--i) * 90ms + 120ms);
+  }
+  .cost__bar span {
+    position: absolute;
+    left: calc(100% + 0.4rem);
+    top: 50%;
+    translate: 0 -50%;
+    font-size: 0.75rem;
+    color: var(--ink-2);
+    white-space: nowrap;
+    transition: opacity 0.4s calc(var(--i) * 90ms + 0.6s);
+  }
+  /* Long bars carry their label inside, so it never runs off the plot. */
+  .cost__bar--on[style*='--w: 9'] span,
+  .cost__bar--on[style*='--w: 6'] span {
+    left: auto;
+    right: 0.4rem;
+    color: var(--on-mark);
+    font-weight: 700;
+  }
+  .cost__ratio {
+    justify-self: end;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--mark);
+  }
+  .cost__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 1.1rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--rule-strong);
+    font-size: 0.75rem;
+    color: var(--ink-3);
+  }
+  .cost__legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .cost__key {
+    width: 0.8rem;
+    height: 0.55rem;
+    border-radius: 1px;
+    background: var(--neutral-fill);
+  }
+  .cost__key--on {
+    background: var(--mark-fill);
+  }
+
+  .cost.armed:not(.is-in) .cost__bar {
+    scale: 0 1;
+    transition: none;
+  }
+  .cost.armed:not(.is-in) .cost__bar span {
+    opacity: 0;
+    transition: none;
+  }
+  @media (max-width: 30rem) {
+    .cost__row {
+      grid-template-columns: 5.25rem minmax(0, 1fr) 2.5rem;
+      gap: 0 0.6rem;
+    }
+  }
+</style>

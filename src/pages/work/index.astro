@@ -1,0 +1,68 @@
+---
+import Base from '@/layouts/Base.astro';
+import WorkList from '@/components/WorkList.astro';
+import { links } from '@/data/site';
+import { getWork } from '@/lib/content';
+
+const work = await getWork();
+const studies = work.filter((entry) => entry.data.page);
+const more = work.filter((entry) => !entry.data.page);
+
+const schema = [
+  {
+    '@type': 'CollectionPage',
+    name: 'Work',
+    url: new URL('/work/', Astro.site).href,
+    hasPart: studies.map((entry) => ({
+      '@type': 'CreativeWork',
+      name: entry.data.title,
+      url: new URL(`/work/${entry.id}/`, Astro.site).href,
+    })),
+  },
+];
+---
+
+<Base
+  title="Work"
+  description="Research studies, machine learning systems and teaching by Soroush Jaberi: language models and retrieval, Persian NLP, medical image segmentation, and an open AI course."
+  image="/og/work.png"
+  schema={schema}
+>
+  <header class="wrap page-head lit">
+    <p class="label label--tick rise">Work</p>
+    <h1 class="rise" style="--i: 1">What I have built, measured <span class="accent">and taught.</span></h1>
+    <p class="lede rise" style="--i: 2">
+      Each case study says what the question was, what I did, and what came out, with the code where it is public.
+    </p>
+  </header>
+
+  <section class="section" aria-labelledby="studies-title">
+    <div class="wrap rail">
+      <header class="rail__label">
+        <h2 id="studies-title" class="label label--ink">Case studies</h2>
+      </header>
+      <WorkList entries={studies} level="h3" />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="more-title">
+    <div class="wrap rail">
+      <header class="rail__label">
+        <h2 id="more-title" class="label label--ink">More projects</h2>
+        <p class="small">Smaller builds. Each links to its repository.</p>
+      </header>
+      <div>
+        <WorkList entries={more} variant="compact" level="h3" />
+        <p class="more">
+          <a class="arrow" href={links.github}>Everything on GitHub</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .more {
+    margin-top: 1.5rem;
+  }
+</style>

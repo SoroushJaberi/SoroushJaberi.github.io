@@ -1,16 +1,37 @@
 name: Deploy to GitHub Pages
 
+# Two ways this runs:
+#
+#  1. Every push to main builds the current site and puts it live.
+#
+#  2. Manually (Actions → "Deploy to GitHub Pages" → Run workflow), with a
+#     choice of which version to put live. That is the switch between the
+#     current site and the archived ones. Nothing is deleted either way:
+#     each version stays on its own branch.
+#
+# To add a version to the list later, add its name under `options` and its
+# branch to the `case` in the "Choose the version" step.
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to put live'
+        type: choice
+        default: current
+        options:
+          - current
+          - v2-nextjs
+          - v1-legacy
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow one deployment at a time; never cancel a run that is already publishing.
+# One deployment at a time; never cancel one that is already publishing.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -19,30 +40,66 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Choose the version
+        id: pick
+        env:
+          VERSION: ${{ inputs.version || 'current' }}
+        run: |
+          case "$VERSION" in
+            current)   echo "ref=main"           >> "$GITHUB_OUTPUT" ;;  # v3, Astro (2026-11)
+            v2-nextjs) echo "ref=site-v2-nextjs" >> "$GITHUB_OUTPUT" ;;  # v2, Next.js (2026-08)
+            v1-legacy) echo "ref=legacy-site"    >> "$GITHUB_OUTPUT" ;;  # v1, hand-written HTML
+            *) echo "Unknown version: $VERSION" >&2; exit 1 ;;
+          esac
+          echo "Deploying version: $VERSION"
+
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.pick.outputs.ref }}
+
+      # Each version knows how to build itself; this works out which kind it is.
+      - name: Detect the kind of site
+        id: kind
+        run: |
+          if ls astro.config.* >/dev/null 2>&1; then
+            echo "kind=astro" >> "$GITHUB_OUTPUT"; echo "node=24" >> "$GITHUB_OUTPUT"; echo "dir=dist" >> "$GITHUB_OUTPUT"
+          elif ls next.config.* >/dev/null 2>&1; then
+            echo "kind=next"  >> "$GITHUB_OUTPUT"; echo "node=20" >> "$GITHUB_OUTPUT"; echo "dir=out"  >> "$GITHUB_OUTPUT"
+          else
+            echo "kind=static" >> "$GITHUB_OUTPUT"; echo "dir=." >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        if: steps.kind.outputs.kind != 'static'
+        uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: ${{ steps.kind.outputs.node }}
           cache: npm
 
       - name: Install dependencies
+        if: steps.kind.outputs.kind != 'static'
         run: npm ci
 
-      - name: Build static export
+      - name: Type-check
+        if: steps.kind.outputs.kind == 'astro'
+        run: npm run check
+
+      - name: Build
+        if: steps.kind.outputs.kind != 'static'
         run: npm run build
 
+      - name: Check internal links
+        if: steps.kind.outputs.kind == 'astro'
+        run: npm run check:links
+
       - name: Configure Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
+        uses: actions/configure-pages@v6
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
-          path: ./out
+          path: ${{ steps.kind.outputs.dir }}
 
   deploy:
     needs: build
@@ -53,4 +110,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

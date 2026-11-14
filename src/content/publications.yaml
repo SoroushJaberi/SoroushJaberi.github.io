@@ -1,0 +1,58 @@
+# Papers, manuscripts and openly published studies.
+# One entry per item. `status` is one of:
+#   published | preprint | under-review | in-preparation | independent-study
+# `work` links an entry to its case study in src/content/work/ (the file name
+# without extension). Lower `order` comes first.
+
+- id: knowledge-conflict
+  title: 'When the Document Is Wrong: Do LLMs Notice, and Does “Thinking” Help?'
+  authors: ['Soroush Jaberi']
+  venue: 'Independent research project. Code and all model outputs on GitHub'
+  status: independent-study
+  year: 2026
+  summary: >-
+    A reproducible measurement study of what open language models do when a
+    retrieved document contradicts a fact they know, with reasoning switched
+    on and off, and what that reasoning costs in tokens, GPU time and energy.
+  code: https://github.com/SoroushJaberi/rag-knowledge-conflict
+  work: knowledge-conflict
+  order: 3
+  bibtex: |-
+    @misc{jaberi2026conflict,
+      author       = {Soroush Jaberi},
+      title        = {When the Document Is Wrong: Knowledge Conflicts and the Cost of Thinking in Qwen3},
+      year         = {2026},
+      howpublished = {\url{https://github.com/SoroushJaberi/rag-knowledge-conflict}}
+    }
+
+- id: hvb-persian
+  title: 'HVB-Persian: Hybrid VADER-ParsBERT for Persian Sentiment Classification of Product Reviews'
+  authors: ['Zeinab Alimardani', 'Soroush Jaberi', 'Amineh Amini']
+  venue: 'SSRN'
+  status: preprint
+  year: 2025
+  summary: >-
+    A hybrid sentiment classifier for Persian product reviews that fuses a
+    fine-tuned ParsBERT model with VADER lexicon scores, using weights tuned
+    on validation data. F1 of 0.88, 0.94 and 0.95 on Digikala, Snappfood and
+    the combined dataset of about 84,000 reviews. I developed the method,
+    prepared and merged the datasets, implemented the pipeline and ran the
+    experiments.
+  doi: 10.2139/ssrn.5371417
+  url: https://doi.org/10.2139/ssrn.5371417
+  work: hvb-persian
+  order: 1
+
+- id: biomedical-segmentation-mapping
+  title: 'A Systematic Mapping Study on Deep Learning-Based Biomedical Image Segmentation Techniques'
+  authors: ['Soroush Jaberi', 'Amineh Amini']
+  venue: 'Manuscript'
+  status: in-preparation
+  year: 2026
+  summary: >-
+    A systematic survey of deep learning architectures across biomedical
+    imaging modalities, covering supervised, semi-supervised and unsupervised
+    methods, evaluation metrics, clinical relevance and the open problems in
+    3D architectures and standardised evaluation.
+  work: tumor-segmentation
+  order: 2

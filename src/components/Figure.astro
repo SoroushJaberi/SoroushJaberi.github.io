@@ -1,0 +1,64 @@
+---
+/**
+ * A numbered figure with a caption, like in a paper. Use it in .mdx:
+ *
+ *   <Figure n={2} caption="What the bars show." source="results/summary.md" href="https://…">
+ *     <SomeChart />
+ *   </Figure>
+ */
+interface Props {
+  n?: number | string;
+  caption: string;
+  /** Where the data comes from. */
+  source?: string;
+  href?: string;
+  /** Let the figure run wider than the text column. Default true. */
+  wide?: boolean;
+  id?: string;
+}
+
+const { n, caption, source, href, wide = true, id } = Astro.props;
+---
+
+<figure class:list={['figure', wide && 'wide']} id={id ?? (n ? `fig-${n}` : undefined)} data-reveal>
+  <div class="figure__body">
+    <slot />
+  </div>
+  <figcaption class="figure__caption">
+    {n && <strong class="figure__n">Fig. {n}.</strong>}
+    <span set:html={caption} />
+    {
+      source && (
+        <span class="figure__source">
+          Source: {href ? <a href={href}>{source}</a> : source}.
+        </span>
+      )
+    }
+  </figcaption>
+</figure>
+
+<style>
+  .figure {
+    margin-block: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 2px solid var(--ink);
+  }
+  .figure__caption {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--rule);
+    max-width: 44rem;
+    font-family: var(--sans);
+    font-size: var(--step--1);
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .figure__n {
+    color: var(--ink);
+    margin-right: 0.35em;
+  }
+  .figure__source {
+    color: var(--ink-3);
+    margin-left: 0.35em;
+  }
+</style>

@@ -1,0 +1,528 @@
+---
+/**
+ * The opening stage of the home page. See src/scripts/stage.ts for the
+ * WebGL side. This file is the content and the two layouts:
+ *
+ *  - static (default): three ordinary sections, a real photograph, and the
+ *    results drawn as CSS bars. This is what no-JS, no-WebGL and
+ *    reduced-motion visitors get, and what search engines read.
+ *  - live (.is-live, set by the script): the stage is pinned, the scenes are
+ *    overlaid, and the canvas draws the portrait and the data.
+ */
+import { getImage, Picture } from 'astro:assets';
+import portrait from '@/assets/portraits/hero-points.jpg';
+import { site } from '@/data/site';
+import { runs, conditions, outcomeLabels, overwriteRange, type Outcome } from '@/data/knowledge-conflict';
+
+const sample = await getImage({ src: portrait, width: 160, height: 200, format: 'webp', quality: 82 });
+
+// Answers per outcome for each condition, summed over the eight runs.
+const keys: (keyof Outcome)[] = ['truth', 'planted', 'idk', 'other'];
+const counts = conditions.map((condition) => {
+  const sums = [0, 0, 0, 0];
+  for (const run of runs) {
+    const raw = keys.map((k) => Math.round(run.outcomes[condition.id][k] * 10));
+    // Rounding can leave a run one short or one over; each run is exactly 1,000 answers.
+    raw[3] = (raw[3] ?? 0) + 1000 - raw.reduce((a, b) => a + b, 0);
+    raw.forEach((n, i) => {
+      sums[i] = (sums[i] ?? 0) + n;
+    });
+  }
+  return sums;
+});
+const total = counts.flat().reduce((a, b) => a + b, 0);
+const share = (c: number, k: number) => Math.round(((counts[c]?.[k] ?? 0) / 8000) * 100);
+
+// Which outcome each column's headline number reports.
+const headline: [number, string][] = [
+  [0, 'answered correctly from memory'],
+  [0, 'answered correctly'],
+  [1, 'repeated the planted answer'],
+  [2, 'said “I don’t know”'],
+];
+const columns = conditions.map((condition, c) => {
+  const row = counts[c] ?? [0, 0, 0, 0];
+  const pct = row.map((n) => n / 80);
+  const [key, what] = headline[c] ?? [0, ''];
+  return {
+    label: condition.label,
+    stat: share(c, key) + '%',
+    what,
+    bands: '--truth: ' + pct[0] + '; --planted: ' + pct[1] + '; --idk: ' + pct[2] + ';',
+    alt: condition.label + ': ' + keys.map((k, j) => outcomeLabels[k] + ' ' + share(c, j) + '%').join(', '),
+  };
+});
+const lo = Math.floor(overwriteRange.min);
+const hi = Math.ceil(overwriteRange.max);
+const fmt = (n: number) => n.toLocaleString('en-US');
+---
+
+<section class="stage" data-stage data-theme="dark" data-sample={sample.src} data-counts={JSON.stringify(counts)}>
+  <div class="stage__pin" data-stage-pin>
+    <canvas class="stage__canvas" data-stage-canvas aria-hidden="true"></canvas>
+
+    <!-- Scene 1: who -->
+    <div class="scene scene--intro" data-scene data-at="0">
+      <div class="wrap scene__grid">
+        <div class="intro__text">
+          <p class="label label--tick rise">{site.role}</p>
+          <h1 class="intro__name rise" style="--i: 1">
+            <span>Soroush</span> <span>Jaberi</span>
+          </h1>
+          <p class="intro__tag rise" style="--i: 2">
+            Machine learning that holds up when you <span class="accent">check it.</span>
+          </p>
+          <p class="intro__lede rise" style="--i: 3">
+            I study how language models handle evidence, build NLP and computer-vision systems, and teach AI in the
+            open.
+          </p>
+          <p class="intro__cta rise" style="--i: 4">
+            <a class="btn" href="#work">See the work</a>
+            <a class="btn btn--quiet" href="/research/">Research</a>
+          </p>
+        </div>
+
+        <figure class="intro__figure">
+          <div class="intro__portrait" data-stage-portrait>
+            <Picture
+              src={portrait}
+              alt="Soroush Jaberi, seated at a table by a window, in a shirt, tie and quarter-zip sweater"
+              formats={['avif', 'webp']}
+              widths={[400, 640, 800]}
+              sizes="(min-width: 64rem) 28rem, 70vw"
+              loading="eager"
+              fetchpriority="high"
+              quality={72}
+            />
+          </div>
+          <figcaption class="intro__caption">
+            <span class="intro__live">
+              <span class="num">{fmt(total)}</span> points draw this portrait. Scroll, and each becomes one answer from my
+              latest study.
+            </span>
+            <span class="intro__still">{site.name}, {site.location}.</span>
+            <span class="intro__fa" lang="fa" dir="rtl">{site.nameFa}</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <!-- Scene 2: what the points are -->
+    <div class="scene scene--points" data-scene data-at="0.42">
+      <div class="wrap">
+        <div class="points__text">
+          <p class="label label--tick">The study</p>
+          <h2 class="points__title">Every point is <span class="accent">one answer.</span></h2>
+          <p class="points__lede">
+            I put 1,000 questions to four open language models, four ways each, with step-by-step reasoning off and on.
+            That is {fmt(total)} answers, and every one of them is public.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scene 3: what they show -->
+    <div class="scene scene--finding" data-scene data-at="1">
+      <div class="wrap scene__grid">
+        <div class="finding__text">
+          <p class="label label--tick">The finding</p>
+          <h2 class="finding__title">
+            Hand a model a document that contradicts what it knows, and it repeats the document
+            <mark class="num">{lo}–{hi}%</mark> of the time.
+          </h2>
+          <p class="finding__lede">
+            Measured on facts each model had answered correctly on its own. Larger models showed no clear improvement,
+            and letting a model “think” first cost 10–19× the GPU energy without making it resist.
+          </p>
+          <p class="intro__cta">
+            <a class="btn" href="/work/knowledge-conflict/">Read the study</a>
+            <a class="arrow" href="#work">All selected work</a>
+          </p>
+        </div>
+
+        <div class="finding__chart">
+          <ol class="columns" role="list">
+            {
+              columns.map((c) => (
+                <li>
+                  <div class="column" data-stage-column style={c.bands} role="img" aria-label={c.alt} />
+                  <p class="column__label">{c.label}</p>
+                  <p class="column__stat">
+                    <strong class="num">{c.stat}</strong> {c.what}
+                  </p>
+                </li>
+              ))
+            }
+          </ol>
+          <ul class="legend" role="list">
+            {
+              keys.map((k) => (
+                <li>
+                  <i class:list={['legend__dot', 'legend__dot--' + k]} />
+                  {outcomeLabels[k]}
+                </li>
+              ))
+            }
+            <li class="legend__note">All eight runs: Qwen3 at 1.7B–14B, reasoning off and on.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <p class="stage__cue" data-stage-cue aria-hidden="true"><span>Scroll</span><i></i></p>
+  </div>
+</section>
+
+<script>
+  import '@/scripts/stage';
+</script>
+
+<style>
+  .stage {
+    --hdr: 4.25rem;
+    position: relative;
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .stage__canvas,
+  .stage__cue {
+    display: none;
+  }
+
+  /* ---------- shared scene styling ---------- */
+  .scene__grid {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+  @media (min-width: 60rem) {
+    .scene__grid {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    }
+  }
+  .intro__name {
+    margin-top: 1.1rem;
+    font-size: min(var(--step-5), 18vh);
+    font-weight: 700;
+    line-height: 0.86;
+    letter-spacing: -0.055em;
+  }
+  .intro__name span {
+    display: block;
+  }
+  .intro__name span:last-child {
+    margin-left: 0.5em;
+  }
+  .intro__tag {
+    margin-top: clamp(1.25rem, 3vh, 2rem);
+    max-width: 22ch;
+    font-family: var(--display);
+    font-size: var(--step-2);
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+  }
+  .intro__lede,
+  .points__lede,
+  .finding__lede {
+    margin-top: 1rem;
+    max-width: 34rem;
+    color: var(--ink-2);
+  }
+  .intro__cta {
+    margin-top: clamp(1.25rem, 3vh, 2rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+  }
+
+  .intro__figure {
+    justify-self: center;
+    width: min(100%, 28rem);
+  }
+  .intro__portrait {
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .intro__portrait :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .intro__caption {
+    margin-top: 0.9rem;
+    font-size: var(--step--1);
+    line-height: 1.45;
+    color: var(--ink-3);
+    max-width: 24rem;
+  }
+  .intro__caption .num {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .intro__live,
+  .stage.is-live .intro__still {
+    display: none;
+  }
+  .stage.is-live .intro__live {
+    display: inline;
+  }
+  .intro__fa {
+    display: block;
+    margin-top: 0.3rem;
+    color: var(--ink-3);
+  }
+
+  .points__title {
+    margin-top: 1rem;
+    font-size: var(--step-4);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+    max-width: 11ch;
+  }
+  .finding__title {
+    margin-top: 1rem;
+    font-size: clamp(1.6rem, 1.1rem + 2.3vw, 3rem);
+    line-height: 1.06;
+    letter-spacing: -0.035em;
+  }
+  .finding__title mark {
+    font-family: var(--display);
+    color: var(--mark);
+    background: none;
+    white-space: nowrap;
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(0.5rem, 1.6vw, 1.5rem);
+  }
+  .column {
+    height: clamp(11rem, 44vh, 27rem);
+    border-radius: 3px;
+    /* Static rendering of the same data: bands from the bottom up. */
+    background: linear-gradient(
+      to top,
+      #8fadff 0 calc(var(--truth) * 1%),
+      #ff5c2b 0 calc((var(--truth) + var(--planted)) * 1%),
+      #99958c 0 calc((var(--truth) + var(--planted) + var(--idk)) * 1%),
+      #404045 0
+    );
+  }
+  .column__label {
+    margin-top: 0.75rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--rule-strong);
+    font-size: clamp(0.72rem, 0.6rem + 0.5vw, 0.9375rem);
+    font-weight: 700;
+    line-height: 1.2;
+    min-height: calc(2.4em + 0.6rem);
+  }
+  .column__stat {
+    margin-top: 0.25rem;
+    font-size: clamp(0.68rem, 0.6rem + 0.3vw, 0.8125rem);
+    line-height: 1.35;
+    color: var(--ink-3);
+  }
+  .column__stat strong {
+    display: block;
+    font-family: var(--display);
+    font-size: clamp(1.15rem, 0.9rem + 1.2vw, 1.9rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.1rem;
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--ink-2);
+  }
+  .legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .legend__dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+  }
+  .legend__dot--truth {
+    background: #8fadff;
+  }
+  .legend__dot--planted {
+    background: #ff5c2b;
+  }
+  .legend__dot--idk {
+    background: #99958c;
+  }
+  .legend__dot--other {
+    background: #404045;
+    outline: 1px solid var(--rule-strong);
+  }
+  .legend__note {
+    flex-basis: 100%;
+    color: var(--ink-3);
+  }
+
+  /* ---------- static layout: three ordinary sections ---------- */
+  .stage:not(.is-live) .stage__pin {
+    display: grid;
+    gap: var(--section);
+    padding-block: calc(var(--hdr) + clamp(2rem, 6vw, 4rem)) var(--section);
+  }
+  .stage:not(.is-live) .scene--points {
+    display: none;
+  }
+
+  /* ---------- live layout: pinned, overlaid ---------- */
+  .stage.is-live {
+    height: 420vh;
+  }
+  .stage.is-live .stage__pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+  }
+  .stage.is-live .stage__canvas {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .stage.is-live .scene {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: grid;
+    align-items: center;
+    padding-block: calc(var(--hdr) + 0.5rem) 2.5rem;
+    will-change: opacity, translate;
+  }
+  /* Later scenes start hidden; the script fades them in on scroll. */
+  .stage.is-live .scene--points,
+  .stage.is-live .scene--finding {
+    opacity: 0;
+    visibility: hidden;
+  }
+  /* The canvas draws these, so the DOM versions step back. */
+  .stage.is-live .intro__portrait :global(img) {
+    visibility: hidden;
+  }
+  .stage.is-live .column {
+    background: none;
+  }
+  .stage.is-live .intro__figure {
+    width: min(100%, 27rem, 46vh);
+  }
+
+  .stage.is-live .points__text {
+    max-width: 30rem;
+  }
+  @media (max-width: 59.99rem) {
+    /* Small screens: picture above, words below, everything inside one view. */
+    .stage.is-live .scene--intro .scene__grid {
+      grid-template-rows: auto auto;
+      gap: 1rem;
+      align-content: center;
+    }
+    .stage.is-live .intro__figure {
+      order: -1;
+      width: min(52vw, 30vh);
+    }
+    .stage.is-live .intro__caption {
+      display: none;
+    }
+    .stage.is-live .intro__name {
+      font-size: min(17vw, 11vh);
+      margin-top: 0.6rem;
+    }
+    .stage.is-live .intro__tag {
+      font-size: clamp(1.15rem, 5vw, 1.5rem);
+      margin-top: 0.9rem;
+    }
+    .stage.is-live .intro__lede {
+      font-size: 0.9375rem;
+      margin-top: 0.6rem;
+    }
+    .stage.is-live .intro__cta {
+      margin-top: 1rem;
+    }
+    .stage.is-live .scene--points {
+      align-items: end;
+      padding-bottom: 12vh;
+    }
+    .stage.is-live .points__title {
+      font-size: clamp(2.2rem, 11vw, 3.5rem);
+    }
+    .stage.is-live .scene--finding .scene__grid {
+      gap: 1.25rem;
+      align-content: center;
+    }
+    .stage.is-live .finding__title {
+      font-size: clamp(1.25rem, 5.6vw, 1.9rem);
+    }
+    .stage.is-live .finding__lede {
+      display: none;
+    }
+    .stage.is-live .column {
+      height: clamp(8rem, 30vh, 16rem);
+    }
+    .stage.is-live .legend__note {
+      display: none;
+    }
+  }
+  @media (max-height: 34rem) {
+    .stage.is-live .intro__lede,
+    .stage.is-live .finding__lede {
+      display: none;
+    }
+  }
+
+  .stage.is-live .stage__cue {
+    position: absolute;
+    left: 50%;
+    bottom: 1.1rem;
+    z-index: 2;
+    display: grid;
+    justify-items: center;
+    gap: 0.4rem;
+    translate: -50% 0;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .stage__cue i {
+    width: 1px;
+    height: 2.2rem;
+    background: linear-gradient(var(--mark-fill), transparent);
+    transform-origin: top;
+    animation: cue 1.9s var(--ease) infinite;
+  }
+  @keyframes cue {
+    0% {
+      scale: 1 0;
+    }
+    55% {
+      scale: 1 1;
+      opacity: 1;
+    }
+    100% {
+      scale: 1 1;
+      opacity: 0;
+    }
+  }
+</style>

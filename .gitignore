@@ -1,39 +1,23 @@
 # dependencies
 /node_modules
-/.pnp
-.pnp.js
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
+# build output and Astro's generated types/cache
+/dist/
+/.astro/
 
 # misc
 .DS_Store
 *.pem
-
-# debug
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # local env files
-.env*.local
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+.env
+.env.*
+!.env.example
 
 # claude code local machine settings
 .claude/settings.local.json
 
-# raw original photos kept locally as source — only optimized copies are deployed/committed
+# raw original photos kept locally as source — only the copies in
+# src/assets/ are committed and optimised at build time
 /source-photos/

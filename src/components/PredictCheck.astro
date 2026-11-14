@@ -1,0 +1,350 @@
+---
+/**
+ * "Predict, then check" — the experiment at the top of the home page.
+ *
+ * The visitor drags a slider to predict how often a model repeats a document
+ * that contradicts a fact it knows. The slider shares its axis with the plot
+ * underneath, so the prediction is a line across the (still empty) chart.
+ * "Check" then draws the measured values from the study's data around it.
+ *
+ * Without JavaScript the result is simply shown.
+ */
+import { runs, sizes, overwriteRange, getRun } from '@/data/knowledge-conflict';
+import DotPlot, { type DotRow } from './DotPlot.astro';
+
+interface Props {
+  /** Small line above the title. */
+  label?: string;
+  /** Where the link under the result goes. */
+  href?: string;
+  cta?: string;
+}
+const {
+  label = 'Before you read: an experiment you can run in ten seconds',
+  href = '#what-i-found',
+  cta = 'See the full results',
+} = Astro.props;
+
+const lo = Math.floor(overwriteRange.min);
+const hi = Math.ceil(overwriteRange.max);
+
+const rows: DotRow[] = sizes.map((size) => {
+  const off = getRun(size, false);
+  const on = getRun(size, true);
+  return { name: size, off: { v: off.overwrite, ci: off.ci }, on: { v: on.overwrite, ci: on.ci } };
+});
+
+const description =
+  'Dot plot. For each of four Qwen3 model sizes, the share of known facts overwritten by a contradicting document: ' +
+  rows.map((r) => `${r.name}: ${r.off.v}% answering directly, ${r.on.v}% when thinking first`).join('; ') +
+  '.';
+---
+
+<section class="xp" data-xp data-state="result" data-lo={lo} data-hi={hi} aria-labelledby="xp-title">
+  <header>
+    <p class="label label--tick">{label}</p>
+    <h2 id="xp-title" class="xp__title">Predict, then check.</h2>
+  </header>
+
+  <p class="xp__question">
+    A language model knows a fact. You hand it a document that says something else. How often does it repeat the
+    document?
+  </p>
+
+  <form class="xp__ask" id="xp-form" data-xp-form hidden>
+    <div class="xp__field">
+      <label for="xp-guess" class="label label--ink">Your prediction</label>
+      <output class="xp__value num" for="xp-guess" data-xp-output>50%</output>
+    </div>
+    <input id="xp-guess" class="xp__range" type="range" min="0" max="100" step="1" value="50" style="--v: 50" />
+  </form>
+
+  <DotPlot
+    rows={rows}
+    label={description}
+    band={[overwriteRange.min, overwriteRange.max]}
+    legend={['answers directly', '“thinks” first', 'rows: model size']}
+  >
+    <div slot="overlay" class="dp__overlay xp__marker" data-xp-marker hidden aria-hidden="true">
+      <span class="num" data-xp-marker-label></span>
+    </div>
+  </DotPlot>
+
+  <p class="xp__actions" data-xp-actions hidden>
+    <button class="btn" type="submit" form="xp-form">Check against the data</button>
+  </p>
+
+  <div class="xp__result" data-xp-result tabindex="-1">
+    <p class="xp__answer" aria-live="polite">
+      <strong><mark>{lo}–{hi}% of the time.</mark></strong>
+      <span data-xp-verdict></span>
+      Larger models showed no clear improvement, and letting a model “think” first cost 10–19× the GPU energy
+      without making it resist.
+    </p>
+    <p class="xp__foot">
+      <a class="arrow" href={href}>{cta}</a>
+      <button type="button" class="xp__again small" data-xp-reset hidden>Predict again</button>
+    </p>
+    <p class="xp__source small">
+      Qwen3 at 1.7B–14B parameters · {runs.length} runs · 1,000 NQ-Swap questions · facts each model answered correctly
+      on its own. Bars are 95% intervals.
+    </p>
+  </div>
+</section>
+
+<!-- Inline, so the card is in its "ask" state before first paint. -->
+<script is:inline>
+  (() => {
+    const root = document.querySelector('[data-xp]');
+    if (!root) return;
+    const q = (sel) => root.querySelector(sel);
+    const form = q('[data-xp-form]');
+    const range = q('.xp__range');
+    const output = q('[data-xp-output]');
+    const actions = q('[data-xp-actions]');
+    const result = q('[data-xp-result]');
+    const marker = q('[data-xp-marker]');
+    const markerLabel = q('[data-xp-marker-label]');
+    const verdict = q('[data-xp-verdict]');
+    const reset = q('[data-xp-reset]');
+    const lo = Number(root.dataset.lo);
+    const hi = Number(root.dataset.hi);
+
+    const sync = () => {
+      output.textContent = range.value + '%';
+      range.style.setProperty('--v', range.value);
+      marker.style.setProperty('--v', range.value);
+    };
+
+    const ask = () => {
+      root.dataset.state = 'ask';
+      form.hidden = false;
+      actions.hidden = false;
+      result.hidden = true;
+      marker.hidden = false;
+      markerLabel.textContent = '';
+      sync();
+    };
+
+    const check = () => {
+      const guess = Number(range.value);
+      marker.classList.toggle('is-right', guess > 78);
+      markerLabel.textContent = 'you: ' + guess + '%';
+      verdict.textContent =
+        guess < lo
+          ? 'More often than you predicted.'
+          : guess > hi
+            ? 'Less often than you predicted, yet still about half the time or more.'
+            : 'Your prediction is inside the measured range.';
+      root.dataset.state = 'result';
+      form.hidden = true;
+      actions.hidden = true;
+      result.hidden = false;
+      result.focus({ preventScroll: true });
+    };
+
+    range.addEventListener('input', sync);
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      check();
+    });
+    reset.addEventListener('click', () => {
+      ask();
+      range.focus({ preventScroll: true });
+    });
+
+    reset.hidden = false;
+    ask();
+  })();
+</script>
+
+<style>
+  .xp {
+    margin-bottom: 2.5rem;
+    font-family: var(--sans);
+    --name: 2.6rem;
+    --vals: 0.5rem;
+    --thumb: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-lg);
+  }
+  .xp :global(.dp) {
+    --surface: var(--paper-2);
+  }
+  .xp__title {
+    margin-top: 0.35rem;
+    font-size: var(--step-3);
+    letter-spacing: -0.04em;
+  }
+  .xp__question {
+    margin-top: 0.75rem;
+    font-size: 1.125rem;
+    line-height: 1.45;
+    color: var(--ink-2);
+  }
+
+  /* ---- ask ---- */
+  .xp__ask {
+    margin-top: 1.25rem;
+  }
+  .xp__field {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .xp__value {
+    font-size: clamp(2.25rem, 1.9rem + 1.8vw, 3rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--blue);
+  }
+  /* The slider spans exactly the plot's 0–100 axis: it is inset by the row
+     label on the left, and widened by one thumb so the thumb's centre, not
+     its edge, reaches 0 and 100. */
+  .xp__range {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    width: calc(100% - var(--name) - var(--vals) + var(--thumb));
+    height: 2.75rem;
+    margin: 0.25rem 0 -1rem calc(var(--name) - var(--thumb) / 2);
+    background: transparent;
+    cursor: ew-resize;
+    position: relative;
+    z-index: 3;
+  }
+  .xp__range::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--rule-strong);
+  }
+  .xp__range::-moz-range-track {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--rule-strong);
+  }
+  .xp__range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: var(--thumb);
+    height: var(--thumb);
+    margin-top: calc(var(--thumb) / -2 + 2px);
+    border-radius: 50%;
+    background: var(--blue);
+    border: 3px solid var(--paper-2);
+    box-shadow: 0 0 0 1px var(--blue);
+    transition: scale 0.2s var(--ease-spring);
+  }
+  .xp__range::-moz-range-thumb {
+    width: var(--thumb);
+    height: var(--thumb);
+    border-radius: 50%;
+    background: var(--blue);
+    border: 3px solid var(--paper-2);
+    box-shadow: 0 0 0 1px var(--blue);
+    box-sizing: border-box;
+  }
+  .xp__range:hover::-webkit-slider-thumb,
+  .xp__range:active::-webkit-slider-thumb {
+    scale: 1.15;
+  }
+  .xp__range:focus-visible {
+    outline: none;
+  }
+  .xp__range:focus-visible::-webkit-slider-thumb {
+    outline: 2px solid var(--blue);
+    outline-offset: 3px;
+  }
+  .xp__range:focus-visible::-moz-range-thumb {
+    outline: 2px solid var(--blue);
+    outline-offset: 3px;
+  }
+
+  /* The prediction, drawn through the plot. */
+  .xp__marker {
+    top: 0;
+    bottom: 1.5rem;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .xp__marker::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--v) * 1%);
+    top: 0;
+    bottom: 0;
+    border-left: 2px solid var(--blue);
+    translate: -1px 0;
+  }
+  .xp[data-state='result'] .xp__marker::before {
+    top: 1.35rem;
+  }
+  .xp__marker span {
+    position: absolute;
+    left: calc(var(--v) * 1%);
+    top: 0;
+    translate: -0.35rem 0;
+    padding: 0.05rem 0.4rem;
+    border-radius: 2px;
+    background: var(--blue);
+    color: var(--paper);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.35;
+    white-space: nowrap;
+  }
+  .xp__marker span:empty {
+    display: none;
+  }
+  .xp__marker.is-right span {
+    translate: calc(-100% + 0.35rem) 0;
+  }
+
+  .xp__actions {
+    margin-top: 1.1rem;
+  }
+
+  /* ---- result ---- */
+  .xp__result:focus {
+    outline: none;
+  }
+  .xp__answer {
+    margin-top: 1rem;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    animation: rise 0.6s var(--ease) 0.5s both;
+  }
+  .xp__answer strong {
+    font-size: 1.3125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .xp__foot {
+    margin-top: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+  }
+  .xp__again {
+    min-height: 2rem;
+    color: var(--ink-3);
+    text-decoration: underline;
+    text-decoration-color: var(--rule-strong);
+    text-underline-offset: 0.2em;
+  }
+  .xp__again:hover {
+    color: var(--blue);
+  }
+  .xp__source {
+    margin-top: 0.85rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.78rem;
+    color: var(--ink-3);
+  }
+</style>

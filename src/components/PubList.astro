@@ -1,0 +1,174 @@
+---
+/**
+ * Publications, typeset as references. Each entry shows its status first, so
+ * a preprint is never mistaken for a peer-reviewed paper.
+ */
+import { site } from '@/data/site';
+import { statusLabel, type Publication } from '@/lib/content';
+
+interface Props {
+  items: Publication[];
+  /** Show summaries and BibTeX. Off for the short list on the home page. */
+  detailed?: boolean;
+}
+const { items, detailed = true } = Astro.props;
+---
+
+<ol class="pubs" role="list">
+  {
+    items.map((pub, i) => {
+      const d = pub.data;
+      const showYear = d.status !== 'in-preparation';
+      return (
+        <li class="pub" data-reveal style={`--i: ${Math.min(i, 4)}`} id={`pub-${pub.id}`}>
+          <p class="pub__status small">
+            <span class:list={['pub__badge', `pub__badge--${d.status}`]}>{statusLabel[d.status]}</span>
+            {showYear && <span class="num">{d.year}</span>}
+          </p>
+          <div class="pub__body">
+            <h3 class="pub__title">{d.title}</h3>
+            <p class="pub__authors">
+              {d.authors.map((name, j) => (
+                <span class:list={[name === site.name && 'pub__me']}>{name + (j < d.authors.length - 1 ? ', ' : '')}</span>
+              ))}
+            </p>
+            <p class="pub__venue small">
+              {d.venue}
+              {d.doi && (
+                <>
+                  {' · '}
+                  <a href={d.url ?? `https://doi.org/${d.doi}`}>doi:{d.doi}</a>
+                </>
+              )}
+            </p>
+            {detailed && <p class="pub__summary">{d.summary}</p>}
+            <p class="pub__links">
+              {d.work && (
+                <a class="arrow" href={`/work/${d.work}/`}>
+                  Case study
+                </a>
+              )}
+              {d.url && (
+                <a class="arrow" href={d.url}>
+                  Paper
+                </a>
+              )}
+              {d.code && (
+                <a class="arrow" href={d.code}>
+                  Code and data
+                </a>
+              )}
+            </p>
+            {detailed && d.bibtex && (
+              <details class="pub__bib">
+                <summary>BibTeX</summary>
+                <pre><code>{d.bibtex}</code></pre>
+              </details>
+            )}
+          </div>
+        </li>
+      );
+    })
+  }
+</ol>
+
+<style>
+  .pubs {
+    border-bottom: 1px solid var(--rule);
+  }
+  .pub {
+    display: grid;
+    gap: 0.5rem 2rem;
+    padding-block: clamp(1.5rem, 3vw, 2rem);
+    border-top: 1px solid var(--rule);
+  }
+  @media (min-width: 46rem) {
+    .pub {
+      grid-template-columns: 8.5rem minmax(0, 1fr);
+    }
+  }
+  .pub__status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.75rem;
+    align-self: start;
+    padding-top: 0.3rem;
+    color: var(--ink-3);
+  }
+  @media (min-width: 46rem) {
+    .pub__status {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+  .pub__badge {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 2px;
+    font-weight: 600;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+  .pub__badge--preprint,
+  .pub__badge--published {
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+  .pub__title {
+    font-size: var(--step-1);
+    font-weight: 500;
+    line-height: 1.22;
+    letter-spacing: -0.012em;
+    max-width: 40rem;
+  }
+  .pub__authors {
+    margin-top: 0.45rem;
+    font-size: 1rem;
+    color: var(--ink-2);
+  }
+  .pub__me {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .pub__venue {
+    margin-top: 0.15rem;
+    color: var(--ink-3);
+  }
+  .pub__summary {
+    margin-top: 0.8rem;
+    max-width: 40rem;
+    color: var(--ink-2);
+  }
+  .pub__links {
+    margin-top: 0.8rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+  }
+  .pub__links:empty {
+    display: none;
+  }
+  .pub__bib {
+    margin-top: 0.75rem;
+    font-family: var(--sans);
+    font-size: var(--step--1);
+  }
+  .pub__bib summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--ink-3);
+  }
+  .pub__bib summary:hover {
+    color: var(--blue);
+  }
+  .pub__bib pre {
+    margin-top: 0.4rem;
+    max-width: 40rem;
+    font-size: 0.8rem;
+  }
+</style>

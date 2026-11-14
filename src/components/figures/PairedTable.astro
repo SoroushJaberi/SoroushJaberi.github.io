@@ -1,0 +1,48 @@
+---
+/** Thinking on vs off on the same facts: a small results table. */
+import { paired } from '@/data/knowledge-conflict';
+
+const fmtP = (p: number) => (p >= 0.995 ? '1.00' : p < 0.001 ? p.toFixed(4) : p < 0.1 ? p.toFixed(3) : p.toFixed(2));
+---
+
+<div class="table-scroll" tabindex="0" role="region" aria-label="Thinking on versus off, same facts">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th scope="col">Model</th>
+        <th scope="col" class="n">Facts known in both modes</th>
+        <th scope="col" class="n">Overwritten, thinking off</th>
+        <th scope="col" class="n">Overwritten, thinking on</th>
+        <th scope="col" class="n">Only when on / only when off</th>
+        <th scope="col" class="n">Exact sign test <i>p</i></th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        paired.map((row) => (
+          <tr class:list={[row.p < 0.05 && 'sig']}>
+            <th scope="row">{row.size}</th>
+            <td class="n">{row.n}</td>
+            <td class="n">{row.off.toFixed(1)}%</td>
+            <td class="n">{row.on.toFixed(1)}%</td>
+            <td class="n">
+              {row.onlyOn} / {row.onlyOff}
+            </td>
+            <td class="n">{fmtP(row.p)}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  tbody th {
+    font-weight: 600;
+  }
+  .sig td:last-child,
+  .sig td:nth-child(4) {
+    font-weight: 700;
+    color: var(--mark);
+  }
+</style>

@@ -1,0 +1,98 @@
+---
+title: HVB-Persian
+summary: A hybrid sentiment classifier for Persian product reviews that fuses a fine-tuned ParsBERT model with VADER lexicon scores.
+finding: A fine-tuned ParsBERT classifier fused with VADER lexicon scores reaches F1 of 0.88, 0.94 and 0.95 on Digikala, Snappfood and the combined set of about 84,000 Persian reviews.
+kind: research
+period: '2025'
+year: 2025
+status: Preprint
+role: Developed the method, built the dataset, ran the experiments
+tags: [Persian NLP, Sentiment analysis, ParsBERT, Lexicon methods]
+glyph: fusion
+stats:
+  - value: '0.95'
+    label: F1 on the combined dataset
+  - value: '0.94'
+    label: F1 on Snappfood
+  - value: ~84K
+    label: Persian reviews, Digikala and Snappfood
+featured: true
+order: 2
+links:
+  - label: Preprint on SSRN
+    href: https://doi.org/10.2139/ssrn.5371417
+facts:
+  - label: Paper
+    value: 'HVB-Persian: Hybrid VADER-ParsBERT for Persian Sentiment Classification of Product Reviews'
+  - label: Authors
+    value: Zeinab Alimardani, Soroush Jaberi, Amineh Amini
+  - label: Data
+    value: About 84,000 Persian reviews from Digikala and Snappfood
+  - label: Status
+    value: Preprint, SSRN, 2025
+  - label: DOI
+    value: 10.2139/ssrn.5371417
+---
+
+import FusionDiagram from '@/components/figures/FusionDiagram.astro';
+
+## The problem
+
+Sentiment in Persian product reviews is harder to classify than it looks. Reviews are written informally, labeled
+data is scarce, and negation and sarcasm weaken models that rely on simple polarity cues. A transformer fine-tuned on
+reviews reads context well, but its decisions are hard to inspect. A lexicon is transparent and cheap, but blind to
+context.
+
+## The approach
+
+HVB-Persian uses both. A ParsBERT classifier is fine-tuned on the reviews and produces class scores from the whole
+sentence. In parallel, VADER produces a polarity score from word-level rules. The two are combined by a weighted
+score fusion, and the weights are tuned on validation data rather than fixed by hand.
+
+<Figure
+  n={1}
+  caption="The method in one picture: contextual scores from a fine-tuned transformer and a rule-based polarity score, fused with weights chosen on validation data."
+  source="paper abstract"
+  href="https://doi.org/10.2139/ssrn.5371417"
+>
+  <FusionDiagram />
+</Figure>
+
+
+Pairing a learned representation with an explicit, rule-based polarity signal is meant to make the pipeline more
+reliable, and easier to interpret, than either part alone.
+
+## Data and results
+
+The reviews come from two Persian platforms, Digikala and Snappfood. I prepared both and merged them into a combined
+dataset of about 84,000 reviews.
+
+<div class="scores wide">
+  <div><span class="num">0.88</span><p>F1 on Digikala</p></div>
+  <div><span class="num">0.94</span><p>F1 on Snappfood</p></div>
+  <div><span class="num">0.95</span><p>F1 on the combined dataset</p></div>
+</div>
+
+<Note label="What I did">
+  I developed the hybrid method, prepared and merged the datasets, implemented the pipeline and conducted the
+  experiments.
+</Note>
+
+These are the scores reported in the preprint, which has the full evaluation. A preprint has not been
+peer-reviewed.
+
+## Where it came from
+
+This paper sits on earlier, smaller experiments on the same question, each public:
+
+- **[Classical baselines](https://github.com/SoroushJaberi/SentimentPredModels).** Naive Bayes, Linear SVC, SGD and
+  Random Forest classifiers on TF-IDF features, compared on accuracy, precision, recall and F1. All four land between
+  0.857 and 0.862 accuracy.
+- **[Persian sentiment with FastText](https://github.com/SoroushJaberi/Persian-sentiment-analysis-using-FastText-Model-NLP-).**
+  A three-class classifier (positive, negative, neutral) for Persian text, with 86% accuracy.
+
+## Where it is going
+
+The same question is the subject of my M.Sc. thesis, *Improving sentiment classification of Persian text using
+transformer-based and lexicon-based methods*, supervised by Dr. Amineh Amini with Dr. Hadi Saboohi as co-advisor. I
+expect to defend it in January 2027.

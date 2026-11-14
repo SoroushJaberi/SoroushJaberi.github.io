@@ -1,0 +1,47 @@
+---
+/**
+ * A margin note: evidence, a caveat or a source placed beside the paragraph
+ * it belongs to. On wide screens it sits in the right margin; on narrow ones
+ * it becomes an indented aside in the text flow. Put it directly before the
+ * paragraph it annotates.
+ */
+interface Props {
+  label?: string;
+}
+const { label } = Astro.props;
+---
+
+<aside class="note">
+  {label && <p class="note__label">{label}</p>}
+  <div class="note__body"><slot /></div>
+</aside>
+
+<style>
+  .note {
+    font-family: var(--sans);
+    font-size: var(--step--1);
+    line-height: 1.5;
+    color: var(--ink-2);
+    padding: 0.75rem 0 0.75rem 1rem;
+    border-left: 2px solid var(--mark-fill);
+  }
+  .note__label {
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+  }
+  .note__body :global(> * + *) {
+    margin-top: 0.5em;
+  }
+  @media (min-width: 72rem) {
+    .note {
+      float: right;
+      clear: right;
+      width: var(--margin-col);
+      margin: 0.3rem calc(-1 * (var(--margin-col) + 3rem)) 1rem 0;
+      padding: 0.6rem 0 0;
+      border-left: 0;
+      border-top: 1px solid var(--rule-strong);
+    }
+  }
+</style>

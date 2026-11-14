@@ -1,0 +1,48 @@
+---
+import Base from '@/layouts/Base.astro';
+import { nav } from '@/data/site';
+---
+
+<Base title="Page not found" description="That page does not exist." noindex>
+  <section class="wrap lost lit">
+    <p class="label rise">Error 404</p>
+    <h1 class="rise" style="--i: 1">Prediction: a page.<br />Check: <mark>nothing here.</mark></h1>
+    <p class="lede rise" style="--i: 2">
+      The address may be mistyped, or the page may have moved when this site was rebuilt. These all exist:
+    </p>
+    <ul class="lost__links rise" role="list" style="--i: 3">
+      <li><a class="arrow" href="/">Home</a></li>
+      {
+        nav.map((item) => (
+          <li>
+            <a class="arrow" href={item.href}>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .lost {
+    padding-block: clamp(4rem, 12vw, 9rem) clamp(2rem, 6vw, 4rem);
+  }
+  h1 {
+    margin-top: 1rem;
+    font-size: var(--step-4);
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+  .lede {
+    margin-top: 1.75rem;
+    max-width: 34rem;
+  }
+  .lost__links {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+  }
+</style>

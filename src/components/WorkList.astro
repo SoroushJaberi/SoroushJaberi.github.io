@@ -1,0 +1,202 @@
+---
+/**
+ * A typeset list of work entries. Each row is one link: to the case study if
+ * the entry has one, otherwise to its first link (usually the repository).
+ */
+import type { CollectionEntry } from 'astro:content';
+import Glyph from './Glyph.astro';
+
+interface Props {
+  entries: CollectionEntry<'work'>[];
+  /** Numbered rows with drawings (home, featured) or a compact list. */
+  variant?: 'featured' | 'compact';
+  /** Heading level for entry titles. */
+  level?: 'h2' | 'h3';
+}
+
+const { entries, variant = 'featured', level: Title = 'h3' } = Astro.props;
+
+const kindLabel = { research: 'Research', engineering: 'Engineering', teaching: 'Teaching' } as const;
+
+const target = (entry: CollectionEntry<'work'>) =>
+  entry.data.page ? `/work/${entry.id}/` : (entry.data.links[0]?.href ?? '/work/');
+---
+
+<ol class:list={['entries', `entries--${variant}`]} role="list">
+  {
+    entries.map((entry, i) => {
+      const href = target(entry);
+      const external = href.startsWith('http');
+      return (
+        <li class="entry" data-reveal style={`--i: ${Math.min(i, 4)}`}>
+          {variant === 'featured' && (
+            <span class="entry__n num" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+          )}
+          <div class="entry__body">
+            <p class="entry__meta small">
+              <span>{kindLabel[entry.data.kind]}</span>
+              <span>{entry.data.period}</span>
+              {entry.data.status && <span>{entry.data.status}</span>}
+            </p>
+            <Title class="entry__title">
+              <a
+                href={href}
+                rel={external ? 'noopener' : undefined}
+                style={entry.data.page ? `view-transition-name: work-${entry.id}` : undefined}
+              >
+                {entry.data.title}
+                <span class:list={['icon-arrow', external && 'icon-arrow--out']} aria-hidden="true" />
+                {external && <span class="sr-only"> (on GitHub)</span>}
+              </a>
+            </Title>
+            <p class="entry__text">{entry.data.finding ?? entry.data.summary}</p>
+            {variant === 'featured' && entry.data.tags.length > 0 && (
+              <p class="entry__tags small">{entry.data.tags.join(' · ')}</p>
+            )}
+          </div>
+          {variant === 'featured' && (
+            <div class="entry__glyph">
+              <Glyph kind={entry.data.glyph} />
+            </div>
+          )}
+        </li>
+      );
+    })
+  }
+</ol>
+
+<style>
+  .entries {
+    border-bottom: 1px solid var(--rule);
+  }
+  .entry {
+    position: relative;
+    display: grid;
+    gap: 0.75rem 2rem;
+    padding-block: clamp(1.5rem, 3.5vw, 2.25rem);
+    border-top: 1px solid var(--rule);
+  }
+  /* The whole row is the link target. */
+  .entry__title a::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+  .entry::after {
+    content: '';
+    position: absolute;
+    inset: -1px calc(-1 * var(--gutter)) 0;
+    z-index: -1;
+    background: var(--paper-2);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .entry:hover::after,
+  .entry:focus-within::after {
+    opacity: 1;
+  }
+
+  .entry__n {
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--ink-3);
+    padding-top: 0.3rem;
+  }
+  .entry__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.1rem 0;
+    color: var(--ink-3);
+  }
+  .entry__meta span + span::before {
+    content: '·';
+    margin-inline: 0.5em;
+  }
+  .entry__title {
+    margin-top: 0.4rem;
+    font-size: var(--step-2);
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+  }
+  .entry__title a {
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .entry__title .icon-arrow {
+    width: 0.55em;
+    height: 0.55em;
+    margin-left: 0.3em;
+    color: var(--mark-fill);
+    opacity: 0;
+    translate: -0.3em 0;
+    transition:
+      opacity 0.25s,
+      translate 0.3s var(--ease);
+  }
+  .entry:hover .entry__title .icon-arrow,
+  .entry:focus-within .entry__title .icon-arrow {
+    opacity: 1;
+    translate: 0 0;
+  }
+  .entry__title a:focus-visible {
+    outline: none;
+  }
+  .entry:has(a:focus-visible) {
+    outline: 2px solid var(--blue);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+  .entry__text {
+    margin-top: 0.6rem;
+    max-width: 38rem;
+    color: var(--ink-2);
+  }
+  .entry__tags {
+    margin-top: 0.75rem;
+    color: var(--ink-3);
+  }
+  .entry__glyph {
+    display: none;
+  }
+
+  @media (min-width: 46rem) {
+    .entries--featured .entry {
+      grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+      align-items: start;
+    }
+    .entry__glyph {
+      display: block;
+      padding-top: 0.5rem;
+    }
+  }
+
+  /* Compact: title and one line, in two columns when there is room. */
+  .entries--compact {
+    display: grid;
+    border-bottom: 0;
+  }
+  .entries--compact .entry {
+    padding-block: 1.25rem;
+  }
+  .entries--compact .entry__title {
+    font-size: var(--step-1);
+    letter-spacing: -0.012em;
+  }
+  .entries--compact .entry__text {
+    font-size: 1rem;
+    margin-top: 0.35rem;
+  }
+  @media (min-width: 52rem) {
+    .entries--compact {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 3rem;
+    }
+    .entries--compact .entry::after {
+      inset-inline: -1rem;
+    }
+  }
+</style>

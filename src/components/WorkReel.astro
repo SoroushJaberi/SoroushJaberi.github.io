@@ -1,0 +1,352 @@
+---
+/**
+ * Selected work as a reel. On a wide screen with a mouse, scrolling down
+ * carries the panels sideways while the section stays pinned. Everywhere
+ * else it is a row you swipe, with snap points. Either way the panels are a
+ * plain list of links.
+ */
+import type { CollectionEntry } from 'astro:content';
+import Glyph from './Glyph.astro';
+
+interface Props {
+  entries: CollectionEntry<'work'>[];
+  total: number;
+}
+const { entries, total } = Astro.props;
+const kindLabel = { research: 'Research', engineering: 'Engineering', teaching: 'Teaching' } as const;
+const two = (n: number) => String(n).padStart(2, '0');
+---
+
+<section class="reel" id="work" data-hscroll aria-labelledby="reel-title">
+  <div class="reel__pin" data-hscroll-pin>
+    <header class="wrap reel__head">
+      <div>
+        <p class="label label--tick">Selected work</p>
+        <h2 id="reel-title" class="reel__title">Four projects. <span class="accent">What came out of each.</span></h2>
+      </div>
+      <p class="reel__meter" aria-hidden="true">
+        <span class="num"><b data-hscroll-count>01</b> / {two(entries.length + 1)}</span>
+        <span class="reel__bar"><i data-hscroll-bar></i></span>
+      </p>
+    </header>
+
+    <ol class="reel__track" role="list" data-hscroll-track>
+      {
+        entries.map((entry, i) => (
+          <li class="panel card" data-tilt="3">
+            <div class="panel__text">
+              <p class="panel__meta small">
+                <span class="panel__n num">{two(i + 1)}</span>
+                <span>{kindLabel[entry.data.kind]}</span>
+                <span class="num">{entry.data.period}</span>
+                {entry.data.status && <span>{entry.data.status}</span>}
+              </p>
+              <h3 class="panel__title">
+                <a href={`/work/${entry.id}/`} style={`view-transition-name: work-${entry.id}`}>
+                  {entry.data.title}
+                </a>
+              </h3>
+              <p class="panel__finding">{entry.data.finding ?? entry.data.summary}</p>
+              <p class="panel__tags small">{entry.data.tags.join(' · ')}</p>
+              <span class="arrow" aria-hidden="true">
+                Case study
+              </span>
+            </div>
+            <div class="panel__side">
+              <div class="panel__glyph">
+                <Glyph kind={entry.data.glyph} />
+              </div>
+              {entry.data.stats.length > 0 && (
+                <dl class="panel__stats">
+                  {entry.data.stats.map((s) => (
+                    <div>
+                      <dt>{s.label}</dt>
+                      <dd class="num">{s.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+            </div>
+          </li>
+        ))
+      }
+      <li class="panel panel--end">
+        <p class="label">And the rest</p>
+        <p class="panel__endline">
+          <a href="/work/">
+            All {total} projects
+            <span class="icon-arrow" aria-hidden="true"></span>
+          </a>
+        </p>
+        <p class="small">Smaller builds, each with its repository.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<style>
+  .reel {
+    position: relative;
+    border-top: 1px solid var(--rule);
+  }
+  .reel__pin {
+    padding-block: var(--section);
+  }
+  .reel__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem 3rem;
+    margin-bottom: clamp(1.75rem, 4vh, 3rem);
+  }
+  .reel__title {
+    margin-top: 1rem;
+    font-size: var(--step-3);
+    letter-spacing: -0.04em;
+    line-height: 1.02;
+    max-width: 18ch;
+  }
+  .reel__meter {
+    display: none;
+    align-items: center;
+    gap: 1rem;
+    font-size: var(--step--1);
+    color: var(--ink-3);
+  }
+  .reel__meter b {
+    color: var(--ink);
+  }
+  .reel__bar {
+    display: block;
+    width: 9rem;
+    height: 2px;
+    background: var(--rule);
+    overflow: hidden;
+  }
+  .reel__bar i {
+    display: block;
+    height: 100%;
+    background: var(--mark-fill);
+    transform-origin: left;
+    scale: 0 1;
+  }
+
+  /* Default: a row to swipe. */
+  .reel__track {
+    display: flex;
+    gap: clamp(1rem, 2vw, 1.75rem);
+    padding-inline: max(var(--gutter), (100vw - var(--max)) / 2);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+  .reel__track::-webkit-scrollbar {
+    display: none;
+  }
+  .panel {
+    position: relative;
+    flex: none;
+    width: min(86vw, 62rem);
+    scroll-snap-align: start;
+    display: grid;
+    gap: 1.5rem 3rem;
+    padding: clamp(1.5rem, 3.5vw, 3rem);
+    overflow: hidden;
+    transform: perspective(70rem) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition:
+      transform 0.5s var(--ease-out),
+      border-color 0.3s;
+  }
+  /* A soft light that follows the pointer across the panel. */
+  .panel.card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(28rem 20rem at var(--gx, 80%) var(--gy, 0%), var(--glow-a), transparent 70%);
+    opacity: 0.7;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .panel.card:hover {
+    border-color: var(--rule-strong);
+  }
+  @media (min-width: 52rem) {
+    .panel {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      align-items: stretch;
+      min-height: min(31rem, 62vh);
+    }
+  }
+  .panel__text {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+  }
+  .panel__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.15rem 0;
+    color: var(--ink-3);
+  }
+  .panel__meta span + span::before {
+    content: '·';
+    margin-inline: 0.55em;
+  }
+  .panel__n {
+    font-weight: 700;
+    color: var(--mark);
+  }
+  .panel__title {
+    margin-top: 0.9rem;
+    font-size: clamp(1.9rem, 1.2rem + 3vw, 3.6rem);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+  }
+  .panel__title a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  /* The whole panel is the link. */
+  .panel__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+  .panel__title a:focus-visible {
+    outline: none;
+  }
+  .panel:has(a:focus-visible) {
+    outline: 2px solid var(--blue);
+    outline-offset: 3px;
+  }
+  .panel__finding {
+    margin-top: 1rem;
+    max-width: 34rem;
+    font-size: clamp(1rem, 0.95rem + 0.3vw, 1.1875rem);
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .panel__tags {
+    margin-top: 1rem;
+    color: var(--ink-3);
+  }
+  .panel__text .arrow {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    background-position: 0 100%;
+  }
+  .panel:hover .arrow {
+    color: var(--mark);
+  }
+  .panel:hover .arrow::after {
+    translate: 0.22em 0;
+  }
+
+  .panel__side {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+  }
+  @media (min-width: 52rem) {
+    .panel__side {
+      padding: 0 0 0 clamp(1.5rem, 3vw, 3rem);
+      border-top: 0;
+      border-left: 1px solid var(--rule);
+    }
+  }
+  .panel__glyph :global(.glyph) {
+    width: min(100%, 15rem);
+    color: var(--ink-2);
+  }
+  .panel:hover .panel__glyph :global(.g-dot) {
+    scale: 1.25;
+  }
+  .panel__stats {
+    display: grid;
+    gap: 0.9rem;
+  }
+  .panel__stats div {
+    display: grid;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--rule);
+  }
+  .panel__stats dt {
+    order: 2;
+    font-size: var(--step--1);
+    color: var(--ink-3);
+  }
+  .panel__stats dd {
+    font-family: var(--display);
+    font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.6rem);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+  .panel__stats div:first-child dd {
+    color: var(--mark);
+  }
+
+  .panel--end {
+    width: min(70vw, 26rem);
+    align-content: center;
+    gap: 0.75rem;
+    border: 1px dashed var(--rule-strong);
+    border-radius: var(--radius-lg);
+  }
+  .panel__endline {
+    font-family: var(--display);
+    font-size: var(--step-3);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .panel__endline a {
+    text-decoration: none;
+  }
+  .panel__endline a::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .panel__endline .icon-arrow {
+    width: 0.5em;
+    height: 0.5em;
+    margin-left: 0.2em;
+    color: var(--mark-fill);
+  }
+
+  /* Live: pinned, and the page's scroll drives the track sideways. */
+  .reel.is-live .reel__pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: 5rem 2rem;
+    overflow: hidden;
+  }
+  .reel.is-live .reel__track {
+    overflow: visible;
+    scroll-snap-type: none;
+    width: max-content;
+    will-change: transform;
+  }
+  .reel.is-live .reel__meter {
+    display: flex;
+  }
+  .reel.is-live .panel {
+    width: min(74vw, 62rem);
+  }
+  .reel.is-live .panel--end {
+    width: 24rem;
+  }
+</style>
