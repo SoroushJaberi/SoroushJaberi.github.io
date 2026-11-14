@@ -57,86 +57,99 @@
 
 /* ---------- tokens ------------------------------------------------------- */
 @layer tokens {
-  /* Night is the default: the site is staged like a film, lit by two
-     colours. Lapis is for links and "true" in figures. Ember is the
-     reviewer's pen: marks, highlights, and "wrong" in figures. */
+  /*
+    One palette, two lights. Warm paper and soft ink, with two colours that
+    sit well together and with the photographs:
+      accent (teal)  links, buttons, "true" in figures
+      warm (gold)    emphasis, highlights, "wrong" in figures
+    Day is the default. Night keeps the same two hues, lifted for a dark ground.
+  */
   :root,
-  [data-theme='dark'] {
-    --paper: #0b0b0d;
-    --paper-2: #131316;
-    --paper-3: #1c1c21;
-    --ink: #f1ece2;
-    --ink-2: #bcb8b0;
-    --ink-3: #908d87;
-    --rule: rgb(241 236 226 / 0.13);
-    --rule-strong: rgb(241 236 226 / 0.42);
-
-    --blue: #9db4ff;
-    --blue-soft: rgb(157 180 255 / 0.16);
-    --mark: #ff7d55;
-    --mark-fill: #ff5a2c;
-    --mark-soft: rgb(255 90 44 / 0.26);
-    --on-mark: #0b0b0d;
-    --neutral-fill: #8a8782;
-    --neutral-fill-2: #3a3936;
-    --code-bg: #131316;
-
-    --glow-a: rgb(255 90 44 / 0.14);
-    --glow-b: rgb(120 150 255 / 0.12);
-    --shadow: 0 1px 0 rgb(0 0 0 / 0.4), 0 24px 60px -24px rgb(0 0 0 / 0.85);
-    color-scheme: dark;
-  }
-
   [data-theme='light'] {
-    --paper: #f5f2ea;
-    --paper-2: #ece8dc;
-    --paper-3: #e2ddcf;
-    --ink: #15171c;
-    --ink-2: #414652;
-    --ink-3: #5f6472;
-    --rule: rgb(21 23 28 / 0.15);
-    --rule-strong: rgb(21 23 28 / 0.55);
+    --paper: #f6f2e9;
+    --paper-2: #eee8db;
+    --paper-3: #e3dccb;
+    --ink: #161a19;
+    --ink-2: #434a48;
+    --ink-3: #5f6663;
+    --rule: rgb(22 26 25 / 0.14);
+    --rule-strong: rgb(22 26 25 / 0.45);
 
-    --blue: #2140c8;
-    --blue-soft: rgb(33 64 200 / 0.12);
-    --mark: #bd3a1c;
-    --mark-fill: #ea5830;
-    --mark-soft: rgb(234 88 48 / 0.22);
-    --on-mark: #15171c;
-    --neutral-fill: #a9a596;
-    --neutral-fill-2: #cfcbbd;
+    --accent: #0b6159;
+    --accent-fill: #0d6e64;
+    --accent-soft: rgb(13 110 100 / 0.12);
+    --on-accent: #ffffff;
+
+    --warm: #85560c;
+    --warm-fill: #c98d22;
+    --warm-soft: rgb(201 141 34 / 0.24);
+    --on-warm: #161a19;
+
+    --neutral-fill: #a8a493;
+    --neutral-fill-2: #d2cdbd;
     --code-bg: #fbf9f4;
 
-    --glow-a: rgb(224 74 34 / 0.1);
-    --glow-b: rgb(33 64 200 / 0.08);
-    --shadow: 0 1px 0 rgb(21 23 28 / 0.04), 0 20px 44px -22px rgb(21 23 28 / 0.3);
+    --glow-a: rgb(13 110 100 / 0.1);
+    --glow-b: rgb(201 141 34 / 0.12);
+    --shadow: 0 1px 1px rgb(22 26 25 / 0.04), 0 18px 40px -20px rgb(22 26 25 / 0.28);
     color-scheme: light;
+  }
+
+  [data-theme='dark'] {
+    --paper: #0c0f0e;
+    --paper-2: #141817;
+    --paper-3: #1e2322;
+    --ink: #f2ede2;
+    --ink-2: #bebbb1;
+    --ink-3: #939189;
+    --rule: rgb(242 237 226 / 0.13);
+    --rule-strong: rgb(242 237 226 / 0.42);
+
+    --accent: #7fd6c9;
+    --accent-fill: #7fd6c9;
+    --accent-soft: rgb(127 214 201 / 0.15);
+    --on-accent: #0c0f0e;
+
+    --warm: #dcb866;
+    --warm-fill: #d9b25c;
+    --warm-soft: rgb(217 178 92 / 0.22);
+    --on-warm: #0c0f0e;
+
+    --neutral-fill: #8a8782;
+    --neutral-fill-2: #3a3d3b;
+    --code-bg: #141817;
+
+    --glow-a: rgb(127 214 201 / 0.1);
+    --glow-b: rgb(217 178 92 / 0.09);
+    --shadow: 0 1px 0 rgb(0 0 0 / 0.4), 0 24px 60px -24px rgb(0 0 0 / 0.85);
+    color-scheme: dark;
   }
 
   :root {
     /* Type */
     --display: var(--font-bricolage), system-ui, -apple-system, 'Segoe UI', sans-serif;
-    --sans: var(--font-atkinson), system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --sans: var(--font-text), system-ui, -apple-system, 'Segoe UI', sans-serif;
     --serif: var(--font-newsreader), Georgia, 'Times New Roman', serif;
     --mono: var(--font-atkinson-mono), ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
     --fa: var(--font-vazirmatn), Tahoma, 'Segoe UI', sans-serif;
 
     --step--1: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
     --step-0: clamp(1rem, 0.97rem + 0.18vw, 1.125rem);
-    --step-1: clamp(1.2rem, 1.12rem + 0.4vw, 1.45rem);
-    --step-2: clamp(1.5rem, 1.3rem + 0.95vw, 2.15rem);
-    --step-3: clamp(1.95rem, 1.5rem + 2.1vw, 3.3rem);
-    --step-4: clamp(2.6rem, 1.5rem + 5vw, 5.75rem);
-    --step-5: clamp(3.1rem, 1.2rem + 9vw, 9.5rem);
+    --step-1: clamp(1.15rem, 1.08rem + 0.35vw, 1.4rem);
+    --step-2: clamp(1.4rem, 1.24rem + 0.8vw, 2rem);
+    --step-3: clamp(1.75rem, 1.4rem + 1.75vw, 3rem);
+    --step-4: clamp(2.15rem, 1.45rem + 3.5vw, 4.75rem);
+    --step-5: clamp(2.6rem, 1.4rem + 6vw, 7rem);
 
     /* Space and measure */
-    --gutter: clamp(1.25rem, 5vw, 4rem);
-    --max: 80rem;
+    --gutter: clamp(1.15rem, 5vw, 4rem);
+    --max: 78rem;
     --measure: 40rem;
     --margin-col: 15rem;
-    --section: clamp(5rem, 11vw, 9.5rem);
-    --radius: 4px;
-    --radius-lg: 14px;
+    --section: clamp(4rem, 9vw, 8rem);
+    --header: 4.5rem;
+    --radius: 6px;
+    --radius-lg: 16px;
 
     /* Icons, as masks */
     --icon-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 8h11.5M9 3.5 13.5 8 9 12.5'/%3E%3C/svg%3E");
@@ -147,7 +160,7 @@
     --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-spring: cubic-bezier(0.3, 1.35, 0.5, 1);
-    --dur: 0.8s;
+    --dur: 0.7s;
   }
 }
 
@@ -162,7 +175,7 @@
     line-height: 1.6;
     scroll-behavior: smooth;
     scrollbar-gutter: stable;
-    scrollbar-color: var(--paper-3) transparent;
+    scrollbar-color: var(--neutral-fill) transparent;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -174,9 +187,6 @@
     flex-direction: column;
     font-size: var(--step-0);
     overflow-x: clip;
-    transition:
-      background-color 0.4s,
-      color 0.4s;
   }
   main {
     flex: 1;
@@ -188,9 +198,10 @@
   h4 {
     font-family: var(--display);
     font-weight: 600;
-    line-height: 1.08;
-    letter-spacing: -0.028em;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
     text-wrap: balance;
+    overflow-wrap: break-word;
   }
   h1 {
     font-size: var(--step-3);
@@ -200,8 +211,8 @@
   }
   h3 {
     font-size: var(--step-1);
-    line-height: 1.2;
-    letter-spacing: -0.02em;
+    line-height: 1.25;
+    letter-spacing: -0.012em;
   }
   p,
   li,
@@ -214,7 +225,7 @@
   a {
     color: inherit;
     text-decoration-line: underline;
-    text-decoration-color: var(--blue);
+    text-decoration-color: var(--accent);
     text-decoration-thickness: 1px;
     text-underline-offset: 0.2em;
     transition:
@@ -222,17 +233,17 @@
       text-decoration-color 0.2s;
   }
   a:hover {
-    color: var(--blue);
+    color: var(--accent);
   }
 
   :focus-visible {
-    outline: 2px solid var(--blue);
+    outline: 2px solid var(--accent);
     outline-offset: 3px;
     border-radius: 2px;
   }
   ::selection {
-    background: var(--mark-fill);
-    color: var(--on-mark);
+    background: var(--accent-fill);
+    color: var(--on-accent);
   }
 
   strong,
@@ -242,7 +253,7 @@
 
   mark {
     color: inherit;
-    background: linear-gradient(var(--mark-soft), var(--mark-soft)) no-repeat 0 86% / 100% 0.4em;
+    background: linear-gradient(var(--warm-soft), var(--warm-soft)) no-repeat 0 86% / 100% 0.42em;
     padding-inline: 0.06em;
     margin-inline: -0.06em;
   }
@@ -306,11 +317,11 @@
 /* Shiki dual themes: follow the active theme. */
 .astro-code,
 .astro-code span {
-  color: var(--shiki-dark);
-}
-[data-theme='light'] .astro-code,
-[data-theme='light'] .astro-code span {
   color: var(--shiki-light);
+}
+[data-theme='dark'] .astro-code,
+[data-theme='dark'] .astro-code span {
+  color: var(--shiki-dark);
 }
 
 /* ---------- layout ------------------------------------------------------- */
@@ -327,12 +338,16 @@
   .section--flush {
     border-top: 0;
   }
+  /* A section on the slightly darker paper, to give the page a rhythm. */
+  .section--tint {
+    background: var(--paper-2);
+  }
 
   /* A section with its label in a narrow left column that stays in view
      while the content scrolls past. */
   .rail {
     display: grid;
-    gap: 1.75rem 3rem;
+    gap: 1.5rem 3rem;
   }
   @media (min-width: 64rem) {
     .rail {
@@ -340,13 +355,13 @@
     }
     .rail > .rail__label {
       position: sticky;
-      top: 6rem;
+      top: calc(var(--header) + 1.5rem);
       align-self: start;
     }
   }
   .rail__label .small {
     margin-top: 0.5rem;
-    max-width: 16rem;
+    max-width: 22rem;
     color: var(--ink-3);
   }
 
@@ -354,25 +369,43 @@
     margin-block-start: var(--flow, 1.1em);
   }
 
+  /* Section heading block used on the home page. */
+  .head {
+    max-width: 44rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  }
+  .head h2 {
+    margin-top: 0.9rem;
+    font-size: var(--step-3);
+    line-height: 1.08;
+    letter-spacing: -0.028em;
+  }
+  .head .lede {
+    margin-top: 1rem;
+  }
+  .head--center {
+    margin-inline: auto;
+    text-align: center;
+  }
+
   /* Page header used by every inner page. */
   .page-head {
     position: relative;
-    padding-block: clamp(4rem, 11vw, 9rem) clamp(2.5rem, 6vw, 5rem);
+    padding-block: clamp(3rem, 8vw, 6.5rem) clamp(2.5rem, 6vw, 4.5rem);
   }
   .page-head h1 {
     font-size: var(--step-4);
-    font-weight: 600;
-    line-height: 0.98;
-    letter-spacing: -0.04em;
-    max-width: 16ch;
-    margin-top: 1.25rem;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    max-width: 18ch;
+    margin-top: 1.1rem;
   }
   .page-head .lede {
-    margin-top: 1.75rem;
+    margin-top: 1.5rem;
     max-width: 40rem;
   }
 
-  /* Soft coloured light behind a page's opening, like a lit set. */
+  /* Soft coloured light behind a page's opening. */
   .lit {
     position: relative;
     isolation: isolate;
@@ -381,14 +414,14 @@
     content: '';
     position: absolute;
     z-index: -1;
-    top: -8rem;
+    top: calc(-1 * var(--header));
     left: 50%;
     width: 100vw;
     translate: -50% 0;
-    height: min(46rem, 110vh);
+    height: min(44rem, 110vh);
     background:
-      radial-gradient(42rem 26rem at 82% 22%, var(--glow-a), transparent 70%),
-      radial-gradient(38rem 24rem at 8% 60%, var(--glow-b), transparent 70%);
+      radial-gradient(40rem 24rem at 85% 18%, var(--glow-b), transparent 70%),
+      radial-gradient(36rem 24rem at 6% 55%, var(--glow-a), transparent 70%);
     pointer-events: none;
   }
 }
@@ -400,7 +433,7 @@
     font-family: var(--sans);
     font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     line-height: 1.4;
     color: var(--ink-3);
@@ -420,7 +453,7 @@
     height: 0.55em;
     flex: none;
     background:
-      radial-gradient(circle at 62% 50%, var(--mark-fill) 0 0.24em, transparent 0.26em),
+      radial-gradient(circle at 62% 50%, var(--warm-fill) 0 0.24em, transparent 0.26em),
       linear-gradient(currentColor, currentColor) 0 50% / 100% 1px no-repeat;
     border-inline: 1px solid currentColor;
   }
@@ -437,13 +470,12 @@
     color: var(--ink-2);
   }
   .num {
-    font-family: var(--sans);
     font-variant-numeric: tabular-nums lining-nums;
   }
 
   .lede {
     font-size: var(--step-1);
-    line-height: 1.45;
+    line-height: 1.5;
     color: var(--ink-2);
   }
 
@@ -451,30 +483,31 @@
     font-family: var(--display);
     font-size: var(--step-4);
     font-weight: 600;
-    line-height: 0.98;
-    letter-spacing: -0.04em;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
     text-wrap: balance;
   }
-  /* Serif italic for the one word or phrase that carries a headline. */
+  /* Serif italic for the one phrase that carries a headline. */
   .accent {
     font-family: var(--serif);
     font-style: italic;
     font-weight: 400;
-    letter-spacing: -0.025em;
-    color: var(--mark);
+    letter-spacing: -0.015em;
+    color: var(--warm);
   }
 
   /* Buttons */
   .btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.6em;
     min-height: 3rem;
     padding: 0.6rem 1.35rem;
-    border: 1px solid var(--mark-fill);
+    border: 1px solid var(--accent-fill);
     border-radius: 999px;
-    background: var(--mark-fill);
-    color: var(--on-mark);
+    background: var(--accent-fill);
+    color: var(--on-accent);
     font-family: var(--sans);
     font-size: 0.9375rem;
     font-weight: 700;
@@ -484,15 +517,13 @@
       background-color 0.25s,
       border-color 0.25s,
       color 0.25s,
-      translate 0.25s var(--ease),
-      box-shadow 0.25s;
+      translate 0.25s var(--ease);
   }
   .btn:hover {
     background: var(--ink);
     border-color: var(--ink);
     color: var(--paper);
     translate: 0 -2px;
-    box-shadow: 0 10px 30px -12px var(--mark-fill);
   }
   .btn:active {
     translate: 0 0;
@@ -504,13 +535,12 @@
   }
   .btn--quiet:hover {
     background: transparent;
-    border-color: var(--ink);
-    color: var(--ink);
-    box-shadow: none;
+    border-color: var(--accent);
+    color: var(--accent);
   }
   .btn :where(svg) {
-    width: 1.1em;
-    height: 1.1em;
+    width: 1.15em;
+    height: 1.15em;
   }
 
   /* Text link that ends in an arrow which moves on hover. The arrows are
@@ -525,13 +555,11 @@
     gap: 0.45em;
     min-height: 2rem;
     color: var(--ink);
-    background: linear-gradient(var(--mark-fill), var(--mark-fill)) no-repeat 0 calc(100% - 0.2em) / 100% 1px;
-    transition:
-      color 0.2s,
-      background-size 0.3s var(--ease);
+    background: linear-gradient(var(--accent-fill), var(--accent-fill)) no-repeat 0 calc(100% - 0.2em) / 100% 1px;
+    transition: color 0.2s;
   }
   .arrow:hover {
-    color: var(--mark);
+    color: var(--accent);
   }
   .arrow::after,
   .icon-arrow {
@@ -579,11 +607,11 @@
     margin-block-start: 1.15em;
   }
   .prose h2 {
-    margin-block-start: 2.4em;
+    margin-block-start: 2.2em;
     font-size: var(--step-2);
   }
   .prose h3 {
-    margin-block-start: 1.9em;
+    margin-block-start: 1.8em;
   }
   .prose h2 + *,
   .prose h3 + * {
@@ -597,12 +625,12 @@
     margin-block-start: 0.45em;
   }
   .prose li::marker {
-    color: var(--mark);
+    color: var(--accent);
     font-family: var(--sans);
     font-size: 0.9em;
   }
   .prose blockquote {
-    border-inline-start: 2px solid var(--mark-fill);
+    border-inline-start: 2px solid var(--warm-fill);
     padding-inline-start: 1.1em;
     color: var(--ink-2);
     font-style: italic;
@@ -650,7 +678,6 @@
     font-weight: 600;
     color: var(--ink-3);
     border-bottom-color: var(--rule-strong);
-    white-space: nowrap;
   }
   .data-table td.n,
   .data-table th.n {
@@ -688,9 +715,12 @@
 
   /* A raised surface: cards, panels. */
   .card {
-    background: linear-gradient(180deg, var(--paper-2), color-mix(in srgb, var(--paper-2) 60%, var(--paper)));
+    background: color-mix(in srgb, var(--paper) 55%, var(--paper-2));
     border: 1px solid var(--rule);
     border-radius: var(--radius-lg);
+  }
+  .section--tint .card {
+    background: var(--paper);
   }
 
   /* Visually hidden, still read by assistive tech. */
@@ -710,7 +740,7 @@
     position: absolute;
     left: 0.75rem;
     top: 0.75rem;
-    z-index: 200;
+    z-index: 300;
     padding: 0.6rem 0.9rem;
     background: var(--ink);
     color: var(--paper);
@@ -733,35 +763,32 @@
   Scroll reveals are opt-in from script: elements are visible by default and
   only "armed" (hidden, waiting) if the reveal script runs and finds them
   below the fold. No script, or a failed script, means everything is shown.
+  Only opacity and position animate, which every phone can do smoothly.
 */
 @layer utilities {
   [data-reveal].armed {
     opacity: 0;
-    translate: 0 1.75rem;
-    filter: blur(6px);
+    translate: 0 1.25rem;
   }
   [data-reveal].armed.is-in {
     opacity: 1;
     translate: none;
-    filter: none;
     transition:
       opacity var(--dur) var(--ease-out),
-      translate var(--dur) var(--ease-out),
-      filter var(--dur) var(--ease-out);
-    transition-delay: calc(var(--i, 0) * 80ms);
+      translate var(--dur) var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 70ms);
   }
 
   /* First-paint entrance for above-the-fold content: CSS only. */
   @keyframes rise {
     from {
       opacity: 0;
-      translate: 0 1.5rem;
-      filter: blur(8px);
+      translate: 0 1.1rem;
     }
   }
   .rise {
-    animation: rise 1s var(--ease-out) both;
-    animation-delay: calc(var(--i, 0) * 100ms + 80ms);
+    animation: rise 0.8s var(--ease-out) both;
+    animation-delay: calc(var(--i, 0) * 80ms + 60ms);
   }
 
   /* Native cross-document view transitions (progressive enhancement). */
@@ -769,25 +796,24 @@
     navigation: auto;
   }
   ::view-transition-old(root) {
-    animation: 0.2s ease-out both vt-out;
+    animation: 0.18s ease-out both vt-out;
   }
   ::view-transition-new(root) {
-    animation: 0.45s var(--ease-out) both vt-in;
+    animation: 0.35s var(--ease-out) both vt-in;
   }
   @keyframes vt-out {
     to {
       opacity: 0;
-      scale: 0.99;
     }
   }
   @keyframes vt-in {
     from {
       opacity: 0;
-      translate: 0 1rem;
+      translate: 0 0.75rem;
     }
   }
   ::view-transition-group(*) {
-    animation-duration: 0.45s;
+    animation-duration: 0.4s;
     animation-timing-function: var(--ease-out);
   }
   @media (prefers-reduced-motion: reduce) {
@@ -806,7 +832,8 @@
       --ink-3: #444;
       --rule: #ccc;
       --rule-strong: #666;
-      --mark: #a02c10;
+      --accent: #0b6159;
+      --warm: #6b450a;
     }
     .site-header,
     .site-footer nav,

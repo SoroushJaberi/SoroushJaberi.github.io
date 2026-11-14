@@ -15,7 +15,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     index: {
       eyebrow: site.role,
       title: site.tagline,
-      text: 'I study how language models handle evidence, build NLP and computer-vision systems, and teach AI in the open.',
+      text: 'I build and evaluate machine learning systems for language, medical imaging and document retrieval.',
     },
     work: {
       eyebrow: 'Work',
@@ -30,7 +30,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     about: {
       eyebrow: 'About',
       title: site.name,
-      text: 'AI researcher and engineer. M.Sc. candidate in Artificial Intelligence, teaching assistant, and author of The AI Path.',
+      text: 'AI researcher and data scientist. M.Sc. candidate in Artificial Intelligence, teaching assistant, and author of The AI Path.',
     },
     contact: {
       eyebrow: 'Contact',

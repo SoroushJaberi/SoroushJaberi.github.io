@@ -1,0 +1,303 @@
+---
+/**
+ * The opening of the home page: who Soroush is, at a glance.
+ * Name and role, one sentence, three facts, the ways onward, and a portrait.
+ */
+import { Picture } from 'astro:assets';
+import portrait from '@/assets/portraits/cafe.jpg';
+import { site, profiles, mailto } from '@/data/site';
+import { education } from '@/data/profile';
+import Icon, { type IconName } from './Icon.astro';
+
+const msc = education[0]!;
+const proof = [
+  { term: 'M.Sc. in Artificial Intelligence', value: `GPA ${msc.gpa}` },
+  { term: 'Research', value: 'NLP, LLM evaluation, retrieval, medical imaging' },
+  { term: 'Open to', value: 'PhD positions, research and industry roles' },
+];
+const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'linkedin', YouTube: 'youtube' };
+---
+
+<section class="hero lit" aria-labelledby="hero-name">
+  <div class="wrap hero__grid">
+    <div class="hero__text">
+      <p class="hero__eyebrow rise">
+        <span>AI research</span><span>Data science</span><span>ML engineering</span>
+      </p>
+
+      <h1 id="hero-name" class="hero__name rise" style="--i: 1">
+        <span>Soroush</span> <span>Jaberi</span>
+      </h1>
+
+      <p class="hero__role rise" style="--i: 2">
+        AI researcher <span class="accent">&amp; data scientist</span>
+      </p>
+
+      <p class="hero__intro rise" style="--i: 3">
+        I build machine learning systems for language, medical imaging and document retrieval, and I measure how far
+        their answers can be trusted.
+      </p>
+
+      <dl class="hero__proof rise" style="--i: 4">
+        {
+          proof.map((item) => (
+            <div>
+              <dt>{item.term}</dt>
+              <dd>{item.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <div class="hero__actions rise" style="--i: 5">
+        <a class="btn" href="#work">View my work</a>
+        <a class="btn btn--quiet" href={site.cv}>
+          <Icon name="cv" size={18} />
+          Download CV
+        </a>
+        <a class="btn btn--quiet" href="/contact/">Contact</a>
+      </div>
+
+      <ul class="hero__social rise" role="list" style="--i: 6">
+        {
+          profiles.map((p) => (
+            <li>
+              <a href={p.href} rel="me noopener" aria-label={p.label} title={p.label}>
+                <Icon name={profileIcon[p.label] ?? 'spark'} size={20} />
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a href={mailto()} aria-label="Email" title="Email">
+            <Icon name="mail" size={20} />
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <figure class="hero__figure rise" style="--i: 2">
+      <div class="hero__photo" data-tilt="4">
+        <Picture
+          src={portrait}
+          alt="Soroush Jaberi, smiling, seated at a wooden table"
+          formats={['avif', 'webp']}
+          widths={[360, 540, 720, 960]}
+          sizes="(min-width: 62rem) 28rem, (min-width: 48rem) 38vw, 62vw"
+          loading="eager"
+          fetchpriority="high"
+          quality={72}
+        />
+      </div>
+      <figcaption class="hero__caption">
+        <span>
+          <Icon name="pin" size={15} />
+          {site.location}
+        </span>
+        <span lang="fa" dir="rtl">{site.nameFa}</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(1.5rem, 5vw, 4rem) clamp(3rem, 7vw, 6rem);
+  }
+  .hero__grid {
+    display: grid;
+    gap: clamp(1.75rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+  @media (min-width: 48rem) {
+    .hero__grid {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    }
+  }
+  @media (min-width: 62rem) {
+    .hero {
+      min-height: calc(100svh - var(--header));
+      display: grid;
+      align-items: center;
+    }
+  }
+
+  .hero__eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .hero__eyebrow span:not(:last-child)::after {
+    content: '/';
+    margin-inline: 0.7em;
+    color: var(--warm-fill);
+  }
+
+  .hero__name {
+    margin-top: 1rem;
+    font-size: var(--step-5);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+  }
+  @media (min-width: 48rem) {
+    .hero__name span {
+      display: block;
+    }
+  }
+  .hero__role {
+    margin-top: clamp(0.9rem, 2vw, 1.4rem);
+    font-family: var(--display);
+    font-size: var(--step-2);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .hero__role .accent {
+    font-size: 1.06em;
+  }
+  .hero__intro {
+    margin-top: 1rem;
+    max-width: 34rem;
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+
+  .hero__proof {
+    display: grid;
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    border-top: 1px solid var(--rule);
+    max-width: 40rem;
+  }
+  .hero__proof div {
+    padding-block: 0.8rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  @media (min-width: 40rem) and (max-width: 47.99rem), (min-width: 68rem) {
+    .hero__proof {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border-bottom: 1px solid var(--rule);
+    }
+    .hero__proof div {
+      padding: 0.9rem 1.1rem 0.9rem 0;
+      border-bottom: 0;
+    }
+    .hero__proof div + div {
+      padding-left: 1.1rem;
+      border-left: 1px solid var(--rule);
+    }
+  }
+  .hero__proof dt {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.4;
+    color: var(--ink-3);
+  }
+  .hero__proof dd {
+    margin-top: 0.3rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--ink);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  }
+  .hero__social {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 1.25rem;
+  }
+  .hero__social a {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 50%;
+    color: var(--ink-2);
+    transition:
+      background-color 0.25s,
+      color 0.25s,
+      border-color 0.25s,
+      translate 0.25s var(--ease);
+  }
+  .hero__social a:hover {
+    background: var(--accent-fill);
+    border-color: var(--accent-fill);
+    color: var(--on-accent);
+    translate: 0 -2px;
+  }
+
+  /* The portrait, with a fine frame set off behind it. */
+  .hero__figure {
+    position: relative;
+    justify-self: center;
+    width: min(100%, 27rem);
+  }
+  .hero__figure::before {
+    content: '';
+    position: absolute;
+    inset: 0.9rem -0.9rem 2.1rem 0.9rem;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-lg);
+    opacity: 0.55;
+  }
+  .hero__photo {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--paper-3);
+    box-shadow: var(--shadow);
+    transform: perspective(60rem) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition: transform 0.5s var(--ease-out);
+  }
+  .hero__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 52% 18%;
+  }
+  .hero__caption {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    margin-top: 0.75rem;
+    font-size: var(--step--1);
+    color: var(--ink-3);
+  }
+  .hero__caption span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .hero__caption :global(.icon) {
+    color: var(--accent);
+  }
+
+  /* Narrow screens: the portrait leads, at a size that keeps the name in view. */
+  @media (max-width: 47.99rem) {
+    .hero__figure {
+      order: -1;
+      justify-self: start;
+      width: min(62vw, 17rem);
+      margin-right: 0.9rem;
+    }
+  }
+</style>

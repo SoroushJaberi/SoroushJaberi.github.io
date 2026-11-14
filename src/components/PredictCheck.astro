@@ -176,7 +176,7 @@ const description =
   .xp__title {
     margin-top: 0.35rem;
     font-size: var(--step-3);
-    letter-spacing: -0.04em;
+    letter-spacing: -0.03em;
   }
   .xp__question {
     margin-top: 0.75rem;
@@ -200,7 +200,7 @@ const description =
     font-weight: 600;
     line-height: 1;
     letter-spacing: -0.03em;
-    color: var(--blue);
+    color: var(--accent);
   }
   /* The slider spans exactly the plot's 0–100 axis: it is inset by the row
      label on the left, and widened by one thumb so the thumb's centre, not
@@ -233,18 +233,18 @@ const description =
     height: var(--thumb);
     margin-top: calc(var(--thumb) / -2 + 2px);
     border-radius: 50%;
-    background: var(--blue);
+    background: var(--accent);
     border: 3px solid var(--paper-2);
-    box-shadow: 0 0 0 1px var(--blue);
+    box-shadow: 0 0 0 1px var(--accent);
     transition: scale 0.2s var(--ease-spring);
   }
   .xp__range::-moz-range-thumb {
     width: var(--thumb);
     height: var(--thumb);
     border-radius: 50%;
-    background: var(--blue);
+    background: var(--accent);
     border: 3px solid var(--paper-2);
-    box-shadow: 0 0 0 1px var(--blue);
+    box-shadow: 0 0 0 1px var(--accent);
     box-sizing: border-box;
   }
   .xp__range:hover::-webkit-slider-thumb,
@@ -255,11 +255,11 @@ const description =
     outline: none;
   }
   .xp__range:focus-visible::-webkit-slider-thumb {
-    outline: 2px solid var(--blue);
+    outline: 2px solid var(--accent);
     outline-offset: 3px;
   }
   .xp__range:focus-visible::-moz-range-thumb {
-    outline: 2px solid var(--blue);
+    outline: 2px solid var(--accent);
     outline-offset: 3px;
   }
 
@@ -276,7 +276,7 @@ const description =
     left: calc(var(--v) * 1%);
     top: 0;
     bottom: 0;
-    border-left: 2px solid var(--blue);
+    border-left: 2px solid var(--accent);
     translate: -1px 0;
   }
   .xp[data-state='result'] .xp__marker::before {
@@ -289,7 +289,7 @@ const description =
     translate: -0.35rem 0;
     padding: 0.05rem 0.4rem;
     border-radius: 2px;
-    background: var(--blue);
+    background: var(--accent);
     color: var(--paper);
     font-size: 0.75rem;
     font-weight: 600;
@@ -338,7 +338,7 @@ const description =
     text-underline-offset: 0.2em;
   }
   .xp__again:hover {
-    color: var(--blue);
+    color: var(--accent);
   }
   .xp__source {
     margin-top: 0.85rem;

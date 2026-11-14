@@ -1,7 +1,7 @@
 ---
 import { Picture } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
-import portrait from '@/assets/portraits/cafe.jpg';
+import portrait from '@/assets/portraits/formal.jpg';
 import { site, links } from '@/data/site';
 import { education, teaching, skills, languages, habits } from '@/data/profile';
 import Frames from '@/components/Frames.astro';
@@ -18,7 +18,7 @@ const schema = [
 
 <Base
   title="About"
-  description="About Soroush Jaberi: AI researcher and engineer in Karaj, Iran. M.Sc. candidate in Artificial Intelligence (GPA 19.58/20), teaching assistant for three courses, and author of the open course The AI Path."
+  description="About Soroush Jaberi: AI researcher and data scientist in Karaj, Iran. M.Sc. candidate in Artificial Intelligence (GPA 19.58/20), teaching assistant for three courses, and author of the open course The AI Path."
   image="/og/about.png"
   type="profile"
   schema={schema}
@@ -31,7 +31,7 @@ const schema = [
       </h1>
       <div class="bio stack rise" style="--i: 2">
         <p>
-          I am an AI researcher and engineer based in {site.location}. I am completing an M.Sc. in Artificial
+          I am an AI researcher and data scientist based in {site.location}. I am completing an M.Sc. in Artificial
           Intelligence at Karaj Islamic Azad University with a GPA of 19.58 / 20 (4.0 / 4.0), where I also took my
           B.Sc. in Computer Engineering. My thesis is on classifying sentiment in Persian text by combining transformer
           models with lexicon-based methods. I expect to defend it in January 2027.
@@ -58,7 +58,7 @@ const schema = [
     <figure class="portrait rise" style="--i: 2">
       <Picture
         src={portrait}
-        alt="Soroush Jaberi, smiling, seated at a wooden table in a café"
+        alt="Soroush Jaberi seated at a table by a window, hands folded"
         formats={['avif', 'webp']}
         widths={[360, 540, 720, 1080]}
         sizes="(min-width: 60rem) 22rem, (min-width: 36rem) 20rem, 80vw"
@@ -211,7 +211,7 @@ const schema = [
     margin-top: 1rem;
     font-size: var(--step-3);
     line-height: 1.04;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.03em;
     max-width: 20ch;
   }
   .bio {
@@ -245,7 +245,7 @@ const schema = [
     width: 100%;
     aspect-ratio: 4 / 5;
     object-fit: cover;
-    object-position: 50% 28%;
+    object-position: 50% 32%;
     border-radius: var(--radius);
     background: var(--paper-2);
   }
@@ -288,7 +288,7 @@ const schema = [
     color: var(--ink-3);
   }
   .habits .is-key span:last-child {
-    background: linear-gradient(var(--mark-soft), var(--mark-soft)) no-repeat 0 88% / 100% 0.42em;
+    background: linear-gradient(var(--accent-soft), var(--accent-soft)) no-repeat 0 88% / 100% 0.42em;
     justify-self: start;
   }
 

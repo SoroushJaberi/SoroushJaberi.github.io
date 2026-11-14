@@ -7,10 +7,10 @@ export const site = {
   name: 'Soroush Jaberi',
   /** The name in Persian script, shown beside the Latin form. */
   nameFa: 'سروش جابری',
-  role: 'AI researcher & engineer',
+  role: 'AI researcher & data scientist',
   /** One sentence used as the default meta description and share text. */
   description:
-    'Soroush Jaberi is an AI researcher and engineer. He studies how language models handle evidence, builds NLP and computer-vision systems, and teaches AI in the open.',
+    'Soroush Jaberi is an AI researcher and data scientist. He builds and evaluates machine learning systems for language, medical imaging and document retrieval, and teaches AI in the open.',
   tagline: 'Machine learning that holds up when you check it.',
   location: 'Karaj, Iran',
   timezone: 'UTC+3:30',

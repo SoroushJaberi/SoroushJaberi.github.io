@@ -11,12 +11,12 @@ import { site } from '@/data/site';
 
 export const OG_SIZE = { width: 1200, height: 630 };
 
-const PAPER = '#0b0b0d';
-const INK = '#f1ece2';
-const INK_2 = '#bcb8b0';
-const INK_3 = '#908d87';
-const RULE = 'rgba(241, 236, 226, 0.2)';
-const MARK = '#ff5a2c';
+const PAPER = '#f6f2e9';
+const INK = '#161a19';
+const INK_2 = '#434a48';
+const INK_3 = '#5f6663';
+const RULE = 'rgba(22, 26, 25, 0.2)';
+const MARK = '#c98d22';
 
 type Weight = 400 | 500 | 600 | 700;
 type FontSpec = { name: string; pkg: string; file: string; weight: Weight };
@@ -25,15 +25,15 @@ const FONTS: FontSpec[] = [
   { name: 'Bricolage', pkg: 'bricolage-grotesque', file: 'bricolage-grotesque-latin-600-normal.woff', weight: 600 },
   { name: 'Bricolage', pkg: 'bricolage-grotesque', file: 'bricolage-grotesque-latin-700-normal.woff', weight: 700 },
   {
-    name: 'Atkinson',
-    pkg: 'atkinson-hyperlegible-next',
-    file: 'atkinson-hyperlegible-next-latin-400-normal.woff',
+    name: 'Text',
+    pkg: 'hanken-grotesk',
+    file: 'hanken-grotesk-latin-400-normal.woff',
     weight: 400,
   },
   {
-    name: 'Atkinson',
-    pkg: 'atkinson-hyperlegible-next',
-    file: 'atkinson-hyperlegible-next-latin-600-normal.woff',
+    name: 'Text',
+    pkg: 'hanken-grotesk',
+    file: 'hanken-grotesk-latin-600-normal.woff',
     weight: 600,
   },
 ];
@@ -102,7 +102,7 @@ function intervals(): Node {
       top: 0,
       width: x(67.8) - x(49.3),
       height: 150,
-      background: 'rgba(255, 90, 44, 0.2)',
+      background: 'rgba(201, 141, 34, 0.22)',
     }),
     ...rows.map(([a, b, v], i) =>
       h(
@@ -143,7 +143,7 @@ export async function renderOg(card: OgCard): Promise<Buffer> {
       padding: '64px 72px 56px',
       background: PAPER,
       color: INK,
-      fontFamily: 'Atkinson',
+      fontFamily: 'Text',
     },
     // top: mark + name
     h(

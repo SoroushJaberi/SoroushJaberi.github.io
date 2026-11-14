@@ -144,6 +144,13 @@ export const languages = [
   { name: 'English', level: 'Advanced (academic reading and technical writing)' },
 ];
 
+/** How I work, in three lines. Carried over from the previous version of the site. */
+export const principles = [
+  'Frame the research question before the model choice.',
+  'Prefer measurable experiments over impressive demos.',
+  'Build readable systems that can be trusted, reviewed and reused.',
+];
+
 /**
  * Working habits. These are the six habits practiced every week in
  * The AI Path course, quoted from its README.

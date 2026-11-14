@@ -85,7 +85,7 @@ const label =
     background: var(--neutral-fill);
   }
   .cost__bar--on {
-    background: var(--mark-fill);
+    background: var(--warm-fill);
     transition-delay: calc(var(--i) * 90ms + 120ms);
   }
   .cost__bar span {
@@ -103,14 +103,14 @@ const label =
   .cost__bar--on[style*='--w: 6'] span {
     left: auto;
     right: 0.4rem;
-    color: var(--on-mark);
+    color: var(--on-warm);
     font-weight: 700;
   }
   .cost__ratio {
     justify-self: end;
     font-size: 0.9375rem;
     font-weight: 700;
-    color: var(--mark);
+    color: var(--warm);
   }
   .cost__legend {
     display: flex;
@@ -133,7 +133,7 @@ const label =
     background: var(--neutral-fill);
   }
   .cost__key--on {
-    background: var(--mark-fill);
+    background: var(--warm-fill);
   }
 
   .cost.armed:not(.is-in) .cost__bar {

@@ -1,0 +1,277 @@
+---
+/**
+ * The latest study as a figure: 32,000 points, one per answer, that gather
+ * from a globe into four columns when the section comes into view.
+ * See src/scripts/pointfield.ts for the WebGL side.
+ *
+ * Without WebGL, without JavaScript, or with reduced motion, the columns are
+ * drawn as plain CSS bars with the same data.
+ */
+import { runs, conditions, outcomeLabels, overwriteRange, SOURCE, type Outcome } from '@/data/knowledge-conflict';
+
+// Answers per outcome for each condition, summed over the eight runs.
+const keys: (keyof Outcome)[] = ['truth', 'planted', 'idk', 'other'];
+const counts = conditions.map((condition) => {
+  const sums = [0, 0, 0, 0];
+  for (const run of runs) {
+    const raw = keys.map((k) => Math.round(run.outcomes[condition.id][k] * 10));
+    // Rounding can leave a run one short or one over; each run is exactly 1,000 answers.
+    raw[3] = (raw[3] ?? 0) + 1000 - raw.reduce((a, b) => a + b, 0);
+    raw.forEach((n, i) => {
+      sums[i] = (sums[i] ?? 0) + n;
+    });
+  }
+  return sums;
+});
+const total = counts.flat().reduce((a, b) => a + b, 0);
+const share = (c: number, k: number) => Math.round(((counts[c]?.[k] ?? 0) / 8000) * 100);
+
+// Which outcome each column's headline number reports.
+const headline: [number, string][] = [
+  [0, 'answered correctly from memory'],
+  [0, 'answered correctly'],
+  [1, 'repeated the planted answer'],
+  [2, 'said “I don’t know”'],
+];
+const columns = conditions.map((condition, c) => {
+  const row = counts[c] ?? [0, 0, 0, 0];
+  const pct = row.map((n) => n / 80);
+  const [key, what] = headline[c] ?? [0, ''];
+  return {
+    label: condition.label,
+    stat: share(c, key) + '%',
+    what,
+    bands: '--truth: ' + pct[0] + '; --planted: ' + pct[1] + '; --idk: ' + pct[2] + ';',
+    alt: condition.label + ': ' + keys.map((k, j) => outcomeLabels[k] + ' ' + share(c, j) + '%').join(', '),
+  };
+});
+const lo = Math.floor(overwriteRange.min);
+const hi = Math.ceil(overwriteRange.max);
+const fmt = (n: number) => n.toLocaleString('en-US');
+---
+
+<section class="section section--tint study" id="study" aria-labelledby="study-title" data-field data-counts={JSON.stringify(counts)}>
+  <div class="wrap study__grid">
+    <div class="study__text" data-reveal>
+      <p class="label label--tick">Latest study</p>
+      <h2 id="study-title">When the document is <span class="accent">wrong</span></h2>
+      <p class="study__finding">
+        Hand a language model a document that contradicts a fact it knows, and it repeats the document
+        <strong class="num">{lo}–{hi}%</strong> of the time.
+      </p>
+      <p class="study__note">
+        Measured on facts each model had answered correctly on its own. Larger models showed no clear improvement, and
+        letting a model “think” first cost 10–19× the GPU energy without making it resist.
+      </p>
+      <p class="study__actions">
+        <a class="btn" href="/work/knowledge-conflict/">Read the study</a>
+        <a class="arrow" href={SOURCE}>Code and data</a>
+      </p>
+    </div>
+
+    <figure class="study__figure" data-reveal style="--i: 1">
+      <div class="study__stage" data-field-stage>
+        <canvas class="study__canvas" data-field-canvas aria-hidden="true"></canvas>
+        <ol class="columns" role="list">
+          {
+            columns.map((c) => (
+              <li>
+                <div class="column" data-field-column style={c.bands} role="img" aria-label={c.alt} />
+                <p class="column__label">{c.label}</p>
+                <p class="column__stat">
+                  <strong class="num">{c.stat}</strong> {c.what}
+                </p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+      <figcaption class="study__caption">
+        <ul class="legend" role="list">
+          {
+            keys.map((k) => (
+              <li>
+                <i class:list={['legend__dot', 'legend__dot--' + k]} />
+                {outcomeLabels[k]}
+              </li>
+            ))
+          }
+        </ul>
+        <p>
+          Each point is one of {fmt(total)} answers: 8 runs × 4 document conditions × 1,000 questions, on Qwen3 models
+          from 1.7B to 14B parameters.
+          <button type="button" class="study__replay" data-field-replay>Play again</button>
+        </p>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<script>
+  import '@/scripts/pointfield';
+</script>
+
+<style>
+  .study {
+    --c-true: var(--accent-fill);
+    --c-wrong: var(--warm-fill);
+    --c-idk: var(--neutral-fill);
+    --c-other: var(--neutral-fill-2);
+  }
+  .study__grid {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+  @media (min-width: 62rem) {
+    .study__grid {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
+  }
+  .study__text h2 {
+    margin-top: 0.9rem;
+    font-size: var(--step-3);
+    line-height: 1.08;
+    letter-spacing: -0.028em;
+  }
+  .study__finding {
+    margin-top: 1.1rem;
+    font-size: var(--step-1);
+    line-height: 1.45;
+    color: var(--ink);
+  }
+  .study__finding strong {
+    font-family: var(--display);
+    font-weight: 700;
+    color: var(--warm);
+    white-space: nowrap;
+  }
+  .study__note {
+    margin-top: 0.9rem;
+    max-width: 34rem;
+    color: var(--ink-2);
+  }
+  .study__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .study__figure {
+    min-width: 0;
+  }
+  .study__stage {
+    position: relative;
+  }
+  .study__canvas {
+    display: none;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .columns {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(0.5rem, 2vw, 1.5rem);
+  }
+  .column {
+    height: clamp(11rem, 38vw, 22rem);
+    border-radius: 3px;
+    /* The same data without WebGL: bands from the bottom up. */
+    background: linear-gradient(
+      to top,
+      var(--c-true) 0 calc(var(--truth) * 1%),
+      var(--c-wrong) 0 calc((var(--truth) + var(--planted)) * 1%),
+      var(--c-idk) 0 calc((var(--truth) + var(--planted) + var(--idk)) * 1%),
+      var(--c-other) 0
+    );
+  }
+  .column__label {
+    margin-top: 0.75rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--rule-strong);
+    min-height: calc(2.4em + 0.6rem);
+    font-size: clamp(0.72rem, 0.62rem + 0.45vw, 0.9375rem);
+    font-weight: 700;
+    line-height: 1.2;
+    overflow-wrap: break-word;
+  }
+  .column__stat {
+    margin-top: 0.25rem;
+    font-size: clamp(0.6875rem, 0.62rem + 0.25vw, 0.8125rem);
+    line-height: 1.35;
+    color: var(--ink-3);
+  }
+  .column__stat strong {
+    display: block;
+    font-family: var(--display);
+    font-size: clamp(1.15rem, 0.9rem + 1.1vw, 1.8rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+
+  .study__caption {
+    margin-top: 1.1rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--rule);
+    font-size: var(--step--1);
+    line-height: 1.5;
+    color: var(--ink-3);
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--ink-2);
+  }
+  .legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .legend__dot {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+  }
+  .legend__dot--truth {
+    background: var(--c-true);
+  }
+  .legend__dot--planted {
+    background: var(--c-wrong);
+  }
+  .legend__dot--idk {
+    background: var(--c-idk);
+  }
+  .legend__dot--other {
+    background: var(--c-other);
+    outline: 1px solid var(--rule-strong);
+  }
+  .study__replay {
+    display: none;
+    margin-left: 0.4rem;
+    min-height: 1.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  /* Live: the canvas draws the points, so the CSS bars step back. */
+  .study.is-live .study__canvas {
+    display: block;
+  }
+  .study.is-live .column {
+    background: none;
+  }
+  .study.is-live .study__replay {
+    display: inline;
+  }
+</style>

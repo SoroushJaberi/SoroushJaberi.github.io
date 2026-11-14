@@ -102,7 +102,7 @@ const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'lin
 
     <p class="colophon small">
       © {year}
-      {site.name}. Set in Bricolage Grotesque, Atkinson Hyperlegible and Newsreader. Static HTML, no trackers, no cookies.
+      {site.name}. Set in Bricolage Grotesque, Hanken Grotesk and Newsreader. Static HTML, no trackers, no cookies.
       <a href={site.repo}>Source on GitHub</a>.
     </p>
   </div>
@@ -130,12 +130,12 @@ const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'lin
     font-size: var(--step-4);
     font-weight: 600;
     line-height: 0.98;
-    letter-spacing: -0.045em;
+    letter-spacing: -0.03em;
     text-wrap: balance;
   }
   .invite__line a {
     text-decoration: none;
-    background: linear-gradient(var(--mark-fill), var(--mark-fill)) no-repeat 0 96% / 0% 2px;
+    background: linear-gradient(var(--accent-fill), var(--accent-fill)) no-repeat 0 96% / 0% 2px;
     transition: background-size 0.6s var(--ease-out);
   }
   .invite__line a:hover {
@@ -164,7 +164,7 @@ const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'lin
     font-family: var(--display);
     font-size: var(--step-2);
     font-weight: 600;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.025em;
     line-height: 1.1;
     display: flex;
     flex-wrap: wrap;
@@ -197,9 +197,9 @@ const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'lin
       translate 0.25s var(--ease);
   }
   .base__profiles a:hover {
-    background: var(--mark-fill);
-    border-color: var(--mark-fill);
-    color: var(--on-mark);
+    background: var(--accent-fill);
+    border-color: var(--accent-fill);
+    color: var(--on-accent);
     translate: 0 -3px;
   }
   .cols {
@@ -219,7 +219,7 @@ const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'lin
     text-decoration: none;
   }
   .cols a:hover {
-    color: var(--mark);
+    color: var(--accent);
   }
   .colophon {
     margin-top: clamp(2.5rem, 6vw, 4rem);

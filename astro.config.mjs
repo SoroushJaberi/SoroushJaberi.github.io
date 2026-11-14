@@ -87,14 +87,14 @@ export default defineConfig({
     {
       // Interface, labels and every number in a figure.
       provider: local,
-      name: 'Atkinson Hyperlegible Next',
-      cssVariable: '--font-atkinson',
+      name: 'Hanken Grotesk',
+      cssVariable: '--font-text',
       fallbacks: ['system-ui', 'sans-serif'],
       options: {
         variants: [
           {
-            src: [pkg('atkinson-hyperlegible-next', 'atkinson-hyperlegible-next-latin-wght-normal.woff2')],
-            weight: '200 800',
+            src: [pkg('hanken-grotesk', 'hanken-grotesk-latin-wght-normal.woff2')],
+            weight: '100 900',
             style: 'normal',
             unicodeRange: LATIN,
           },

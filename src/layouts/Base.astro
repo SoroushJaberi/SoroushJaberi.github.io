@@ -40,20 +40,20 @@ const speculation = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="dark light" />
-    <meta name="theme-color" content="#0b0b0d" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f6f2e9" />
 
-    <!-- Dark is the default. Apply a saved choice before first paint. -->
+    <!-- Light is the default. Apply a saved choice before first paint. -->
     <script is:inline>
       try {
-        if (localStorage.getItem('theme') === 'light') document.documentElement.dataset.theme = 'light';
+        if (localStorage.getItem('theme') === 'dark') document.documentElement.dataset.theme = 'dark';
       } catch (e) {}
       document.documentElement.classList.add('js');
     </script>
 
     <Font cssVariable="--font-bricolage" preload />
     <Font cssVariable="--font-newsreader" />
-    <Font cssVariable="--font-atkinson" preload />
+    <Font cssVariable="--font-text" preload />
     <Font cssVariable="--font-atkinson-mono" />
     <Font cssVariable="--font-vazirmatn" />
 
@@ -82,13 +82,9 @@ const speculation = {
 </html>
 
 <style>
-  /* The header is fixed, so pages start below it. The home page's stage
-     runs underneath the header instead. */
+  /* The header is fixed, so every page starts below it. */
   main {
-    padding-top: 4.25rem;
-  }
-  main:has(> :global(.stage:first-child)) {
-    padding-top: 0;
+    padding-top: var(--header);
   }
   main:focus {
     outline: none;

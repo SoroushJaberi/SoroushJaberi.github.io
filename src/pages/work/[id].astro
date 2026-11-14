@@ -151,7 +151,7 @@ const schema = [
       inset: 0 0 auto 0;
       height: 3px;
       z-index: 60;
-      background: var(--mark-fill);
+      background: var(--accent-fill);
       transform-origin: 0 50%;
       animation: progress linear both;
       animation-timeline: scroll(root block);
@@ -184,7 +184,14 @@ const schema = [
     gap: 0.1rem 0.5rem;
     color: var(--ink-3);
   }
+  .crumbs {
+    align-items: center;
+  }
   .crumbs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding-right: 0.25rem;
     color: var(--ink-2);
     font-weight: 600;
   }
@@ -192,7 +199,7 @@ const schema = [
     margin-top: 1rem;
     font-size: var(--step-4);
     line-height: 0.98;
-    letter-spacing: -0.045em;
+    letter-spacing: -0.03em;
     max-width: 16ch;
     width: fit-content;
   }
@@ -254,10 +261,10 @@ const schema = [
     font-size: var(--step-4);
     font-weight: 600;
     line-height: 1;
-    letter-spacing: -0.05em;
+    letter-spacing: -0.03em;
   }
   .prose :global(.scores > div:last-child .num) {
-    color: var(--mark);
+    color: var(--accent);
   }
   .prose :global(.scores p) {
     margin-top: 0.4rem;
@@ -283,11 +290,11 @@ const schema = [
     width: 1.75rem;
     height: 1px;
     margin-inline: 0.6rem;
-    background: var(--mark-fill);
+    background: var(--accent-fill);
   }
   .prose :global(.rhythm span:nth-child(2)),
   .prose :global(.rhythm span:nth-child(4)) {
-    color: var(--mark);
+    color: var(--accent);
   }
 
   .next {
@@ -314,7 +321,7 @@ const schema = [
     font-weight: 600;
     font-size: var(--step-3);
     line-height: 1.02;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.03em;
     color: var(--ink);
     transition: color 0.2s;
   }
@@ -322,10 +329,10 @@ const schema = [
     width: 0.5em;
     height: 0.5em;
     margin-left: 0.25em;
-    color: var(--mark-fill);
+    color: var(--accent-fill);
   }
   .next__link:hover .next__title {
-    color: var(--mark);
+    color: var(--accent);
   }
   .next__all {
     display: flex;

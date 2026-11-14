@@ -16,7 +16,7 @@ export async function iconPng(size: number, padding = 0): Promise<Response> {
       bottom: padding,
       left: padding,
       right: padding,
-      background: '#15171c',
+      background: '#0d6e64',
     });
   }
   const png = await image.png().toBuffer();
