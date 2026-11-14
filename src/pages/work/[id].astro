@@ -52,8 +52,6 @@ const schema = [
 ---
 
 <Base title={data.title} description={data.summary} image={`/og/work/${entry.id}.png`} type="article" schema={schema}>
-  <div class="progress" aria-hidden="true"></div>
-
   <article>
     <header class="wrap head lit">
       <div class="head__main">
@@ -140,32 +138,6 @@ const schema = [
 </Base>
 
 <style>
-  /* Reading progress: a scroll-driven animation, so no script. */
-  .progress {
-    display: none;
-  }
-  @supports (animation-timeline: scroll()) {
-    .progress {
-      display: block;
-      position: fixed;
-      inset: 0 0 auto 0;
-      height: 3px;
-      z-index: 60;
-      background: var(--accent-fill);
-      transform-origin: 0 50%;
-      animation: progress linear both;
-      animation-timeline: scroll(root block);
-    }
-    @keyframes progress {
-      from {
-        scale: 0 1;
-      }
-      to {
-        scale: 1 1;
-      }
-    }
-  }
-
   .head {
     display: grid;
     gap: 2.5rem clamp(2rem, 5vw, 4rem);

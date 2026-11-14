@@ -61,7 +61,25 @@ export default defineConfig({
       },
     },
     {
-      // Serif for long-form reading (case studies) and for italic accents.
+      // Display serif, italic only: the surname on the home page and the one
+      // accent phrase in each headline. The face the previous site used.
+      provider: local,
+      name: 'Instrument Serif',
+      cssVariable: '--font-instrument',
+      fallbacks: ['Georgia', 'serif'],
+      options: {
+        variants: [
+          {
+            src: ['./node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2'],
+            weight: '400',
+            style: 'italic',
+            unicodeRange: LATIN,
+          },
+        ],
+      },
+    },
+    {
+      // Serif for long-form reading (case studies).
       // The browser fetches each file only on pages that use it.
       provider: local,
       name: 'Newsreader',

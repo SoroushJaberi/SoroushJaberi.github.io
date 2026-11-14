@@ -22,6 +22,9 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
 const two = (n: number) => String(n).padStart(2, '0');
 ---
 
+<!-- A line across the top of the window that fills as the page is read. -->
+<div class="strip no-print" aria-hidden="true"><span data-strip></span></div>
+
 <header class="site-header" data-header>
   <a class="brand" href="/" aria-label={`${site.name}, home`}>{site.name}</a>
 
@@ -117,15 +120,47 @@ const two = (n: number) => String(n).padStart(2, '0');
     });
   }
 
-  // The bar gains a backdrop once the page has scrolled.
-  if (header) {
-    const update = () => header.classList.toggle('is-scrolled', window.scrollY > 12);
-    window.addEventListener('scroll', update, { passive: true });
-    update();
-  }
+  // On scroll: the bar gains a backdrop, and the strip above it fills.
+  const strip = document.querySelector<HTMLElement>('[data-strip]');
+  let queued = false;
+  const update = () => {
+    queued = false;
+    const y = window.scrollY;
+    header?.classList.toggle('is-scrolled', y > 12);
+    if (strip) {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const done = max > 8 ? Math.min(1, Math.max(0, y / max)) : 0;
+      strip.style.transform = `scaleX(${done.toFixed(4)})`;
+    }
+  };
+  const ask = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(update);
+  };
+  window.addEventListener('scroll', ask, { passive: true });
+  window.addEventListener('resize', ask);
+  window.addEventListener('load', ask);
+  update();
 </script>
 
 <style>
+  .strip {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 90;
+    height: 3px;
+    pointer-events: none;
+  }
+  .strip span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-fill), var(--warm-fill));
+    box-shadow: 0 0 10px var(--glow-a);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+
   .site-header {
     position: fixed;
     inset: 0 0 auto 0;

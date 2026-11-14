@@ -12,7 +12,7 @@ export const site = {
   description:
     'Soroush Jaberi is an AI researcher and data scientist. He builds and evaluates machine learning systems for language, medical imaging and document retrieval, and teaches AI in the open.',
   tagline: 'Machine learning that holds up when you check it.',
-  location: 'Karaj, Iran',
+  location: 'Iran',
   timezone: 'UTC+3:30',
   email: 'jaberi.soroush@gmail.com',
   cv: '/Soroush-Jaberi-CV.pdf',

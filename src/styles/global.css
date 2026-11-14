@@ -130,6 +130,8 @@
     --display: var(--font-bricolage), system-ui, -apple-system, 'Segoe UI', sans-serif;
     --sans: var(--font-text), system-ui, -apple-system, 'Segoe UI', sans-serif;
     --serif: var(--font-newsreader), Georgia, 'Times New Roman', serif;
+    /* Display serif, italic: the surname and the accent phrase in a headline. */
+    --serif-display: var(--font-instrument), var(--font-newsreader), Georgia, 'Times New Roman', serif;
     --mono: var(--font-atkinson-mono), ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
     --fa: var(--font-vazirmatn), Tahoma, 'Segoe UI', sans-serif;
 
@@ -161,6 +163,12 @@
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-spring: cubic-bezier(0.3, 1.35, 0.5, 1);
     --dur: 0.7s;
+  }
+  /* A phone held sideways has little height to give to the header. */
+  @media (max-height: 30rem) {
+    :root {
+      --header: 3.5rem;
+    }
   }
 }
 
@@ -490,10 +498,11 @@
   }
   /* Serif italic for the one phrase that carries a headline. */
   .accent {
-    font-family: var(--serif);
+    font-family: var(--serif-display);
     font-style: italic;
     font-weight: 400;
-    letter-spacing: -0.015em;
+    font-size: 1.1em;
+    letter-spacing: -0.01em;
     color: var(--warm);
   }
 

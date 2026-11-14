@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
 import { iconPng } from '@/lib/icon';
 
-// iOS masks the icon itself, so fill the square and inset the mark.
-export const GET: APIRoute = () => iconPng(180, 22);
+// iOS rounds the corners itself and does not allow transparency, so fill the square.
+export const GET: APIRoute = () => iconPng(180, true);

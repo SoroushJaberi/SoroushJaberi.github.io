@@ -1,7 +1,16 @@
 ---
 /**
  * The opening of the home page: who Soroush is, at a glance.
- * Name and role, one sentence, three facts, the ways onward, and a portrait.
+ * Name and role, one sentence, three facts, the ways onward, and a portrait,
+ * with a neural network turning slowly behind the portrait.
+ *
+ * Everything here is sized from the height of the window as well as its
+ * width, so the whole opening is in view when the page loads, on a phone, a
+ * phone held sideways, a tablet, a laptop or a large screen. Three layouts:
+ *   narrow   portrait beside the name, the rest in one column
+ *   wide     text on the left, portrait on the right
+ *   short    (a phone held sideways, a low window) the same two sides,
+ *            with the name on one line and everything compact
  */
 import { Picture } from 'astro:assets';
 import portrait from '@/assets/portraits/cafe.jpg';
@@ -11,22 +20,30 @@ import Icon, { type IconName } from './Icon.astro';
 
 const msc = education[0]!;
 const proof = [
-  { term: 'M.Sc. in Artificial Intelligence', value: `GPA ${msc.gpa}` },
-  { term: 'Research', value: 'NLP, LLM evaluation, retrieval, medical imaging' },
-  { term: 'Open to', value: 'PhD positions, research and industry roles' },
+  { term: 'M.Sc. in Artificial Intelligence', short: 'M.Sc. in AI', value: `GPA ${msc.gpa}` },
+  { term: 'Research', short: 'Research', value: 'NLP, LLM evaluation, retrieval, medical imaging' },
+  { term: 'Open to', short: 'Open to', value: 'PhD positions, research and industry roles' },
 ];
 const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'linkedin', YouTube: 'youtube' };
+
+// The name is set letter by letter so each can arrive, and answer the mouse, on its own.
+const [first = '', ...rest] = site.name.split(' ');
+const firstLetters = [...first];
+const lastLetters = [...rest.join(' ')];
 ---
 
-<section class="hero lit" aria-labelledby="hero-name">
+<section class="hero lit" aria-labelledby="hero-name" data-neural>
+  <canvas class="hero__net" aria-hidden="true" data-neural-canvas></canvas>
+
   <div class="wrap hero__grid">
-    <div class="hero__text">
+    <div class="hero__text" data-neural-text>
       <p class="hero__eyebrow rise">
         <span>AI research</span><span>Data science</span><span>ML engineering</span>
       </p>
 
-      <h1 id="hero-name" class="hero__name rise" style="--i: 1">
-        <span>Soroush</span> <span>Jaberi</span>
+      <h1 id="hero-name" class="hero__name" aria-label={site.name}>
+        <span class="hero__word" aria-hidden="true">{firstLetters.map((ch, i) => <span class="ch" style={`--c: ${i}`}>{ch}</span>)}</span>
+        <span class="hero__word hero__word--last" aria-hidden="true">{lastLetters.map((ch, i) => <span class="ch" style={`--c: ${i + firstLetters.length + 2}`}>{ch}</span>)}</span>
       </h1>
 
       <p class="hero__role rise" style="--i: 2">
@@ -42,48 +59,53 @@ const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'lin
         {
           proof.map((item) => (
             <div>
-              <dt>{item.term}</dt>
+              <dt>
+                <span class="hero__long">{item.term}</span>
+                <span class="hero__short">{item.short}</span>
+              </dt>
               <dd>{item.value}</dd>
             </div>
           ))
         }
       </dl>
 
-      <div class="hero__actions rise" style="--i: 5">
-        <a class="btn" href="#work">View my work</a>
-        <a class="btn btn--quiet" href={site.cv}>
-          <Icon name="cv" size={18} />
-          Download CV
-        </a>
-        <a class="btn btn--quiet" href="/contact/">Contact</a>
-      </div>
-
-      <ul class="hero__social rise" role="list" style="--i: 6">
-        {
-          profiles.map((p) => (
-            <li>
-              <a href={p.href} rel="me noopener" aria-label={p.label} title={p.label}>
-                <Icon name={profileIcon[p.label] ?? 'spark'} size={20} />
-              </a>
-            </li>
-          ))
-        }
-        <li>
-          <a href={mailto()} aria-label="Email" title="Email">
-            <Icon name="mail" size={20} />
+      <div class="hero__cta">
+        <div class="hero__actions rise" style="--i: 5">
+          <a class="btn" href="#work">View my work</a>
+          <a class="btn btn--quiet" href={site.cv} aria-label="Download CV">
+            <Icon name="cv" size={18} />
+            <span><span class="hero__dl">Download </span>CV</span>
           </a>
-        </li>
-      </ul>
+          <a class="btn btn--quiet" href="/contact/">Contact</a>
+        </div>
+
+        <ul class="hero__social rise" role="list" style="--i: 6">
+          {
+            profiles.map((p) => (
+              <li>
+                <a href={p.href} rel="me noopener" aria-label={p.label} title={p.label}>
+                  <Icon name={profileIcon[p.label] ?? 'spark'} size={20} />
+                </a>
+              </li>
+            ))
+          }
+          <li>
+            <a href={mailto()} aria-label="Email" title="Email">
+              <Icon name="mail" size={20} />
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <figure class="hero__figure rise" style="--i: 2">
-      <div class="hero__photo" data-tilt="4">
+      <div class="hero__photo" data-tilt="4" data-neural-anchor>
         <Picture
           src={portrait}
           alt="Soroush Jaberi, smiling, seated at a wooden table"
           formats={['avif', 'webp']}
-          widths={[360, 540, 720, 960]}
-          sizes="(min-width: 62rem) 28rem, (min-width: 48rem) 38vw, 62vw"
+          widths={[240, 360, 540, 720, 960]}
+          sizes="(min-width: 48rem) min(27rem, 38vw), 34vw"
           loading="eager"
           fetchpriority="high"
           quality={72}
@@ -98,134 +120,177 @@ const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'lin
       </figcaption>
     </figure>
   </div>
+
+  <span class="hero__cue" aria-hidden="true"></span>
 </section>
 
+<script>
+  import '@/scripts/neuralfield';
+</script>
+
 <style>
+  /*
+    --avail is the height left under the header; --u is one hundredth of it.
+    Sizes below take the smaller of a width-based and a height-based value, so
+    the opening always fits the window it is given.
+  */
   .hero {
-    padding-block: clamp(1.5rem, 5vw, 4rem) clamp(3rem, 7vw, 6rem);
+    --avail: calc(100vh - var(--header));
+    --u: calc(var(--avail) / 100);
+    --gap: clamp(0.5rem, calc(2 * var(--u)), 1.25rem);
+    --pw: clamp(5.5rem, 33vw, 9.5rem);
+    display: grid;
+    align-items: center;
+    min-height: var(--avail);
+    padding-block: clamp(0.4rem, calc(1.5 * var(--u)), 1.5rem) clamp(0.6rem, calc(2.2 * var(--u)), 2rem);
   }
+  @supports (height: 100svh) {
+    .hero {
+      --avail: calc(100svh - var(--header));
+    }
+  }
+
+  /* The network: behind everything, running up under the header. */
+  .hero__net {
+    position: absolute;
+    z-index: -1;
+    top: calc(-1 * var(--header));
+    left: 0;
+    width: 100%;
+    max-width: none;
+    height: calc(100% + var(--header));
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.4s ease-out;
+  }
+  .hero__net.is-live {
+    opacity: 1;
+  }
+
+  /* ---- narrow: the base layout ---- */
   .hero__grid {
     display: grid;
-    gap: clamp(1.75rem, 5vw, 4.5rem);
-    align-items: center;
+    grid-template-columns: minmax(0, 1fr) var(--pw);
+    grid-template-areas:
+      'eyebrow eyebrow'
+      'name    figure'
+      'role    figure'
+      'social  figure'
+      'intro   intro'
+      'proof   proof'
+      'actions actions';
+    column-gap: clamp(0.6rem, 3.5vw, 1.25rem);
   }
-  @media (min-width: 48rem) {
-    .hero__grid {
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-    }
-  }
-  @media (min-width: 62rem) {
-    .hero {
-      min-height: calc(100vh - var(--header));
-      min-height: calc(100svh - var(--header));
-      display: grid;
-      align-items: center;
-    }
+  .hero__text,
+  .hero__cta {
+    display: contents;
   }
 
   .hero__eyebrow {
+    grid-area: eyebrow;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25rem 0;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-  }
-  .hero__eyebrow span:not(:last-child)::after {
-    content: '/';
-    margin-inline: 0.7em;
-    color: var(--warm-fill);
-  }
-
-  .hero__name {
-    margin-top: 1rem;
-    font-size: var(--step-5);
-    font-weight: 700;
-    line-height: 0.95;
-    letter-spacing: -0.025em;
-  }
-  @media (min-width: 48rem) {
-    .hero__name span {
-      display: block;
-    }
-  }
-  .hero__role {
-    margin-top: clamp(0.9rem, 2vw, 1.4rem);
-    font-family: var(--display);
-    font-size: var(--step-2);
-    font-weight: 500;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-  }
-  .hero__role .accent {
-    font-size: 1.06em;
-  }
-  .hero__intro {
-    margin-top: 1rem;
-    max-width: 34rem;
-    font-size: var(--step-1);
-    line-height: 1.5;
-    color: var(--ink-2);
-  }
-
-  .hero__proof {
-    display: grid;
-    margin-top: clamp(1.5rem, 3vw, 2.25rem);
-    border-top: 1px solid var(--rule);
-    max-width: 40rem;
-  }
-  .hero__proof div {
-    padding-block: 0.8rem;
-    border-bottom: 1px solid var(--rule);
-  }
-  @media (min-width: 40rem) and (max-width: 47.99rem), (min-width: 68rem) {
-    .hero__proof {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      border-bottom: 1px solid var(--rule);
-    }
-    .hero__proof div {
-      padding: 0.9rem 1.1rem 0.9rem 0;
-      border-bottom: 0;
-    }
-    .hero__proof div + div {
-      padding-left: 1.1rem;
-      border-left: 1px solid var(--rule);
-    }
-  }
-  .hero__proof dt {
-    font-size: 0.6875rem;
+    gap: 0.1rem 0;
+    margin-bottom: calc(0.8 * var(--gap));
+    font-size: clamp(0.625rem, 2.9vw, 0.7rem);
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     line-height: 1.4;
     color: var(--ink-3);
   }
-  .hero__proof dd {
-    margin-top: 0.3rem;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    line-height: 1.35;
-    color: var(--ink);
+  .hero__eyebrow span:not(:last-child)::after {
+    content: '/';
+    margin-inline: 0.6em;
+    color: var(--warm-fill);
   }
 
-  .hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  /* The name. First name in the display face; surname in the serif italic. */
+  .hero__name {
+    grid-area: name;
+    align-self: end;
+    font-size: clamp(2rem, 11.6vw, 3.5rem);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
   }
+  /* On the dark ground the name carries a soft light of its own. */
+  :global([data-theme='dark']) .hero__name {
+    text-shadow: 0 0 1em var(--accent-soft);
+  }
+  .hero__word {
+    display: block;
+    white-space: nowrap;
+  }
+  .hero__word--last {
+    font-family: var(--serif-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.1em;
+    letter-spacing: -0.01em;
+    line-height: 0.9;
+    color: var(--accent);
+  }
+  /* Each letter rises into place in turn. */
+  .ch {
+    display: inline-block;
+    animation: letter 0.75s var(--ease-out) both;
+    animation-delay: calc(var(--c) * 36ms + 120ms);
+    transition:
+      translate 0.32s var(--ease-out),
+      color 0.32s,
+      text-shadow 0.32s;
+  }
+  @keyframes letter {
+    from {
+      opacity: 0;
+      translate: 0 0.5em;
+    }
+  }
+  /* And lifts and lights under the mouse. */
+  @media (hover: hover) and (pointer: fine) {
+    .ch:hover {
+      translate: 0 -0.1em;
+      color: var(--accent);
+      text-shadow:
+        0 0 0.5em var(--accent-soft),
+        0 0.12em 0.45em var(--accent-soft);
+    }
+    .hero__word--last .ch:hover {
+      color: var(--warm);
+      text-shadow:
+        0 0 0.5em var(--warm-soft),
+        0 0.12em 0.45em var(--warm-soft);
+    }
+  }
+
+  .hero__role {
+    grid-area: role;
+    align-self: center;
+    margin-top: calc(0.6 * var(--gap));
+    font-family: var(--display);
+    font-size: clamp(1rem, 4.9vw, 1.3rem);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .hero__role .accent {
+    font-size: 1.14em;
+  }
+
   .hero__social {
+    grid-area: social;
+    align-self: start;
     display: flex;
-    gap: 0.4rem;
-    margin-top: 1.25rem;
+    gap: 0.3rem;
+    margin-top: calc(0.8 * var(--gap));
+    --dot: clamp(1.9rem, 9.4vw, 2.5rem);
   }
   .hero__social a {
     display: grid;
     place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
+    width: var(--dot);
+    height: var(--dot);
     border: 1px solid var(--rule-strong);
     border-radius: 50%;
     color: var(--ink-2);
@@ -241,17 +306,103 @@ const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'lin
     color: var(--on-accent);
     translate: 0 -2px;
   }
+  .hero__social :global(svg) {
+    width: 46%;
+    height: 46%;
+  }
+
+  .hero__intro {
+    grid-area: intro;
+    margin-top: var(--gap);
+    max-width: 38rem;
+    font-size: clamp(0.875rem, 3.9vw, 1.0625rem);
+    line-height: 1.45;
+    color: var(--ink-2);
+  }
+
+  /* Three facts. Rows by default; three columns where height is short. */
+  .hero__proof {
+    grid-area: proof;
+    display: grid;
+    margin-top: var(--gap);
+    border-top: 1px solid var(--rule);
+  }
+  .hero__proof div {
+    display: grid;
+    grid-template-columns: 4.9rem minmax(0, 1fr);
+    align-items: baseline;
+    gap: 0.6rem;
+    padding-block: clamp(0.3rem, calc(1.1 * var(--u)), 0.6rem);
+    border-bottom: 1px solid var(--rule);
+  }
+  .hero__proof dt {
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.4;
+    color: var(--ink-3);
+  }
+  .hero__proof dd {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+  .hero__long,
+  .hero__dl {
+    display: none;
+  }
+  @media (min-width: 20rem) and (max-width: 47.99rem) and (max-height: 41rem) {
+    .hero__proof {
+      grid-template-columns: auto 1.2fr 1fr;
+      border-bottom: 1px solid var(--rule);
+    }
+    .hero__proof div {
+      display: block;
+      padding: 0.4rem 0.5rem 0.4rem 0;
+      border-bottom: 0;
+    }
+    .hero__proof div:first-child dd {
+      white-space: nowrap;
+    }
+    .hero__proof div + div {
+      padding-left: 0.5rem;
+      border-left: 1px solid var(--rule);
+    }
+    .hero__proof dd {
+      margin-top: 0.15rem;
+      font-size: 0.75rem;
+    }
+  }
+
+  .hero__actions {
+    grid-area: actions;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: var(--gap);
+  }
+  .hero__actions .btn {
+    min-height: 2.75rem;
+    padding: 0.4rem clamp(0.65rem, 3.4vw, 1.1rem);
+    font-size: clamp(0.8125rem, 3.6vw, 0.9375rem);
+    white-space: nowrap;
+  }
 
   /* The portrait, with a fine frame set off behind it. */
   .hero__figure {
+    --off: clamp(0.3rem, 1.5vw, 0.9rem);
+    grid-area: figure;
+    align-self: center;
     position: relative;
-    justify-self: center;
-    width: min(100%, 27rem);
+    width: 100%;
   }
   .hero__figure::before {
     content: '';
     position: absolute;
-    inset: 0.9rem -0.9rem 2.1rem 0.9rem;
+    inset: var(--off) calc(-1 * var(--off)) auto var(--off);
+    aspect-ratio: 4 / 5;
     border: 1px solid var(--accent);
     border-radius: var(--radius-lg);
     opacity: 0.55;
@@ -283,27 +434,294 @@ const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'lin
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 0.25rem 1rem;
-    margin-top: 0.75rem;
-    font-size: var(--step--1);
+    gap: 0 0.5rem;
+    margin-top: calc(var(--off) + 0.3rem);
+    font-size: 0.6875rem;
+    line-height: 1.5;
     color: var(--ink-3);
   }
   .hero__caption span {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.25rem;
+  }
+  .hero__caption [lang='fa'] {
+    line-height: 1.5;
   }
   .hero__caption :global(.icon) {
+    width: 0.8rem;
+    height: 0.8rem;
     color: var(--accent);
   }
 
-  /* Narrow screens: the portrait leads, at a size that keeps the name in view. */
-  @media (max-width: 47.99rem) {
+  .hero__cue {
+    display: none;
+  }
+
+  /*
+    ---- wide: text on the left, portrait on the right ----
+    Wide enough for two columns, and tall enough for the name on two lines.
+  */
+  @media (min-width: 48rem) and (max-width: 74.99rem) and (min-height: 40.0625rem),
+    (min-width: 75rem) and (min-height: 31.0625rem) {
+    .hero {
+      --gap: clamp(0.6rem, calc(3.2 * var(--u)), 2.25rem);
+      padding-block: clamp(0.6rem, calc(2.4 * var(--u)), 3rem) clamp(0.8rem, calc(3.6 * var(--u)), 4rem);
+    }
+    .hero__grid {
+      grid-template-areas: none;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      column-gap: clamp(2rem, 5vw, 4.5rem);
+      align-items: center;
+    }
+    .hero__text {
+      display: block;
+    }
+    .hero__eyebrow {
+      margin-bottom: clamp(0.4rem, calc(1.8 * var(--u)), 1rem);
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+    }
+    .hero__eyebrow span:not(:last-child)::after {
+      margin-inline: 0.7em;
+    }
+    .hero__name {
+      font-size: min(var(--step-5), calc(11.6 * var(--u)));
+    }
+    .hero__role {
+      margin-top: clamp(0.5rem, calc(2.2 * var(--u)), 1.4rem);
+      font-size: clamp(1.2rem, calc(4.3 * var(--u)), var(--step-2));
+    }
+    .hero__intro {
+      margin-top: clamp(0.4rem, calc(1.8 * var(--u)), 1rem);
+      font-size: clamp(1rem, calc(3 * var(--u)), var(--step-1));
+      line-height: 1.5;
+    }
+    .hero__proof {
+      max-width: 40rem;
+    }
+    .hero__proof div {
+      display: block;
+      padding-block: clamp(0.4rem, calc(1.4 * var(--u)), 0.8rem);
+    }
+    .hero__proof dt {
+      font-size: 0.6875rem;
+      letter-spacing: 0.12em;
+    }
+    .hero__proof dd {
+      margin-top: 0.3rem;
+      font-size: 0.9375rem;
+      line-height: 1.35;
+    }
+    .hero__long {
+      display: inline;
+    }
+    .hero__short {
+      display: none;
+    }
+    .hero__actions {
+      gap: 0.6rem;
+    }
+    .hero__actions .btn {
+      min-height: clamp(2.6rem, calc(7.4 * var(--u)), 3rem);
+      padding: 0.5rem 1.35rem;
+      font-size: 0.9375rem;
+    }
+    .hero__social {
+      --dot: clamp(2.5rem, calc(6.8 * var(--u)), 2.75rem);
+      gap: 0.4rem;
+      margin-top: clamp(0.6rem, calc(2 * var(--u)), 1.25rem);
+    }
+    .hero__social :global(svg) {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
     .hero__figure {
-      order: -1;
+      --off: 0.9rem;
+      grid-area: auto;
+      justify-self: center;
+      width: min(100%, 27rem, calc((var(--avail) - 7.5rem) * 0.8));
+    }
+    .hero__caption {
+      gap: 0.25rem 1rem;
+      font-size: var(--step--1);
+    }
+    .hero__caption span {
+      gap: 0.35rem;
+    }
+    .hero__caption :global(.icon) {
+      width: 0.95rem;
+      height: 0.95rem;
+    }
+  }
+  /* Wide and roomy: the button says "Download CV" in full. */
+  @media (min-width: 62rem) and (min-height: 42.0625rem) {
+    .hero__dl {
+      display: inline;
+    }
+  }
+  /* Wide, and either roomy across or not tall: the three facts sit side by side. */
+  @media (min-width: 75rem) and (min-height: 31.0625rem),
+    (min-width: 48rem) and (max-width: 74.99rem) and (min-height: 40.0625rem) and (max-height: 52rem) {
+    .hero__proof {
+      grid-template-columns: 0.95fr 1.1fr 1fr;
+      border-bottom: 1px solid var(--rule);
+    }
+    .hero__proof div {
+      padding: clamp(0.45rem, calc(1.6 * var(--u)), 0.9rem) 1rem clamp(0.45rem, calc(1.6 * var(--u)), 0.9rem) 0;
+      border-bottom: 0;
+    }
+    .hero__proof div + div {
+      padding-left: 1rem;
+      border-left: 1px solid var(--rule);
+    }
+  }
+  /* Wide but low (a laptop window with every toolbar open): buttons and
+     profile icons share one row. */
+  @media (min-width: 75rem) and (min-height: 31.0625rem) and (max-height: 42rem) {
+    .hero__cta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0 1rem;
+      margin-top: var(--gap);
+    }
+    .hero__cta .hero__actions,
+    .hero__cta .hero__social {
+      margin-top: 0;
+    }
+  }
+  /* Room to spare: a quiet mark that the page goes on. */
+  @media (min-width: 62rem) and (min-height: 50rem) {
+    .hero__cue {
+      display: block;
+      position: absolute;
+      left: 50%;
+      bottom: 0.9rem;
+      width: 1px;
+      height: 2.25rem;
+      background: var(--rule-strong);
+      opacity: 0.6;
+    }
+    .hero__cue::after {
+      content: '';
+      position: absolute;
+      left: -2px;
+      top: 0;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent-fill);
+      animation: cue 2.4s var(--ease) infinite;
+    }
+    @keyframes cue {
+      0% {
+        translate: 0 0;
+        opacity: 0;
+      }
+      25% {
+        opacity: 1;
+      }
+      100% {
+        translate: 0 2rem;
+        opacity: 0;
+      }
+    }
+  }
+
+  /*
+    ---- short: a phone held sideways, or a low window ----
+    Text on the left with the name on one line, portrait on the right.
+  */
+  @media (min-width: 36rem) and (max-width: 47.99rem) and (max-height: 36rem),
+    (min-width: 48rem) and (max-width: 74.99rem) and (max-height: 40rem),
+    (min-width: 75rem) and (max-height: 31rem) {
+    .hero {
+      --gap: clamp(0.3rem, calc(2.6 * var(--u)), 1.1rem);
+      --pw: min(calc((var(--avail) - 3.5rem) * 0.8), max(21vw, calc(50vw - 16rem)), 20rem);
+      padding-block: clamp(0.35rem, calc(2 * var(--u)), 1.25rem);
+    }
+    .hero__grid {
+      grid-template-columns: minmax(0, 1fr) auto var(--pw);
+      grid-template-areas:
+        'eyebrow eyebrow figure'
+        'name    name    figure'
+        'role    role    figure'
+        'intro   intro   figure'
+        'proof   proof   figure'
+        'actions social  figure';
+      column-gap: clamp(0.75rem, 2.5vw, 2.5rem);
+      align-items: center;
+    }
+    .hero__eyebrow {
+      margin-bottom: calc(0.5 * var(--gap));
+      font-size: 0.6875rem;
+    }
+    .hero__name {
+      align-self: auto;
+      font-size: min(clamp(1.6rem, calc(11.5 * var(--u)), 4rem), 8.6vw);
+      line-height: 1;
+    }
+    .hero__word {
+      display: inline-block;
+    }
+    .hero__word--last {
+      line-height: 1;
+    }
+    .hero__role {
+      margin-top: calc(0.4 * var(--gap));
+      font-size: clamp(0.95rem, calc(6 * var(--u)), 1.4rem);
+    }
+    .hero__intro {
+      margin-top: calc(0.8 * var(--gap));
+      max-width: 44rem;
+      font-size: clamp(0.78rem, calc(4.6 * var(--u)), 1.0625rem);
+      line-height: 1.4;
+    }
+    .hero__proof {
+      grid-template-columns: auto 1.3fr 1fr;
+      max-width: 44rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .hero__proof div {
+      display: block;
+      padding: clamp(0.25rem, calc(1.6 * var(--u)), 0.6rem) 0.7rem clamp(0.25rem, calc(1.6 * var(--u)), 0.6rem) 0;
+      border-bottom: 0;
+    }
+    .hero__proof div + div {
+      padding-left: 0.7rem;
+      border-left: 1px solid var(--rule);
+    }
+    .hero__proof div:first-child dd {
+      white-space: nowrap;
+    }
+    .hero__proof dd {
+      margin-top: 0.1rem;
+      font-size: clamp(0.75rem, calc(4.4 * var(--u)), 0.875rem);
+    }
+    .hero__actions {
+      flex-wrap: nowrap;
+    }
+    .hero__actions .btn {
+      min-height: clamp(2.25rem, calc(12 * var(--u)), 2.75rem);
+      padding: 0.3rem 0.85rem;
+      font-size: 0.8125rem;
+    }
+    .hero__social {
+      --dot: clamp(2.25rem, calc(12 * var(--u)), 2.5rem);
+      align-self: center;
       justify-self: start;
-      width: min(62vw, 17rem);
-      margin-right: 0.9rem;
+      margin-top: var(--gap);
+    }
+    .hero__figure {
+      --off: 0.4rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__cue::after {
+      animation: none;
+      opacity: 1;
     }
   }
 </style>

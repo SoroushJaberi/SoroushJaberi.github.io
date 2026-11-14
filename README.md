@@ -20,9 +20,10 @@ Node 22.22 or newer is required.
 
 The page introduces a person before it explains any one result.
 
-It opens with an overview: name, role, one sentence, three facts, the ways onward, and a portrait. An
-About section follows, then the areas I work in and the tools I use. Only after that does the page turn to
-the work itself:
+It opens with an overview: name, role, one sentence, three facts, the ways onward, and a portrait, with a
+neural network turning slowly behind the portrait. The whole opening is in view when the page loads, on
+any screen, with nothing to scroll for. An About section follows, then the areas I work in and the tools I
+use. Only after that does the page turn to the work itself:
 
 - **Selected work** is a reel. The section holds still while scrolling down carries four panels sideways,
   on phones and tablets as well as desktops. The panels also move with a sideways swipe, a mouse drag, the
@@ -40,12 +41,20 @@ the work itself:
 - **Day theme by default, night theme on the switch.** Both use the same palette: warm paper and soft ink
   with two colours, teal (links, buttons, "true" in figures) and gold (emphasis, highlights, "wrong" in
   figures). The colours were chosen to sit well with the photographs.
-- **Type:** Bricolage Grotesque for headlines, Hanken Grotesk for text and numbers, Newsreader for
-  long-form reading and the italic accent phrase, Vazirmatn for the Persian name.
+- **Type:** Bricolage Grotesque for headlines, Hanken Grotesk for text and numbers, Instrument Serif
+  italic for the surname and for the one accent phrase in each headline (the face the previous site used),
+  Newsreader for long-form reading, Vazirmatn for the Persian name.
+- **The name:** its letters arrive one after another when the page loads, and each lifts and changes
+  colour under the mouse.
+- **The network:** layers of nodes in space, with signals travelling forward from layer to layer the way
+  activations do. A node lights when a signal reaches it; a connection stays warm for a moment after one
+  has passed.
+- **Reading line:** a thin strip across the top of the window fills as the page is scrolled, on every
+  page.
 - **Menu:** the pattern of the previous site. Name at the left, a boxed bar of links in the middle on wide
   screens, and a "Menu" button that opens a compact numbered list over a blurred page.
-- **Icons:** one set drawn in one style, in `src/components/Icon.astro`. The site mark is a point on an
-  error bar.
+- **Icons:** one set drawn in one style, in `src/components/Icon.astro`. The tab icon is the "SJ" tile
+  from the previous site.
 
 ## How it is built
 
@@ -54,7 +63,7 @@ the work itself:
 | Framework | [Astro](https://astro.build) 7, static output. Pages are HTML at build time |
 | Content | Markdown/MDX in content collections, validated by schemas |
 | Styling | Plain CSS with custom properties. No CSS framework |
-| Motion | Plain WebGL (no three.js), CSS, native view transitions, one small scroll script |
+| Motion | Plain WebGL and 2D canvas (no three.js), CSS, native view transitions, one small scroll script |
 | Fonts | Self-hosted from `@fontsource` packages through Astro's Fonts API |
 | Share images | Drawn at build time with `satori` + `sharp`, one per page |
 | Hosting | GitHub Pages, deployed by GitHub Actions |
@@ -62,9 +71,14 @@ the work itself:
 Decisions worth knowing:
 
 - **Astro, not Next.js.** The site is content, so it ships HTML. Version 2 shipped about 198 kB of
-  JavaScript before its 3D scene; this version ships about 10 kB in total.
-- **No animation libraries.** The study figure is plain WebGL in `src/scripts/pointfield.ts`; the reel,
-  timeline and photo deck share one scroll listener in `src/scripts/scrollfx.ts`.
+  JavaScript before its 3D scene; this version ships about 22 kB in total (9 kB compressed).
+- **No animation libraries.** The study figure is plain WebGL in `src/scripts/pointfield.ts`; the network
+  behind the portrait is a 2D canvas in `src/scripts/neuralfield.ts`; the reel, timeline and photo deck
+  share one scroll listener in `src/scripts/scrollfx.ts`.
+- **The opening is sized from the window's height as well as its width.** Every size in it takes the
+  smaller of a width-based and a height-based value, and it has three layouts: narrow (portrait beside the
+  name), wide (text left, portrait right) and short (a phone held sideways, a low window). That is what
+  keeps all of it in the first screen.
 - **Motion that every device can do.** Reveals animate only opacity and position. The study figure plays
   on its own clock when it comes into view, not on the page's scroll, and stops drawing once it has
   settled.
@@ -72,8 +86,9 @@ Decisions worth knowing:
   screen; on short screens (a phone held sideways, for instance) it becomes an ordinary sideways-scrolling
   row with the same arrow buttons.
 - **Everything degrades.** Without JavaScript or WebGL, or with "reduce motion" turned on, the study figure
-  is plain bars with the same data, the reel is a swipeable row and the timeline is a list. Nothing is
-  hidden waiting for a script.
+  is plain bars with the same data, the reel is a swipeable row and the timeline is a list. The network
+  is decoration: it draws one still frame under "reduce motion" and is simply absent without JavaScript.
+  Nothing is hidden waiting for a script.
 - **One layout rule per component, not one per device.** The photo deck sizes itself from its own width
   (container query units), so the same rules fit a 320 px phone and a wide desktop.
 - **GitHub Pages stays.** It is free, the address is on my CV, and a static site needs nothing more.
@@ -108,12 +123,16 @@ src/
   content/work/*.mdx         one file per project
   content/publications.yaml  papers and manuscripts
   content/writing/           articles (empty; see below)
+  assets/portraits/          the five photographs
+  assets/icons/sj.png        the tab icon's source image
   components/                Hero, WorkReel, PointField, Timeline, Frames, ContactPhoto, Header (+ menu), Icon, figures/…
+  scripts/neuralfield.ts     the network behind the portrait
   scripts/pointfield.ts      the 32,000-point study figure
   scripts/scrollfx.ts        reel, timeline line, photo deck, card tilt
   styles/global.css          tokens (colours, type, spacing) and shared styles
+  lib/icon.ts                resizes the tab icon into every size a browser asks for
   pages/                     routes
-public/                      CV PDFs, favicon
+public/                      CV PDFs
 scripts/check-links.mjs      link checker used by `npm run verify`
 ```
 
@@ -169,6 +188,9 @@ the photo deck.
 
 **Add an icon.** Add a path to the `icons` map in `src/components/Icon.astro`.
 
+**Change the tab icon.** Replace `src/assets/icons/sj.png` with a square image of 512 px or more. If its
+corners are rounded differently, set `RADIUS` in `src/lib/icon.ts`.
+
 ## Deployment
 
 Every push to `main` runs `.github/workflows/deploy.yml`: type-check, build, link check, publish. If any
@@ -190,13 +212,14 @@ deleted by switching; each version stays on its branch.
 
 ## Checked before release
 
-Run against the production build on 14 November 2026, in headless Edge:
+Run against the production build on 14 November 2026:
 
 | Check | Result |
 | --- | --- |
 | Type check (`astro check`) | 0 errors |
-| Internal links | 344 checked, 0 broken |
+| Internal links | 365 checked, 0 broken |
 | Layout at 13 widths, 280 px to 2560 px, all 10 pages | no horizontal overflow, nothing outside the screen, no clipped text |
+| The opening fits the first screen: Chromium, Firefox and WebKit × 56 window sizes (phones upright and sideways, tablets, laptops with every toolbar open, desktops, ultrawide) | every part of it is inside the window on load, nothing overlaps, nothing runs off the side |
 | Chromium, Firefox and WebKit × 8 device sizes (fold, phones, phone sideways, tablets, laptop, desktop) | all pages load without script errors; reel, arrows, mouse drag, menu, theme switch, study figure, photo deck and the prediction widget all work |
 | Real touch gestures on the reel (Chromium, 5 sizes) | sideways swipe moves the panels, vertical swipe scrolls the page, tap opens the case study |
 | Accessibility (axe-core, WCAG 2.2 AA + best practice) | 0 violations on all 10 pages, day and night themes, desktop and phone |
