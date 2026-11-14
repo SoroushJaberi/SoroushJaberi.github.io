@@ -112,10 +112,6 @@ const lastLetters = [...rest.join(' ')];
         />
       </div>
       <figcaption class="hero__caption">
-        <span>
-          <Icon name="pin" size={15} />
-          {site.location}
-        </span>
         <span lang="fa" dir="rtl">{site.nameFa}</span>
       </figcaption>
     </figure>
@@ -433,25 +429,15 @@ const lastLetters = [...rest.join(' ')];
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 0 0.5rem;
     margin-top: calc(var(--off) + 0.3rem);
     font-size: 0.6875rem;
     line-height: 1.5;
     color: var(--ink-3);
   }
-  .hero__caption span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-  }
   .hero__caption [lang='fa'] {
     line-height: 1.5;
-  }
-  .hero__caption :global(.icon) {
-    width: 0.8rem;
-    height: 0.8rem;
-    color: var(--accent);
   }
 
   .hero__cue {
@@ -545,13 +531,6 @@ const lastLetters = [...rest.join(' ')];
     .hero__caption {
       gap: 0.25rem 1rem;
       font-size: var(--step--1);
-    }
-    .hero__caption span {
-      gap: 0.35rem;
-    }
-    .hero__caption :global(.icon) {
-      width: 0.95rem;
-      height: 0.95rem;
     }
   }
   /* Wide and roomy: the button says "Download CV" in full. */

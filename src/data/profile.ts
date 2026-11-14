@@ -17,7 +17,7 @@ export type Education = {
 export const education: Education[] = [
   {
     degree: 'M.Sc. in Artificial Intelligence',
-    school: 'Karaj Islamic Azad University',
+    school: 'Islamic Azad University',
     period: '2023 – present',
     gpa: '19.58 / 20',
     facts: [
@@ -33,7 +33,7 @@ export const education: Education[] = [
   },
   {
     degree: 'B.Sc. in Computer Engineering',
-    school: 'Karaj Islamic Azad University',
+    school: 'Islamic Azad University',
     period: '2019 – 2023',
     gpa: '17.97 / 20',
     facts: [
@@ -66,7 +66,7 @@ export type Role = {
 export const teaching: Role[] = [
   {
     title: 'Teaching Assistant, Machine Learning (graduate level)',
-    org: 'Karaj Islamic Azad University',
+    org: 'Islamic Azad University',
     period: '2024 – 2025',
     points: [
       'Assisted in designing and evaluating projects on supervised and unsupervised learning and model evaluation.',
@@ -75,7 +75,7 @@ export const teaching: Role[] = [
   },
   {
     title: 'Teaching Assistant, Data Mining',
-    org: 'Karaj Islamic Azad University',
+    org: 'Islamic Azad University',
     period: '2023 – 2025',
     points: [
       'Worked with the course instructor to design and evaluate assignments on data preprocessing, feature selection, classification, clustering and pattern discovery.',
@@ -84,7 +84,7 @@ export const teaching: Role[] = [
   },
   {
     title: 'Teaching Assistant, Algorithm Design',
-    org: 'Karaj Islamic Azad University',
+    org: 'Islamic Azad University',
     period: '2022 – 2023',
     points: [
       'Assisted in developing and assessing problem sets requiring efficient algorithm design and rigorous complexity analysis.',
@@ -176,7 +176,7 @@ export const timeline: TimelineYear[] = [
     events: [
       {
         title: 'B.Sc. in Computer Engineering begins',
-        text: 'Karaj Islamic Azad University. Algorithms, artificial intelligence, data mining and computer graphics.',
+        text: 'Islamic Azad University. Algorithms, artificial intelligence, data mining and computer graphics.',
       },
     ],
   },
