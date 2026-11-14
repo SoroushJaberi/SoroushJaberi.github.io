@@ -13,7 +13,7 @@
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-if (!reduce && 'IntersectionObserver' in window) {
+if (!reduce && 'IntersectionObserver' in window && 'classList' in document.documentElement) {
   const targets = document.querySelectorAll<HTMLElement>('[data-reveal], [data-draw]');
   const fold = window.innerHeight;
 

@@ -145,6 +145,12 @@ const target = (entry: CollectionEntry<'work'>) =>
   .entry__title a:focus-visible {
     outline: none;
   }
+  @supports not selector(:has(a)) {
+    .entry:focus-within {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+  }
   .entry:has(a:focus-visible) {
     outline: 2px solid var(--accent);
     outline-offset: 4px;

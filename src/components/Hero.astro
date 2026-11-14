@@ -116,6 +116,7 @@ const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'lin
   }
   @media (min-width: 62rem) {
     .hero {
+      min-height: calc(100vh - var(--header));
       min-height: calc(100svh - var(--header));
       display: grid;
       align-items: center;
@@ -264,6 +265,11 @@ const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'lin
     box-shadow: var(--shadow);
     transform: perspective(60rem) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
     transition: transform 0.5s var(--ease-out);
+  }
+  .hero__photo :global(picture) {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
   .hero__photo :global(img) {
     width: 100%;

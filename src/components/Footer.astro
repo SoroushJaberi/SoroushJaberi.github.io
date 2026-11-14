@@ -2,6 +2,7 @@
 import { site, profiles, nav, mailto } from '@/data/site';
 import CopyEmail from './CopyEmail.astro';
 import Icon, { type IconName } from './Icon.astro';
+import ContactPhoto from './ContactPhoto.astro';
 
 interface Props {
   /** Hide the large invitation (the contact page already is one). */
@@ -16,21 +17,26 @@ const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'lin
   {
     !compact && (
       <div class="invite lit">
-        <div class="wrap">
-          <p class="label label--tick" data-reveal>
-            Contact
-          </p>
-          <p class="invite__line" data-reveal style="--i: 1">
-            A position, a project, or a result I should check?
-            <a href={mailto()}>
-              <span class="accent">Write to me.</span>
-            </a>
-          </p>
-          <div class="invite__row" data-reveal style="--i: 2">
-            <CopyEmail />
-            <a class="arrow" href="/contact/">
-              Who I would like to hear from
-            </a>
+        <div class="wrap invite__grid">
+          <div class="invite__text">
+            <p class="label label--tick" data-reveal>
+              Contact
+            </p>
+            <p class="invite__line" data-reveal style="--i: 1">
+              A position, a project, or a result I should check?
+              <a href={mailto()}>
+                <span class="accent">Write to me.</span>
+              </a>
+            </p>
+            <div class="invite__row" data-reveal style="--i: 2">
+              <CopyEmail />
+              <a class="arrow" href="/contact/">
+                Who I would like to hear from
+              </a>
+            </div>
+          </div>
+          <div class="invite__photo" data-reveal style="--i: 2">
+            <ContactPhoto />
           </div>
         </div>
       </div>
@@ -122,6 +128,25 @@ const profileIcon: Record<string, IconName> = { GitHub: 'github', LinkedIn: 'lin
   .invite.lit::before {
     top: 0;
     height: 100%;
+  }
+  .invite__grid {
+    display: grid;
+    gap: clamp(2rem, 6vw, 4rem);
+    align-items: center;
+  }
+  .invite__photo {
+    width: min(64vw, 16rem);
+    margin-right: 0.8rem;
+  }
+  @media (min-width: 52rem) {
+    .invite__grid {
+      grid-template-columns: minmax(0, 1fr) clamp(13rem, 24vw, 19rem);
+    }
+    .invite__photo {
+      width: auto;
+      justify-self: end;
+      width: 100%;
+    }
   }
   .invite__line {
     margin-top: 1.25rem;

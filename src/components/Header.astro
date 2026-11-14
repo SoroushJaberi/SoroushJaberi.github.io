@@ -79,22 +79,27 @@ const two = (n: number) => String(n).padStart(2, '0');
   const dialog = document.querySelector<HTMLDialogElement>('[data-menu]');
   const header = document.querySelector<HTMLElement>('[data-header]');
 
-  if (dialog && typeof dialog.showModal === 'function') {
+  if (dialog) {
+    const modal = typeof dialog.showModal === 'function';
     const reduce = matchMedia('(prefers-reduced-motion: reduce)');
     const close = () => {
-      if (!dialog.open) return;
+      if (!dialog.hasAttribute('open')) return;
       dialog.classList.add('is-closing');
       window.setTimeout(
         () => {
           dialog.classList.remove('is-closing');
-          dialog.close();
+          if (modal) dialog.close();
+          else dialog.removeAttribute('open');
         },
         reduce.matches ? 0 : 200,
       );
     };
 
     for (const button of document.querySelectorAll('[data-menu-open]')) {
-      button.addEventListener('click', () => dialog.showModal());
+      button.addEventListener('click', () => {
+        if (modal) dialog.showModal();
+        else dialog.setAttribute('open', '');
+      });
     }
     dialog.querySelector('[data-menu-close]')?.addEventListener('click', close);
     // Esc: play the closing animation instead of vanishing.
@@ -147,6 +152,7 @@ const two = (n: number) => String(n).padStart(2, '0');
     background: var(--paper);
   }
   .site-header.is-scrolled {
+    background: var(--paper);
     background: color-mix(in srgb, var(--paper) 94%, transparent);
     backdrop-filter: saturate(1.4) blur(14px);
     -webkit-backdrop-filter: saturate(1.4) blur(14px);
@@ -179,6 +185,7 @@ const two = (n: number) => String(n).padStart(2, '0');
     gap: 0.25rem;
     padding: 0.2rem 0.5rem;
     border: 1px solid var(--rule);
+    background: var(--paper);
     background: color-mix(in srgb, var(--paper) 70%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
@@ -214,6 +221,7 @@ const two = (n: number) => String(n).padStart(2, '0');
     min-height: 2.5rem;
     padding: 0 1rem;
     border: 1px solid var(--rule);
+    background: var(--paper);
     background: color-mix(in srgb, var(--paper) 70%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
@@ -249,6 +257,7 @@ const two = (n: number) => String(n).padStart(2, '0');
     margin: 0;
     padding: 3rem 1.5rem;
     border: 0;
+    background: var(--paper);
     background: color-mix(in srgb, var(--paper) 72%, transparent);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
@@ -313,6 +322,7 @@ const two = (n: number) => String(n).padStart(2, '0');
     padding: 0.5rem 1.25rem;
     border: 1px solid var(--rule);
     border-radius: 1rem;
+    background: var(--paper);
     background: color-mix(in srgb, var(--paper) 60%, transparent);
     color: var(--ink);
     text-decoration: none;

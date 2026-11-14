@@ -24,8 +24,9 @@ It opens with an overview: name, role, one sentence, three facts, the ways onwar
 About section follows, then the areas I work in and the tools I use. Only after that does the page turn to
 the work itself:
 
-- **Selected work** is a reel. On a wide screen, scrolling down carries four panels sideways; on a phone
-  it is a row to swipe. Each panel leads with what came out of the project.
+- **Selected work** is a reel. The section holds still while scrolling down carries four panels sideways,
+  on phones and tablets as well as desktops. The panels also move with a sideways swipe, a mouse drag, the
+  two arrow buttons and the keyboard. Each panel leads with what came out of the project.
 - **Latest study** shows the knowledge-conflict study as 32,000 points, one per answer, that gather from a
   turning globe into four columns when the section comes into view. The number is exact: 8 runs ×
   4 conditions × 1,000 questions.
@@ -67,6 +68,9 @@ Decisions worth knowing:
 - **Motion that every device can do.** Reveals animate only opacity and position. The study figure plays
   on its own clock when it comes into view, not on the page's scroll, and stops drawing once it has
   settled.
+- **The reel measures instead of guessing the device.** It pins itself only if a panel really fits in one
+  screen; on short screens (a phone held sideways, for instance) it becomes an ordinary sideways-scrolling
+  row with the same arrow buttons.
 - **Everything degrades.** Without JavaScript or WebGL, or with "reduce motion" turned on, the study figure
   is plain bars with the same data, the reel is a swipeable row and the timeline is a list. Nothing is
   hidden waiting for a script.
@@ -75,6 +79,14 @@ Decisions worth knowing:
 - **GitHub Pages stays.** It is free, the address is on my CV, and a static site needs nothing more.
   For a custom domain, change `site` in `astro.config.mjs` and add `public/CNAME`.
 - **No analytics, no cookies, no third-party requests.**
+
+### Browser support
+
+Tested in three engines: Chromium (Chrome, Edge, Samsung Internet, Opera), Firefox, and WebKit (Safari on
+macOS and iOS). The site relies on CSS cascade layers, so the practical floor is browsers released from
+March 2022: Chrome and Edge 99, Firefox 97, Safari 15.4. Newer features have fallbacks: `color-mix()`,
+container query units, `:has()`, `overflow: clip`, small-viewport units, `<dialog>` and view transitions
+all degrade to something that still works.
 
 ### Pinned versions
 
@@ -96,7 +108,7 @@ src/
   content/work/*.mdx         one file per project
   content/publications.yaml  papers and manuscripts
   content/writing/           articles (empty; see below)
-  components/                Hero, WorkReel, PointField, Timeline, Frames, Header (+ menu), Icon, figures/…
+  components/                Hero, WorkReel, PointField, Timeline, Frames, ContactPhoto, Header (+ menu), Icon, figures/…
   scripts/pointfield.ts      the 32,000-point study figure
   scripts/scrollfx.ts        reel, timeline line, photo deck, card tilt
   styles/global.css          tokens (colours, type, spacing) and shared styles
@@ -151,7 +163,9 @@ post, and not before.
 
 **Change colours or type.** Edit the tokens at the top of `src/styles/global.css`. Each theme is one block.
 
-**Change the photos.** Replace files in `src/assets/portraits/` (same names).
+**Change the photos.** Replace files in `src/assets/portraits/` (same names). `cafe.jpg` opens the home
+page, `formal.jpg` is on the About page, `sun.jpg` sits beside the contact invitation, and all five are in
+the photo deck.
 
 **Add an icon.** Add a path to the `icons` map in `src/components/Icon.astro`.
 
@@ -181,14 +195,18 @@ Run against the production build on 14 November 2026, in headless Edge:
 | Check | Result |
 | --- | --- |
 | Type check (`astro check`) | 0 errors |
-| Internal links | 334 checked, 0 broken |
-| Layout at 11 widths, 320 px to 1920 px, all 10 pages | no horizontal overflow, nothing outside the screen, no clipped text |
+| Internal links | 344 checked, 0 broken |
+| Layout at 13 widths, 280 px to 2560 px, all 10 pages | no horizontal overflow, nothing outside the screen, no clipped text |
+| Chromium, Firefox and WebKit × 8 device sizes (fold, phones, phone sideways, tablets, laptop, desktop) | all pages load without script errors; reel, arrows, mouse drag, menu, theme switch, study figure, photo deck and the prediction widget all work |
+| Real touch gestures on the reel (Chromium, 5 sizes) | sideways swipe moves the panels, vertical swipe scrolls the page, tap opens the case study |
 | Accessibility (axe-core, WCAG 2.2 AA + best practice) | 0 violations on all 10 pages, day and night themes, desktop and phone |
 | Layout shift (CLS) | 0 on every page |
 | Reduced motion, and no WebGL | static layout in place |
 
-Not measured: real-network performance on the deployed URL, and Safari and Firefox by hand. The code
-avoids engine-specific features without a fallback, but those browsers were not opened.
+Not covered: real devices. The WebKit runs use Playwright's WebKit build on Windows, which shares Safari's
+engine but is not Safari on an iPhone; touch gestures were sent to Chromium only, because the other two
+engines cannot be driven by touch in this setup. Real-network performance on the deployed URL was not
+measured.
 
 ## Known limits
 

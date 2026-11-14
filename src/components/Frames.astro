@@ -59,11 +59,17 @@ const frames = [
     --progress: 1;
     /* Print width, and the distance between neighbouring prints. Both scale
        with the deck, and the step is chosen so the outer prints stay inside. */
-    --w: clamp(6.25rem, 25cqw, 16rem);
-    --step: min(11rem, (100cqw - var(--w)) / 4.5);
+    --w: clamp(6.25rem, 22vw, 16rem);
+    --step: min(11rem, (86vw - var(--w)) / 4.5);
     --open: clamp(0.64, var(--progress) * 2.2, 1);
     position: relative;
     height: calc(var(--w) * 1.62 + 2rem);
+  }
+  @supports (width: 1cqw) {
+    .deck {
+      --w: clamp(6.25rem, 25cqw, 16rem);
+      --step: min(11rem, (100cqw - var(--w)) / 4.5);
+    }
   }
   .deck li {
     position: absolute;

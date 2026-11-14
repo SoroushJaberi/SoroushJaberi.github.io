@@ -2,6 +2,7 @@
 import Base from '@/layouts/Base.astro';
 import CopyEmail from '@/components/CopyEmail.astro';
 import Paths from '@/components/Paths.astro';
+import ContactPhoto from '@/components/ContactPhoto.astro';
 import { site, profiles } from '@/data/site';
 
 const schema = [
@@ -21,17 +22,22 @@ const schema = [
   schema={schema}
   compactFooter
 >
-  <header class="wrap page-head lit">
-    <p class="label label--tick rise">Contact</p>
-    <h1 class="rise" style="--i: 1">Write <span class="accent">to me.</span></h1>
-    <p class="lede rise" style="--i: 2">
-      Email is the best way to reach me. Say who you are and what you have in mind. A paragraph is enough.
-    </p>
-    <div class="reach rise" style="--i: 3">
-      <CopyEmail />
-      <p class="small">
-        {site.location} · {site.timezone}
+  <header class="wrap page-head lit contact-head">
+    <div>
+      <p class="label label--tick rise">Contact</p>
+      <h1 class="rise" style="--i: 1">Write <span class="accent">to me.</span></h1>
+      <p class="lede rise" style="--i: 2">
+        Email is the best way to reach me. Say who you are and what you have in mind. A paragraph is enough.
       </p>
+      <div class="reach rise" style="--i: 3">
+        <CopyEmail />
+        <p class="small">
+          {site.location} · {site.timezone}
+        </p>
+      </div>
+    </div>
+    <div class="contact-head__photo rise" style="--i: 2">
+      <ContactPhoto />
     </div>
   </header>
 
@@ -75,6 +81,24 @@ const schema = [
 </Base>
 
 <style>
+  .contact-head {
+    display: grid;
+    gap: clamp(2rem, 6vw, 4rem);
+    align-items: center;
+  }
+  .contact-head__photo {
+    width: min(64vw, 16rem);
+    margin-right: 0.8rem;
+  }
+  @media (min-width: 52rem) {
+    .contact-head {
+      grid-template-columns: minmax(0, 1fr) clamp(13rem, 24vw, 19rem);
+    }
+    .contact-head__photo {
+      width: 100%;
+      justify-self: end;
+    }
+  }
   .reach {
     margin-top: 2.25rem;
     display: grid;
